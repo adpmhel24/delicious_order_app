@@ -25,14 +25,20 @@ class LoginBody extends StatelessWidget {
                 padding: EdgeInsets.only(
                   left: 24.h,
                   right: 24.h,
-                  bottom: MediaQuery.of(context).viewPadding.bottom,
+                  bottom: MediaQuery.of(context).viewPadding.bottom.h,
                 ),
                 child: Column(
                   children: [
-                    Image.asset(
-                      'assets/images/logo.png',
-                      fit: BoxFit.fitWidth,
+                    SizedBox(height: 50.h),
+                    SizedBox(
+                      height: 200.h,
+                      width: 300.w,
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.fitWidth,
+                      ),
                     ),
+                    SizedBox(height: 18.h),
                     const LoginForm(),
                     SizedBox(height: 18.h),
                     SizedBox(

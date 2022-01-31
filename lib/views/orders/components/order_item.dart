@@ -21,8 +21,6 @@ class _OrderItemState extends State<OrderItem> {
   @override
   Widget build(BuildContext context) {
     var deviceInfo = MediaQuery.of(context);
-    var width = deviceInfo.size.width;
-    var height = deviceInfo.size.height;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: _expanded
@@ -90,16 +88,14 @@ class _OrderItemState extends State<OrderItem> {
                   ),
                   Text(
                     'Delivery Address : ${widget.order.address}',
-                    style: TextStyle(
-                      fontSize: (height - width) * .03,
+                    style: const TextStyle(
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   FittedBox(
                     child: Text(
                       'Remarks : ${widget.order.remarks}',
-                      style: TextStyle(
-                        fontSize: (height - width) * .03,
+                      style: const TextStyle(
                         fontWeight: FontWeight.w400,
                       ),
                     ),

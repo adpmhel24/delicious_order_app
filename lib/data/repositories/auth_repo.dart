@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:delicious_ordering_app/data/repositories/app_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -29,6 +30,9 @@ class AuthRepository extends ChangeNotifier {
         _currentUser = UserModel.fromJson(response.data['data']);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("userData", json.encode(_currentUser!.toJson()));
+
+        // Load or resources after autheticate
+        await AppRepo().init();
 
         // Change the value of authenticated then notify
         _authenticated = true;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/data/repositories/repositories.dart';
 import '/router/router.gr.dart';
@@ -231,23 +232,32 @@ class CustomerTypeModal extends StatelessWidget {
     return CustomFieldModalChoices(
       autovalidateMode: AutovalidateMode.always,
       controller: _custTypeController,
-      builder: ListView.builder(
-          shrinkWrap: true,
-          itemCount: _custTypeRepo.customerTypes.length,
-          itemBuilder: (_, index) {
-            return ListTile(
-              title: Text(_custTypeRepo.customerTypes[index].name),
-              selected: _custTypeController.text ==
-                  _custTypeRepo.customerTypes[index].name,
-              onTap: () {
-                _custTypeController.text =
-                    _custTypeRepo.customerTypes[index].name;
-                context.read<AddCustomerBloc>().add(ChangeCustomerType(
-                    _custTypeRepo.customerTypes[index].id.toString()));
-                Navigator.of(context).pop();
+      onTap: () {
+        return showMaterialModalBottomSheet(
+          context: context,
+          builder: (_) {
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: _custTypeRepo.customerTypes.length,
+              itemBuilder: (_, index) {
+                return ListTile(
+                  title: Text(_custTypeRepo.customerTypes[index].name),
+                  selected: _custTypeController.text ==
+                      _custTypeRepo.customerTypes[index].name,
+                  onTap: () {
+                    _custTypeController.text =
+                        _custTypeRepo.customerTypes[index].name;
+                    context.read<AddCustomerBloc>().add(ChangeCustomerType(
+                        _custTypeRepo.customerTypes[index].id.toString()));
+                    Navigator.of(context).pop();
+                  },
+                );
               },
             );
-          }),
+          },
+        );
+      },
+      // builder: ,
       labelText: 'Customer Type',
       prefixIcon: const Icon(Icons.group),
       suffixIcon: Row(

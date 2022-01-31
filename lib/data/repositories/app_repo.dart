@@ -10,4 +10,12 @@ class AppRepo {
   static final orderRepository = OrderRepo();
   static final customerTypeRepository = CustomerTypeRepo();
   static final checkOutRepository = CheckOutRepo();
+
+  Future<void> init() async {
+    await productsRepository.fetchProducts();
+    await customerRepository.fetchCustomerFromAPI();
+    await salesTypeRepository.fetchFromAPI();
+    await discTypeRepository.fetchDiscType();
+    await customerTypeRepository.fetchCustomerType();
+  }
 }

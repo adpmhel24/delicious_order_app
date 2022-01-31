@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/global_bloc/cust_type_bloc/bloc.dart';
 import '/global_bloc/customer_bloc/bloc.dart';
@@ -91,7 +92,7 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
               SizedBox(
                 height: 20.h,
               ),
-              customerTypeField(
+              customerType1Field(
                 context: context,
                 custTypeController: _custTypeController,
               ),
@@ -129,89 +130,158 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
   }
 }
 
-customerTypeField({
+// customerTypeField({
+//   required BuildContext context,
+//   required TextEditingController custTypeController,
+// }) {
+//   return BlocBuilder<CustTypeBloc, CustTypeState>(
+//     builder: (_, state) {
+//       if (state is CustTypeLoadedState) {
+//         return CustomFieldModalChoices(
+//           controller: custTypeController,
+//           builder: ListView.separated(
+//             shrinkWrap: true,
+//             itemCount: state.custTypes.length,
+//             itemBuilder: (_, index) {
+//               return ListTile(
+//                 title: Text(state.custTypes[index].name),
+//                 selected:
+//                     custTypeController.text == state.custTypes[index].name,
+//                 onTap: () {
+//                   custTypeController.text = state.custTypes[index].name;
+//                   context
+//                       .read<OrderCustDetailsBloc>()
+//                       .add(ChangeCustType(custTypeController));
+//                   context
+//                       .read<CustomerBloc>()
+//                       .add(FilterCustomerByCustType(state.custTypes[index].id));
+//                   Navigator.of(context).pop();
+//                 },
+//               );
+//             },
+//             separatorBuilder: (_, index) {
+//               return const Divider(
+//                 thickness: 1,
+//               );
+//             },
+//           ),
+//           labelText: 'Customer Type',
+//           prefixIcon: const Icon(Icons.group),
+//           suffixIcon: Row(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               IconButton(
+//                 icon: const Icon(Icons.refresh),
+//                 onPressed: () async {
+//                   context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
+//                   custTypeController.clear();
+//                 },
+//               ),
+//               IconButton(
+//                 icon: const Icon(Icons.close),
+//                 onPressed: () {
+//                   custTypeController.clear();
+//                 },
+//               ),
+//             ],
+//           ),
+//         );
+//       } else {
+//         return TextFormField(
+//           readOnly: true,
+//           decoration: customInputDecoration(
+//             labelText: 'Customer Type',
+//             prefixIcon: const Icon(Icons.group),
+//             suffixIcon: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 IconButton(
+//                   icon: const Icon(Icons.refresh),
+//                   onPressed: () async {
+//                     context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
+//                     custTypeController.clear();
+//                   },
+//                 ),
+//                 IconButton(
+//                   icon: const Icon(Icons.close),
+//                   onPressed: () {
+//                     custTypeController.clear();
+//                   },
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       }
+//     },
+//   );
+// }
+
+customerType1Field({
   required BuildContext context,
   required TextEditingController custTypeController,
 }) {
-  return BlocBuilder<CustTypeBloc, CustTypeState>(
-    builder: (_, state) {
-      if (state is CustTypeLoadedState) {
-        return CustomFieldModalChoices(
-          controller: custTypeController,
-          builder: ListView.separated(
-            shrinkWrap: true,
-            itemCount: state.custTypes.length,
-            itemBuilder: (_, index) {
-              return ListTile(
-                title: Text(state.custTypes[index].name),
-                selected:
-                    custTypeController.text == state.custTypes[index].name,
-                onTap: () {
-                  custTypeController.text = state.custTypes[index].name;
-                  context
-                      .read<OrderCustDetailsBloc>()
-                      .add(ChangeCustType(custTypeController));
-                  context
-                      .read<CustomerBloc>()
-                      .add(FilterCustomerByCustType(state.custTypes[index].id));
-                  Navigator.of(context).pop();
+  return CustomFieldModalChoices(
+    controller: custTypeController,
+    onTap: () {
+      showMaterialModalBottomSheet(
+        context: context,
+        builder: (_) => BlocBuilder<CustTypeBloc, CustTypeState>(
+          builder: (_, state) {
+            if (state is CustTypeLoadedState) {
+              return ListView.separated(
+                shrinkWrap: true,
+                itemCount: state.custTypes.length,
+                itemBuilder: (_, index) {
+                  return ListTile(
+                    title: Text(state.custTypes[index].name),
+                    selected:
+                        custTypeController.text == state.custTypes[index].name,
+                    onTap: () {
+                      custTypeController.text = state.custTypes[index].name;
+                      context
+                          .read<OrderCustDetailsBloc>()
+                          .add(ChangeCustType(custTypeController));
+                      context.read<CustomerBloc>().add(
+                          FilterCustomerByCustType(state.custTypes[index].id));
+                      Navigator.of(context).pop();
+                    },
+                  );
+                },
+                separatorBuilder: (_, index) {
+                  return const Divider(
+                    thickness: 1,
+                  );
                 },
               );
-            },
-            separatorBuilder: (_, index) {
-              return const Divider(
-                thickness: 1,
-              );
-            },
-          ),
-          labelText: 'Customer Type',
-          prefixIcon: const Icon(Icons.group),
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () async {
-                  context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
-                  custTypeController.clear();
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  custTypeController.clear();
-                },
-              ),
-            ],
-          ),
-        );
-      } else {
-        return TextFormField(
-          decoration: customInputDecoration(
-            labelText: 'Customer Type',
-            prefixIcon: const Icon(Icons.group),
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () async {
-                    context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
-                    custTypeController.clear();
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    custTypeController.clear();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      }
+            }
+            return SizedBox(
+              height: 100.w,
+            );
+          },
+        ),
+      );
     },
+    labelText: 'Customer Type',
+    prefixIcon: const Icon(Icons.group),
+    suffixIcon: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: () async {
+            context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
+            custTypeController.clear();
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            custTypeController.clear();
+          },
+        ),
+      ],
+    ),
   );
 }
 
