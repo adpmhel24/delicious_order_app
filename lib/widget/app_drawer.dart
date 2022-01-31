@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:line_icons/line_icons.dart';
 import '/router/router.gr.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -31,9 +32,11 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           _createDrawerItem(
-            icon: Icons.list_alt,
+            icon: LineIcons.listUl,
             text: 'My Orders',
-            onTap: () {},
+            onTap: () {
+              AutoRouter.of(context).popAndPush(const OrderScreenRoute());
+            },
           ),
           _createDrawerItem(
             icon: Icons.list_alt_rounded,

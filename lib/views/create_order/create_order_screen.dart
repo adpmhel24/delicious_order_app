@@ -1,14 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:badges/badges.dart';
-import '/data/repositories/app_repo.dart';
-import '/data/repositories/cart_repo.dart';
-import '/global_bloc/cart_bloc/bloc.dart';
-import '/views/create_order/select_product/bloc/bloc.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
+import '/data/repositories/app_repo.dart';
+import '/data/repositories/cart_repo.dart';
+import '/global_bloc/cart_bloc/bloc.dart';
+import '/views/create_order/select_product/bloc/bloc.dart';
 import '/views/create_order/select_customer/bloc/bloc.dart';
 import '/router/router.gr.dart';
 import '/widget/app_drawer.dart';
@@ -64,6 +64,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                         context
                                             .read<CartBloc>()
                                             .add(LoadCart());
+
                                         AutoRouter.of(context).push(
                                             CartScreenRoute(
                                                 orderingHomeContext: context));
