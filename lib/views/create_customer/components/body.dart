@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/data/repositories/repositories.dart';
@@ -13,6 +14,8 @@ import '/widget/custom_error_dialog.dart';
 import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_success_dialog.dart';
 import '/widget/custom_text_field.dart';
+import 'city_modal_selection.dart';
+import 'province_modal_selection.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -23,8 +26,13 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   final TextEditingController _codeController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _custTypeController = TextEditingController();
+  final TextEditingController _provinceController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _municipalityController = TextEditingController();
+  final TextEditingController _brgyController = TextEditingController();
   final TextEditingController _custAddressController = TextEditingController();
   final TextEditingController _custContactNumberController =
       TextEditingController();
@@ -32,7 +40,8 @@ class _BodyState extends State<Body> {
   @override
   void dispose() {
     _codeController.dispose();
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _custTypeController.dispose();
     _custAddressController.dispose();
     _custContactNumberController.dispose();
@@ -42,6 +51,7 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     CustomerTypeRepo _custTypeRepo = AppRepo.customerTypeRepository;
+    PhLocationRepo _phLocationRepo = AppRepo.phLocationRepository;
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.w),
@@ -78,14 +88,38 @@ class _BodyState extends State<Body> {
                   SizedBox(height: 15.w),
                   _customerCodeField(context, state),
                   SizedBox(height: 15.w),
-                  _customerNameField(context, state),
-                  SizedBox(height: 15.w),
                   CustomerTypeModal(
                       custTypeController: _custTypeController,
                       custTypeRepo: _custTypeRepo,
                       state: state),
                   SizedBox(height: 15.w),
+                  _customerFirstNameField(context, state),
+                  SizedBox(height: 15.w),
+                  _customerLastNameField(context, state),
+                  SizedBox(height: 15.w),
                   _customerContactNumber(context, state),
+                  SizedBox(height: 15.w),
+                  provinceModalSelection(
+                    context: context,
+                    provinceController: _provinceController,
+                    cityController: _cityController,
+                    municipalityController: _municipalityController,
+                    brgyController: _brgyController,
+                    phLocationRepo: _phLocationRepo,
+                  ),
+                  SizedBox(height: 15.w),
+                  cityModalSelection(
+                    context: context,
+                    provinceController: _provinceController,
+                    cityController: _cityController,
+                    municipalityController: _municipalityController,
+                    brgyController: _brgyController,
+                    phLocationRepo: _phLocationRepo,
+                  ),
+                  SizedBox(height: 15.w),
+                  _municipalityModalSelection(),
+                  SizedBox(height: 15.w),
+                  _brgyModalSelection(),
                   SizedBox(height: 15.w),
                   _customerAddressField(context, state),
                 ],
@@ -104,8 +138,10 @@ class _BodyState extends State<Body> {
       textInputAction: TextInputAction.done,
       keyBoardType: TextInputType.phone,
       controller: _custContactNumberController,
-      labelText: 'Customer Contact Number',
-      prefixIcon: const Icon(Icons.phone),
+      labelText: 'Contact Number',
+      prefixIcon: const Icon(
+        Icons.phone,
+      ),
       suffixIcon: IconButton(
         onPressed: () {
           _custContactNumberController.clear();
@@ -113,7 +149,9 @@ class _BodyState extends State<Body> {
               .read<AddCustomerBloc>()
               .add(ChangeCustContactNumber(_custContactNumberController.text));
         },
-        icon: const Icon(Icons.close),
+        icon: const Icon(
+          Icons.close,
+        ),
       ),
       validator: (_) {
         return (state.contactNumber.invalid) ? "Required field!" : null;
@@ -134,7 +172,7 @@ class _BodyState extends State<Body> {
       minLines: 3,
       maxLines: 6,
       controller: _custAddressController,
-      labelText: 'Customer Address',
+      labelText: 'Street Address',
       prefixIcon: const Icon(Icons.home),
       suffixIcon: IconButton(
         onPressed: () {
@@ -156,30 +194,58 @@ class _BodyState extends State<Body> {
     );
   }
 
-  CustomTextField _customerNameField(
+  CustomTextField _customerFirstNameField(
       BuildContext context, AddCustomerState state) {
     return CustomTextField(
       autovalidateMode: AutovalidateMode.always,
       textInputAction: TextInputAction.next,
-      controller: _nameController,
-      labelText: 'Customer Name',
+      controller: _firstNameController,
+      labelText: 'First Name*',
       prefixIcon: const Icon(Icons.person),
       suffixIcon: IconButton(
         onPressed: () {
-          _nameController.clear();
+          _firstNameController.clear();
           context
               .read<AddCustomerBloc>()
-              .add(ChangeCustomerName(_nameController.text));
+              .add(ChangeFirstName(_firstNameController.text));
         },
         icon: const Icon(Icons.close),
       ),
       validator: (_) {
-        return (state.name.invalid) ? "Required field!" : null;
+        return (state.firstName.invalid) ? "Required field!" : null;
       },
       onChanged: (value) {
         context
             .read<AddCustomerBloc>()
-            .add(ChangeCustomerName(_nameController.text));
+            .add(ChangeFirstName(_firstNameController.text));
+      },
+    );
+  }
+
+  CustomTextField _customerLastNameField(
+      BuildContext context, AddCustomerState state) {
+    return CustomTextField(
+      autovalidateMode: AutovalidateMode.always,
+      textInputAction: TextInputAction.next,
+      controller: _lastNameController,
+      labelText: 'Last Name*',
+      prefixIcon: const Icon(Icons.person),
+      suffixIcon: IconButton(
+        onPressed: () {
+          _lastNameController.clear();
+          context
+              .read<AddCustomerBloc>()
+              .add(ChangeLastName(_lastNameController.text));
+        },
+        icon: const Icon(Icons.close),
+      ),
+      validator: (_) {
+        return (state.lastName.invalid) ? "Required field!" : null;
+      },
+      onChanged: (value) {
+        context
+            .read<AddCustomerBloc>()
+            .add(ChangeLastName(_lastNameController.text));
       },
     );
   }
@@ -190,7 +256,7 @@ class _BodyState extends State<Body> {
       autovalidateMode: AutovalidateMode.always,
       textInputAction: TextInputAction.next,
       controller: _codeController,
-      labelText: 'Customer Code',
+      labelText: 'Customer Code*',
       prefixIcon: const Icon(Icons.person),
       suffixIcon: IconButton(
         onPressed: () {
@@ -209,6 +275,144 @@ class _BodyState extends State<Body> {
             .read<AddCustomerBloc>()
             .add(ChangeCustomerCode(_codeController.text));
       },
+    );
+  }
+
+  _municipalityModalSelection() {
+    return CustomFieldModalChoices(
+      controller: _municipalityController,
+      onTap: () {
+        showMaterialModalBottomSheet(
+          context: context,
+          // builder: (_) => BlocBuilder<CustTypeBloc, CustTypeState>(
+          //   builder: (_, state) {
+          //     if (state is CustTypeLoadedState) {
+          //       return ListView.separated(
+          //         shrinkWrap: true,
+          //         itemCount: state.custTypes.length,
+          //         itemBuilder: (_, index) {
+          //           return ListTile(
+          //             title: Text(state.custTypes[index].name),
+          //             selected: custTypeController.text ==
+          //                 state.custTypes[index].name,
+          //             onTap: () {
+          //               custTypeController.text = state.custTypes[index].name;
+          //               context
+          //                   .read<OrderCustDetailsBloc>()
+          //                   .add(ChangeCustType(custTypeController));
+          //               context.read<CustomerBloc>().add(
+          //                   FilterCustomerByCustType(
+          //                       state.custTypes[index].id));
+          //               Navigator.of(context).pop();
+          //             },
+          //           );
+          //         },
+          //         separatorBuilder: (_, index) {
+          //           return const Divider(
+          //             thickness: 1,
+          //           );
+          //         },
+          //       );
+          //     }
+          //     return SizedBox(
+          //       height: 100.w,
+          //     );
+          //   },
+          // ),
+          builder: (_) => SizedBox(
+            height: 100.w,
+          ),
+        );
+      },
+      labelText: 'Municipality',
+      prefixIcon: const Icon(Icons.location_city),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              // context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
+              // _municipalityController.clear();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              _municipalityController.clear();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _brgyModalSelection() {
+    return CustomFieldModalChoices(
+      controller: _brgyController,
+      onTap: () {
+        showMaterialModalBottomSheet(
+          context: context,
+          // builder: (_) => BlocBuilder<CustTypeBloc, CustTypeState>(
+          //   builder: (_, state) {
+          //     if (state is CustTypeLoadedState) {
+          //       return ListView.separated(
+          //         shrinkWrap: true,
+          //         itemCount: state.custTypes.length,
+          //         itemBuilder: (_, index) {
+          //           return ListTile(
+          //             title: Text(state.custTypes[index].name),
+          //             selected: custTypeController.text ==
+          //                 state.custTypes[index].name,
+          //             onTap: () {
+          //               custTypeController.text = state.custTypes[index].name;
+          //               context
+          //                   .read<OrderCustDetailsBloc>()
+          //                   .add(ChangeCustType(custTypeController));
+          //               context.read<CustomerBloc>().add(
+          //                   FilterCustomerByCustType(
+          //                       state.custTypes[index].id));
+          //               Navigator.of(context).pop();
+          //             },
+          //           );
+          //         },
+          //         separatorBuilder: (_, index) {
+          //           return const Divider(
+          //             thickness: 1,
+          //           );
+          //         },
+          //       );
+          //     }
+          //     return SizedBox(
+          //       height: 100.w,
+          //     );
+          //   },
+          // ),
+          builder: (_) => SizedBox(
+            height: 100.w,
+          ),
+        );
+      },
+      labelText: 'Brgy',
+      prefixIcon: const Icon(LineIcons.building),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              // context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
+              // _brgyController.clear();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              _brgyController.clear();
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -258,13 +462,16 @@ class CustomerTypeModal extends StatelessWidget {
         );
       },
       // builder: ,
-      labelText: 'Customer Type',
+      labelText: 'Customer Type*',
       prefixIcon: const Icon(Icons.group),
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(
+              Icons.refresh,
+            ),
             onPressed: () async {
               await _custTypeRepo.fetchCustomerType();
               _custTypeController.clear();
@@ -272,7 +479,9 @@ class CustomerTypeModal extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: const Icon(
+              Icons.close,
+            ),
             onPressed: () {
               _custTypeController.clear();
               context.read<AddCustomerBloc>().add(const ChangeCustomerType(''));
@@ -286,62 +495,3 @@ class CustomerTypeModal extends StatelessWidget {
     );
   }
 }
-
-// class _CustomField extends StatelessWidget {
-//   const _CustomField({
-//     Key? key,
-//     required TextEditingController controller,
-//     required String labelText,
-//     TextInputAction? textInputAction,
-//     Widget? prefixIcon,
-//     Widget? suffixIcon,
-//     TextInputType? keyBoardType,
-//     int? minLines,
-//     int? maxLines,
-//     String? Function(String?)? validator,
-//     void Function(String?)? onChanged,
-//     AutovalidateMode? autovalidateMode,
-//   })  : _controller = controller,
-//         _labelText = labelText,
-//         _prefixIcon = prefixIcon,
-//         _suffixIcon = suffixIcon,
-//         _textInputAction = textInputAction,
-//         _keyboardType = keyBoardType,
-//         _minLines = minLines,
-//         _maxLines = maxLines,
-//         _validator = validator,
-//         _onChanged = onChanged,
-//         _autovalidateMode = autovalidateMode,
-//         super(key: key);
-
-//   final TextEditingController _controller;
-//   final String _labelText;
-//   final Widget? _prefixIcon;
-//   final Widget? _suffixIcon;
-//   final TextInputAction? _textInputAction;
-//   final TextInputType? _keyboardType;
-//   final int? _minLines;
-//   final int? _maxLines;
-//   final String? Function(String?)? _validator;
-//   final void Function(String?)? _onChanged;
-//   final AutovalidateMode? _autovalidateMode;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return TextFormField(
-//       autovalidateMode: _autovalidateMode,
-//       textInputAction: _textInputAction,
-//       keyboardType: _keyboardType,
-//       controller: _controller,
-//       minLines: _minLines,
-//       maxLines: _maxLines,
-//       decoration: InputDecoration(
-//         labelText: _labelText,
-//         prefixIcon: _prefixIcon,
-//         suffixIcon: _suffixIcon,
-//       ),
-//       validator: _validator,
-//       onChanged: _onChanged,
-//     );
-//   }
-// }

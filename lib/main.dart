@@ -58,6 +58,9 @@ class _MyAppState extends State<MyApp> {
                 letterSpacing: 1.0,
               ),
             ),
+            iconTheme: const IconThemeData().copyWith(
+              size: 20.h,
+            ),
             elevatedButtonTheme: elevatedButtonTheme(),
             textTheme: textTheme(),
           ),

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 
 abstract class AddCustomerEvent extends Equatable {
   const AddCustomerEvent();
@@ -14,11 +15,63 @@ class ChangeCustomerCode extends AddCustomerEvent {
   List<Object> get props => [code];
 }
 
-class ChangeCustomerName extends AddCustomerEvent {
-  final String name;
-  const ChangeCustomerName(this.name);
+class ChangeFirstName extends AddCustomerEvent {
+  final String firstName;
+  const ChangeFirstName(this.firstName);
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [firstName];
+}
+
+class ChangeLastName extends AddCustomerEvent {
+  final String lastName;
+  const ChangeLastName(this.lastName);
+  @override
+  List<Object> get props => [lastName];
+}
+
+// class ChangeProvince extends AddCustomerEvent {
+//   final String province;
+//   const ChangeProvince(this.province);
+//   @override
+//   List<Object> get props => [province];
+// }
+
+// class ChangeCity extends AddCustomerEvent {
+//   final String city;
+//   const ChangeCity(this.city);
+//   @override
+//   List<Object> get props => [city];
+// }
+
+// class ChangeMunicipality extends AddCustomerEvent {
+//   final String municipality;
+//   const ChangeMunicipality(this.municipality);
+//   @override
+//   List<Object> get props => [municipality];
+// }
+
+// class ChangeBrgy extends AddCustomerEvent {
+//   final String brgy;
+//   const ChangeBrgy(this.brgy);
+//   @override
+//   List<Object> get props => [brgy];
+// }
+
+class ChangeProvinceCityMunicipalityBrgy extends AddCustomerEvent {
+  final TextEditingController province;
+  final TextEditingController city;
+  final TextEditingController municipality;
+  final TextEditingController brgy;
+
+  const ChangeProvinceCityMunicipalityBrgy({
+    required this.province,
+    required this.city,
+    required this.municipality,
+    required this.brgy,
+  });
+
+  @override
+  List<Object> get props => [province, city, municipality, brgy];
 }
 
 class ChangeCustomerType extends AddCustomerEvent {

@@ -7,6 +7,8 @@ import './disc_type_bloc/bloc.dart';
 import './products_bloc/bloc.dart';
 import './sales_type_bloc/bloc.dart';
 import './cust_type_bloc/bloc.dart';
+import './ph_location_bloc/city_bloc/bloc.dart';
+import './ph_location_bloc/province_bloc/bloc.dart';
 
 class GlobalBloc {
   static final authBloc = AuthBloc();
@@ -16,6 +18,8 @@ class GlobalBloc {
   static final salesTypeBloc = SalesTypeBloc();
   static final discTypeBloc = DiscTypeBloc();
   static final custTypeBloc = CustTypeBloc();
+  static final provinceBloc = ProvinceBloc();
+  static final cityBloc = CityBloc();
 
   static final List<BlocProvider> blocProviders = [
     BlocProvider<AuthBloc>(create: (context) => authBloc),
@@ -25,6 +29,8 @@ class GlobalBloc {
     BlocProvider<SalesTypeBloc>(create: (context) => salesTypeBloc),
     BlocProvider<DiscTypeBloc>(create: (context) => discTypeBloc),
     BlocProvider<CustTypeBloc>(create: (context) => custTypeBloc),
+    BlocProvider<ProvinceBloc>(create: (context) => provinceBloc),
+    BlocProvider<CityBloc>(create: (context) => cityBloc),
   ];
 
   static void dispose() {
@@ -35,6 +41,8 @@ class GlobalBloc {
     salesTypeBloc.close();
     discTypeBloc.close();
     custTypeBloc.close();
+    provinceBloc.close();
+    cityBloc.close();
   }
 
   /// Singleton factory

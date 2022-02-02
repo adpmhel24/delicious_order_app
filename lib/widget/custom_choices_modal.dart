@@ -58,7 +58,7 @@ class CustomFieldModalChoices extends StatelessWidget {
         ),
         prefixIcon: _prefixIcon,
         suffixIcon: _suffixIcon,
-        contentPadding: EdgeInsets.symmetric(horizontal: 14.h, vertical: 16.w),
+        contentPadding: EdgeInsets.symmetric(horizontal: 5.h, vertical: 15.w),
       ),
       validator: _validator,
     );

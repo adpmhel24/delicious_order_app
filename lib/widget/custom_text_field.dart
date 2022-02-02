@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     Key? key,
-    required TextEditingController controller,
     required String labelText,
+    TextEditingController? controller,
     TextInputAction? textInputAction,
     Widget? prefixIcon,
     Widget? suffixIcon,
@@ -36,7 +36,7 @@ class CustomTextField extends StatelessWidget {
         _autovalidateMode = autovalidateMode,
         super(key: key);
 
-  final TextEditingController _controller;
+  final TextEditingController? _controller;
   final String _labelText;
   final Widget? _prefixIcon;
   final Widget? _suffixIcon;

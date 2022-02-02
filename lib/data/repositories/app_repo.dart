@@ -10,6 +10,7 @@ class AppRepo {
   static final orderRepository = OrderRepo();
   static final customerTypeRepository = CustomerTypeRepo();
   static final checkOutRepository = CheckOutRepo();
+  static final phLocationRepository = PhLocationRepo();
 
   Future<void> init() async {
     await productsRepository.fetchProducts();
@@ -17,5 +18,6 @@ class AppRepo {
     await salesTypeRepository.fetchFromAPI();
     await discTypeRepository.fetchDiscType();
     await customerTypeRepository.fetchCustomerType();
+    // await phLocationRepository.fetchProvinces();
   }
 }

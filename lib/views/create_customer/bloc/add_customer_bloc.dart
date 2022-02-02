@@ -10,10 +10,12 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
 
   AddCustomerBloc() : super(const AddCustomerState()) {
     on<ChangeCustomerCode>(onCustomerCodeChange);
-    on<ChangeCustomerName>(onCustomerNameChange);
+    on<ChangeFirstName>(onCustomerNameChange);
     on<ChangeCustomerType>(onCustomerTypeChange);
     on<ChangeCustAddress>(onChangeAddress);
     on<ChangeCustContactNumber>(onChangeContactNumber);
+    on<ChangeProvinceCityMunicipalityBrgy>(
+        onChangeProvinceCityMunicipalityBrgy);
     on<PostNewCustomer>(onSubmit);
   }
 
@@ -25,19 +27,21 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
         status: Formz.validate([
           code,
           state.custType,
-          state.name,
-          state.address,
+          state.firstName,
+          state.lastName,
           state.contactNumber,
+          state.address,
         ])));
   }
 
   void onCustomerNameChange(
-      ChangeCustomerName event, Emitter<AddCustomerState> emit) {
-    final name = TextField.dirty(event.name);
+      ChangeFirstName event, Emitter<AddCustomerState> emit) {
+    final firstName = TextField.dirty(event.firstName);
     emit(state.copyWith(
-        name: name,
+        firstName: firstName,
         status: Formz.validate([
-          name,
+          firstName,
+          state.lastName,
           state.code,
           state.custType,
           state.address,
@@ -48,15 +52,44 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
   void onCustomerTypeChange(
       ChangeCustomerType event, Emitter<AddCustomerState> emit) {
     final custType = TextField.dirty(event.custType);
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         custType: custType,
         status: Formz.validate([
           custType,
-          state.name,
+          state.firstName,
+          state.lastName,
           state.code,
           state.address,
           state.contactNumber,
-        ])));
+        ]),
+      ),
+    );
+  }
+
+  void onChangeProvinceCityMunicipalityBrgy(
+      ChangeProvinceCityMunicipalityBrgy event,
+      Emitter<AddCustomerState> emit) {
+    final province = TextField.dirty(event.province.text);
+    final city = TextField.dirty(event.city.text);
+    final municipality = TextField.dirty(event.municipality.text);
+    final brgy = TextField.dirty(event.brgy.text);
+    emit(
+      state.copyWith(
+        province: province,
+        city: city,
+        municipality: municipality,
+        brgy: brgy,
+        status: Formz.validate([
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
+          state.address,
+          state.contactNumber,
+        ]),
+      ),
+    );
   }
 
   void onChangeAddress(
@@ -67,7 +100,8 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
         status: Formz.validate([
           address,
           state.custType,
-          state.name,
+          state.firstName,
+          state.lastName,
           state.code,
           state.contactNumber,
         ])));
@@ -82,7 +116,8 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
           contactNumber,
           state.address,
           state.custType,
-          state.name,
+          state.firstName,
+          state.lastName,
           state.code,
         ])));
   }
@@ -92,7 +127,8 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     Map<String, dynamic> data = {
       "code": state.code.value,
-      "name": state.name.value,
+      "firstName": state.firstName.value,
+      "lastName": state.lastName.value,
       "cust_type": int.parse(state.custType.value),
       "address": state.address.value,
       "contact_number": state.contactNumber.value,
