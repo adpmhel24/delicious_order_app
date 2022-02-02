@@ -95,28 +95,10 @@ class CartTotalDetails extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  customLabel(labelText: 'GRAND TOTAL:'),
+                  customLabel(labelText: 'OTHER FEE:'),
                   SizedBox(width: 10.w),
                   dataContainerHolder(
-                    textData: _cartRepo.grantTotal.toString(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.w),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  customLabel(
-                    labelText: 'TENDERED AMOUNT:',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                      color: Colors.red,
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
-                  dataContainerHolder(
-                    textData: _cartRepo.tenderedAmnt.toString(),
+                    textData: _cartRepo.otherfee.toString(),
                   ),
                 ],
               ),
@@ -124,17 +106,10 @@ class CartTotalDetails extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  customLabel(
-                    labelText: 'CHANGE AMOUNT:',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                      color: Colors.red,
-                    ),
-                  ),
+                  customLabel(labelText: 'GRAND TOTAL:'),
                   SizedBox(width: 10.w),
                   dataContainerHolder(
-                    textData: _cartRepo.changeAmount.toString(),
+                    textData: _cartRepo.grantTotal.toString(),
                   ),
                 ],
               ),

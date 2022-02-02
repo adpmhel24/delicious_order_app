@@ -6,18 +6,11 @@ part 'brgy_model.g.dart';
 class BrgyModel {
   String code;
   String name;
-  String districtCode;
-  String provinceCode;
-  String regionCode;
-  String municipalityCode;
 
-  BrgyModel(
-      {required this.code,
-      required this.name,
-      required this.districtCode,
-      required this.provinceCode,
-      required this.regionCode,
-      required this.municipalityCode});
+  BrgyModel({
+    required this.code,
+    required this.name,
+  });
 
   factory BrgyModel.fromJson(Map<String, dynamic> json) =>
       _$BrgyModelFromJson(json);

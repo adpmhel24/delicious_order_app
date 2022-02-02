@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:delicious_ordering_app/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/data/repositories/repositories.dart';
@@ -14,7 +14,8 @@ import '/widget/custom_error_dialog.dart';
 import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_success_dialog.dart';
 import '/widget/custom_text_field.dart';
-import 'city_modal_selection.dart';
+import 'brgy_modal_selection.dart';
+import 'city_municipality_modal_selection.dart';
 import 'province_modal_selection.dart';
 
 class Body extends StatefulWidget {
@@ -30,12 +31,13 @@ class _BodyState extends State<Body> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _custTypeController = TextEditingController();
   final TextEditingController _provinceController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _municipalityController = TextEditingController();
+  final TextEditingController _cityMunicipalityController =
+      TextEditingController();
   final TextEditingController _brgyController = TextEditingController();
   final TextEditingController _custAddressController = TextEditingController();
   final TextEditingController _custContactNumberController =
       TextEditingController();
+  final PhLocationRepo _phLocationRepo = AppRepo.phLocationRepository;
 
   @override
   void dispose() {
@@ -44,14 +46,17 @@ class _BodyState extends State<Body> {
     _lastNameController.dispose();
     _custTypeController.dispose();
     _custAddressController.dispose();
+    _provinceController.dispose();
+    _cityMunicipalityController.dispose();
+    _brgyController.dispose();
     _custContactNumberController.dispose();
+    _phLocationRepo.clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     CustomerTypeRepo _custTypeRepo = AppRepo.customerTypeRepository;
-    PhLocationRepo _phLocationRepo = AppRepo.phLocationRepository;
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.w),
@@ -102,24 +107,26 @@ class _BodyState extends State<Body> {
                   provinceModalSelection(
                     context: context,
                     provinceController: _provinceController,
-                    cityController: _cityController,
-                    municipalityController: _municipalityController,
+                    cityMunicipalityController: _cityMunicipalityController,
                     brgyController: _brgyController,
                     phLocationRepo: _phLocationRepo,
                   ),
                   SizedBox(height: 15.w),
-                  cityModalSelection(
+                  cityMunicipalityModalSelection(
                     context: context,
                     provinceController: _provinceController,
-                    cityController: _cityController,
-                    municipalityController: _municipalityController,
+                    cityMunicipalityController: _cityMunicipalityController,
                     brgyController: _brgyController,
                     phLocationRepo: _phLocationRepo,
                   ),
                   SizedBox(height: 15.w),
-                  _municipalityModalSelection(),
-                  SizedBox(height: 15.w),
-                  _brgyModalSelection(),
+                  brgyModalSelection(
+                    context: context,
+                    provinceController: _provinceController,
+                    cityMunicipalityController: _cityMunicipalityController,
+                    brgyController: _brgyController,
+                    phLocationRepo: _phLocationRepo,
+                  ),
                   SizedBox(height: 15.w),
                   _customerAddressField(context, state),
                 ],
@@ -215,6 +222,11 @@ class _BodyState extends State<Body> {
         return (state.firstName.invalid) ? "Required field!" : null;
       },
       onChanged: (value) {
+        _firstNameController.value = TextEditingValue(
+          // text: StringUtils.capitalize(value[0]),
+          text: value[0].toUpperCase() + value.substring(1),
+          selection: TextSelection.collapsed(offset: value.length),
+        );
         context
             .read<AddCustomerBloc>()
             .add(ChangeFirstName(_firstNameController.text));
@@ -243,6 +255,11 @@ class _BodyState extends State<Body> {
         return (state.lastName.invalid) ? "Required field!" : null;
       },
       onChanged: (value) {
+        _lastNameController.value = TextEditingValue(
+          text: value[0].toUpperCase() + value.substring(1),
+          selection: TextSelection.collapsed(offset: value.length),
+        );
+
         context
             .read<AddCustomerBloc>()
             .add(ChangeLastName(_lastNameController.text));
@@ -271,148 +288,14 @@ class _BodyState extends State<Body> {
         return (state.code.invalid) ? "Required field!" : null;
       },
       onChanged: (value) {
+        _codeController.value = TextEditingValue(
+          text: value[0].toUpperCase() + value.substring(1),
+          selection: TextSelection.collapsed(offset: value.length),
+        );
         context
             .read<AddCustomerBloc>()
             .add(ChangeCustomerCode(_codeController.text));
       },
-    );
-  }
-
-  _municipalityModalSelection() {
-    return CustomFieldModalChoices(
-      controller: _municipalityController,
-      onTap: () {
-        showMaterialModalBottomSheet(
-          context: context,
-          // builder: (_) => BlocBuilder<CustTypeBloc, CustTypeState>(
-          //   builder: (_, state) {
-          //     if (state is CustTypeLoadedState) {
-          //       return ListView.separated(
-          //         shrinkWrap: true,
-          //         itemCount: state.custTypes.length,
-          //         itemBuilder: (_, index) {
-          //           return ListTile(
-          //             title: Text(state.custTypes[index].name),
-          //             selected: custTypeController.text ==
-          //                 state.custTypes[index].name,
-          //             onTap: () {
-          //               custTypeController.text = state.custTypes[index].name;
-          //               context
-          //                   .read<OrderCustDetailsBloc>()
-          //                   .add(ChangeCustType(custTypeController));
-          //               context.read<CustomerBloc>().add(
-          //                   FilterCustomerByCustType(
-          //                       state.custTypes[index].id));
-          //               Navigator.of(context).pop();
-          //             },
-          //           );
-          //         },
-          //         separatorBuilder: (_, index) {
-          //           return const Divider(
-          //             thickness: 1,
-          //           );
-          //         },
-          //       );
-          //     }
-          //     return SizedBox(
-          //       height: 100.w,
-          //     );
-          //   },
-          // ),
-          builder: (_) => SizedBox(
-            height: 100.w,
-          ),
-        );
-      },
-      labelText: 'Municipality',
-      prefixIcon: const Icon(Icons.location_city),
-      suffixIcon: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () async {
-              // context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
-              // _municipalityController.clear();
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              _municipalityController.clear();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  _brgyModalSelection() {
-    return CustomFieldModalChoices(
-      controller: _brgyController,
-      onTap: () {
-        showMaterialModalBottomSheet(
-          context: context,
-          // builder: (_) => BlocBuilder<CustTypeBloc, CustTypeState>(
-          //   builder: (_, state) {
-          //     if (state is CustTypeLoadedState) {
-          //       return ListView.separated(
-          //         shrinkWrap: true,
-          //         itemCount: state.custTypes.length,
-          //         itemBuilder: (_, index) {
-          //           return ListTile(
-          //             title: Text(state.custTypes[index].name),
-          //             selected: custTypeController.text ==
-          //                 state.custTypes[index].name,
-          //             onTap: () {
-          //               custTypeController.text = state.custTypes[index].name;
-          //               context
-          //                   .read<OrderCustDetailsBloc>()
-          //                   .add(ChangeCustType(custTypeController));
-          //               context.read<CustomerBloc>().add(
-          //                   FilterCustomerByCustType(
-          //                       state.custTypes[index].id));
-          //               Navigator.of(context).pop();
-          //             },
-          //           );
-          //         },
-          //         separatorBuilder: (_, index) {
-          //           return const Divider(
-          //             thickness: 1,
-          //           );
-          //         },
-          //       );
-          //     }
-          //     return SizedBox(
-          //       height: 100.w,
-          //     );
-          //   },
-          // ),
-          builder: (_) => SizedBox(
-            height: 100.w,
-          ),
-        );
-      },
-      labelText: 'Brgy',
-      prefixIcon: const Icon(LineIcons.building),
-      suffixIcon: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () async {
-              // context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
-              // _brgyController.clear();
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              _brgyController.clear();
-            },
-          ),
-        ],
-      ),
     );
   }
 }
@@ -439,15 +322,28 @@ class CustomerTypeModal extends StatelessWidget {
       onTap: () {
         return showMaterialModalBottomSheet(
           context: context,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.r),
+              topRight: Radius.circular(10.r),
+            ),
+          ),
           builder: (_) {
-            return ListView.builder(
+            return ListView.separated(
               shrinkWrap: true,
               itemCount: _custTypeRepo.customerTypes.length,
+              separatorBuilder: (_, index) {
+                return const Divider(
+                  thickness: 1,
+                  color: Color(0xFFBDBDBD),
+                );
+              },
               itemBuilder: (_, index) {
                 return ListTile(
                   title: Text(_custTypeRepo.customerTypes[index].name),
                   selected: _custTypeController.text ==
                       _custTypeRepo.customerTypes[index].name,
+                  selectedColor: Constant.onSelectedColor,
                   onTap: () {
                     _custTypeController.text =
                         _custTypeRepo.customerTypes[index].name;

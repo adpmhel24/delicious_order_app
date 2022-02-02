@@ -59,19 +59,17 @@ class ChangeLastName extends AddCustomerEvent {
 
 class ChangeProvinceCityMunicipalityBrgy extends AddCustomerEvent {
   final TextEditingController province;
-  final TextEditingController city;
-  final TextEditingController municipality;
+  final TextEditingController cityMunicipality;
   final TextEditingController brgy;
 
   const ChangeProvinceCityMunicipalityBrgy({
     required this.province,
-    required this.city,
-    required this.municipality,
+    required this.cityMunicipality,
     required this.brgy,
   });
 
   @override
-  List<Object> get props => [province, city, municipality, brgy];
+  List<Object> get props => [province, cityMunicipality, brgy];
 }
 
 class ChangeCustomerType extends AddCustomerEvent {

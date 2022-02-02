@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 
@@ -7,22 +7,20 @@ import '/data/models/models.dart';
 
 class PhLocationRepo {
   late List<ProvinceModel> _provinces = [];
-  late List<CityModel> _cities = [];
-  late List<MunicipalityModel> _municipalities = [];
+  late List<CityMunicipalityModel> _citiesMunicipalities = [];
   late List<BrgyModel> _brgys = [];
 
   final PhLocationApiService _phApiService = PhLocationApiService();
 
   List<ProvinceModel> get provinces =>
       [..._provinces..sort((a, b) => a.name!.compareTo(b.name!))];
-  List<CityModel> get cities =>
-      [..._cities]..sort((a, b) => a.name.compareTo(b.name));
-  List<MunicipalityModel> get municipalities => [..._municipalities];
-  List<BrgyModel> get brgys => [..._brgys];
+  List<CityMunicipalityModel> get cities =>
+      [..._citiesMunicipalities]..sort((a, b) => a.name.compareTo(b.name));
+  List<BrgyModel> get brgys =>
+      [..._brgys..sort((a, b) => a.name.compareTo(b.name))];
 
   late Map<String, dynamic> selectedProvinceCode = {};
-  late String selectedCityCode = '';
-  late String selectedmunicipalityCode = '';
+  late String selectedCityMunicipalityCode = '';
 
   Future<void> fetchProvinces() async {
     Response provinceResponse;
@@ -54,8 +52,8 @@ class PhLocationRepo {
 
         _provinces = resultProvinces;
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 
@@ -68,16 +66,18 @@ class PhLocationRepo {
     return _provinces;
   }
 
-  Future<void> fetchCity() async {
+  Future<void> fetchCitiesMunicipalities() async {
     String path;
     if (selectedProvinceCode.isNotEmpty) {
       if (selectedProvinceCode['isDistrict']) {
-        path = "/districts/${selectedProvinceCode['code']}/cities.json";
+        path =
+            "/districts/${selectedProvinceCode['code']}/cities-municipalities.json";
       } else {
-        path = "/provinces/${selectedProvinceCode["code"]}/cities.json";
+        path =
+            "/provinces/${selectedProvinceCode["code"]}/cities-municipalities.json";
       }
     } else {
-      path = '/cities.json';
+      path = '/cities-municipalities.json';
     }
     Response response;
     try {
@@ -85,87 +85,67 @@ class PhLocationRepo {
 
       if (response.statusCode == 200) {
         if (response.data.isNotEmpty) {
-          _cities = List<CityModel>.from(
+          _citiesMunicipalities = List<CityMunicipalityModel>.from(
             response.data.map(
-              (jsonCity) => CityModel.fromJson(jsonCity),
+              (jsonCityMunicipality) =>
+                  CityMunicipalityModel.fromJson(jsonCityMunicipality),
             ),
           );
         }
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 
-  List<CityModel> searchCityByKeyword(String keyword) {
+  List<CityMunicipalityModel> searchCityMunicipalityByKeyword(String keyword) {
     if (keyword.isNotEmpty) {
-      return _cities
+      return _citiesMunicipalities
           .where((e) => e.name.toLowerCase().contains(keyword.toLowerCase()))
           .toList();
     }
-    return _cities;
+    return _citiesMunicipalities;
   }
 
-  Future<void> fetchMunicipality() async {
+  Future<void> fetchBrgys() async {
     String path;
-
-    if (selectedCityCode.isNotEmpty) {
-      path = 'city/'
-    }
-    else if (selectedProvinceCode.isNotEmpty) {
-      if (selectedProvinceCode['isDistrict']) {
-        path = "/districts/${selectedProvinceCode['code']}/municipalities.json";
-      } else {
-        path = "/provinces/${selectedProvinceCode["code"]}/municipalities.json";
-      }
+    if (selectedCityMunicipalityCode.isNotEmpty) {
+      path =
+          '/cities-municipalities/$selectedCityMunicipalityCode/barangays.json';
+    } else if (selectedProvinceCode.isNotEmpty) {
+      path = "/provinces/${selectedProvinceCode["code"]}/barangays.json";
     } else {
-      path = '/municipalities.json';
+      path = '/barangays.json';
     }
 
     Response response;
     try {
       response = await _phApiService.fetchData(path);
       if (response.statusCode == 200) {
-        List<dynamic> decodedResult = jsonDecode(response.data);
-        if (decodedResult.isNotEmpty) {
-          _municipalities = List<MunicipalityModel>.from(
-            decodedResult.map(
-              (jsonMunicipality) =>
-                  MunicipalityModel.fromJson(jsonMunicipality),
-            ),
-          );
-        }
-      }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
-    }
-  }
-
-  List<MunicipalityModel> searchMunicipalityByKeyword(String keyword) {
-    if (keyword.isNotEmpty) {
-      return _municipalities
-          .where((e) => e.name.toLowerCase().contains(keyword.toLowerCase()))
-          .toList();
-    }
-    return _municipalities;
-  }
-
-  Future<void> fetchBrgy(String path) async {
-    Response response;
-    try {
-      response = await _phApiService.fetchData(path);
-      if (response.statusCode == 200) {
-        List<dynamic> decodedResult = jsonDecode(response.data);
-        if (decodedResult.isNotEmpty) {
+        if (response.data.isNotEmpty) {
           _brgys = List<BrgyModel>.from(
-            decodedResult.map(
+            response.data.map(
               (jsonBrgy) => BrgyModel.fromJson(jsonBrgy),
             ),
           );
         }
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
+  }
+
+  List<BrgyModel> searchBarangaysByKeyword(String keyword) {
+    if (keyword.isNotEmpty) {
+      return _brgys
+          .where((e) => e.name.toLowerCase().contains(keyword.toLowerCase()))
+          .toList();
+    }
+    return _brgys;
+  }
+
+  void clear() {
+    selectedProvinceCode.clear();
+    selectedCityMunicipalityCode = '';
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../models/models.dart';
 import '../api_services/apis.dart';
 import './repositories.dart';
@@ -20,8 +22,8 @@ class ProductsRepo {
       } else {
         throw Exception(response.data['message']);
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 

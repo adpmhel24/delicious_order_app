@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:delicious_ordering_app/utils/constant.dart';
+import 'package:delicious_ordering_app/utils/size_config.dart';
+import 'package:delicious_ordering_app/widget/custom_text_field.dart';
+import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/brgy_modal_selection.dart';
+import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/city_municipality_modal_selection.dart';
+import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/province_modal_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -22,9 +29,14 @@ class CustomerSelectionScreen extends StatefulWidget {
 class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
   final CheckOutRepo _checkOutRepo = AppRepo.checkOutRepository;
   final TextEditingController _custCodeController = TextEditingController();
+  final TextEditingController _custNameController = TextEditingController();
   final TextEditingController _contactNumberController =
       TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _provinceController = TextEditingController();
+  final TextEditingController _cityMunicipalityController =
+      TextEditingController();
+  final TextEditingController _brgyController = TextEditingController();
   final TextEditingController _custTypeController = TextEditingController();
 
   @override
@@ -32,6 +44,8 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
     _custTypeController.text = _checkOutRepo.checkoutData.custType ?? '';
 
     _custCodeController.text = _checkOutRepo.checkoutData.custCode ?? '';
+
+    _custNameController.text = _checkOutRepo.checkoutData.custName ?? '';
 
     _contactNumberController.text =
         _checkOutRepo.checkoutData.contactNumber ?? '';
@@ -65,15 +79,20 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
   @override
   void dispose() {
     _custCodeController.dispose();
+    _custNameController.dispose();
     _contactNumberController.dispose();
     _custTypeController.dispose();
     _addressController.dispose();
+    _provinceController.dispose();
+    _cityMunicipalityController.dispose();
+    _brgyController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     CustomerRepo _custRepo = AppRepo.customerRepository;
+    PhLocationRepo _phLocationRepo = AppRepo.phLocationRepository;
     return BlocBuilder<OrderCustDetailsBloc, OrderCustDetailsState>(
         builder: (context, state) {
       return SingleChildScrollView(
@@ -92,19 +111,42 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
               SizedBox(
                 height: 20.h,
               ),
-              customerType1Field(
+              customerTypeField(
                 context: context,
                 custTypeController: _custTypeController,
               ),
               SizedBox(
                 height: 15.h,
               ),
-              customerCodeTypeAheadFormField(
+              customerNameField(
                 context: context,
                 custCodeController: _custCodeController,
+                custNameController: _custNameController,
                 contactNumberController: _contactNumberController,
                 addressController: _addressController,
-                customerRepo: _custRepo,
+                provinceController: _provinceController,
+                cityMunicipalityController: _cityMunicipalityController,
+                brgyController: _brgyController,
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
+              CustomTextField(
+                autovalidateMode: AutovalidateMode.always,
+                readOnly: true,
+                labelText: 'Customer Code',
+                controller: _custCodeController,
+                prefixIcon: const Icon(LineIcons.user),
+                validator: (_) {
+                  if (context
+                      .watch<OrderCustDetailsBloc>()
+                      .state
+                      .custCode
+                      .invalid) {
+                    return "Required field!";
+                  }
+                  return null;
+                },
               ),
               SizedBox(
                 height: 15.h,
@@ -117,11 +159,35 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
               SizedBox(
                 height: 15.h,
               ),
+              provinceModalSelection(
+                context: context,
+                phLocationRepo: _phLocationRepo,
+                provinceController: _provinceController,
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
+              cityMunicipalityModalSelection(
+                context: context,
+                cityMunicipalityController: _cityMunicipalityController,
+                phLocationRepo: _phLocationRepo,
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
+              brgyModalSelection(
+                context: context,
+                phLocationRepo: _phLocationRepo,
+                brgyController: _brgyController,
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
               customerAddressField(
                 context: context,
                 addressController: _addressController,
                 customerRepo: _custRepo,
-              )
+              ),
             ],
           ),
         ),
@@ -130,133 +196,97 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
   }
 }
 
-// customerTypeField({
-//   required BuildContext context,
-//   required TextEditingController custTypeController,
-// }) {
-//   return BlocBuilder<CustTypeBloc, CustTypeState>(
-//     builder: (_, state) {
-//       if (state is CustTypeLoadedState) {
-//         return CustomFieldModalChoices(
-//           controller: custTypeController,
-//           builder: ListView.separated(
-//             shrinkWrap: true,
-//             itemCount: state.custTypes.length,
-//             itemBuilder: (_, index) {
-//               return ListTile(
-//                 title: Text(state.custTypes[index].name),
-//                 selected:
-//                     custTypeController.text == state.custTypes[index].name,
-//                 onTap: () {
-//                   custTypeController.text = state.custTypes[index].name;
-//                   context
-//                       .read<OrderCustDetailsBloc>()
-//                       .add(ChangeCustType(custTypeController));
-//                   context
-//                       .read<CustomerBloc>()
-//                       .add(FilterCustomerByCustType(state.custTypes[index].id));
-//                   Navigator.of(context).pop();
-//                 },
-//               );
-//             },
-//             separatorBuilder: (_, index) {
-//               return const Divider(
-//                 thickness: 1,
-//               );
-//             },
-//           ),
-//           labelText: 'Customer Type',
-//           prefixIcon: const Icon(Icons.group),
-//           suffixIcon: Row(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               IconButton(
-//                 icon: const Icon(Icons.refresh),
-//                 onPressed: () async {
-//                   context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
-//                   custTypeController.clear();
-//                 },
-//               ),
-//               IconButton(
-//                 icon: const Icon(Icons.close),
-//                 onPressed: () {
-//                   custTypeController.clear();
-//                 },
-//               ),
-//             ],
-//           ),
-//         );
-//       } else {
-//         return TextFormField(
-//           readOnly: true,
-//           decoration: customInputDecoration(
-//             labelText: 'Customer Type',
-//             prefixIcon: const Icon(Icons.group),
-//             suffixIcon: Row(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 IconButton(
-//                   icon: const Icon(Icons.refresh),
-//                   onPressed: () async {
-//                     context.read<CustTypeBloc>().add(FetchCustTypeFromAPI());
-//                     custTypeController.clear();
-//                   },
-//                 ),
-//                 IconButton(
-//                   icon: const Icon(Icons.close),
-//                   onPressed: () {
-//                     custTypeController.clear();
-//                   },
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       }
-//     },
-//   );
-// }
-
-customerType1Field({
+customerTypeField({
   required BuildContext context,
   required TextEditingController custTypeController,
 }) {
   return CustomFieldModalChoices(
     controller: custTypeController,
     onTap: () {
+      context.read<CustTypeBloc>().add(FetchCustTypeFromLocal());
       showMaterialModalBottomSheet(
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10.r),
+            topRight: Radius.circular(10.r),
+          ),
+        ),
         builder: (_) => BlocBuilder<CustTypeBloc, CustTypeState>(
           builder: (_, state) {
             if (state is CustTypeLoadedState) {
-              return ListView.separated(
-                shrinkWrap: true,
-                itemCount: state.custTypes.length,
-                itemBuilder: (_, index) {
-                  return ListTile(
-                    title: Text(state.custTypes[index].name),
-                    selected:
-                        custTypeController.text == state.custTypes[index].name,
-                    onTap: () {
-                      custTypeController.text = state.custTypes[index].name;
-                      context
-                          .read<OrderCustDetailsBloc>()
-                          .add(ChangeCustType(custTypeController));
-                      context.read<CustomerBloc>().add(
-                          FilterCustomerByCustType(state.custTypes[index].id));
-                      Navigator.of(context).pop();
-                    },
-                  );
-                },
-                separatorBuilder: (_, index) {
-                  return const Divider(
-                    thickness: 1,
-                  );
-                },
+              return SafeArea(
+                child: SizedBox(
+                  height: (SizeConfig.screenHeight * .75).h,
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                        ),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.r)),
+                          child: CustomTextField(
+                            labelText: 'Search by keyword',
+                            onChanged: (value) {
+                              context.read<CustTypeBloc>().add(
+                                    SearchCustTypeByKeyword(value),
+                                  );
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Expanded(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: state.custTypes.length,
+                          itemBuilder: (_, index) {
+                            return ListTile(
+                              title: Text(state.custTypes[index].name),
+                              selected: custTypeController.text ==
+                                  state.custTypes[index].name,
+                              selectedColor: Constant.onSelectedColor,
+                              onTap: () {
+                                custTypeController.text =
+                                    state.custTypes[index].name;
+                                context
+                                    .read<OrderCustDetailsBloc>()
+                                    .add(ChangeCustType(custTypeController));
+                                context.read<CustomerBloc>().add(
+                                    FilterCustomerByCustType(
+                                        state.custTypes[index].id));
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          separatorBuilder: (_, index) {
+                            return const Divider(
+                              thickness: 1,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else if (state is CustTypeLoadingState) {
+              return SizedBox(
+                height: (SizeConfig.screenHeight * .75).h,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             }
             return SizedBox(
-              height: 100.w,
+              height: (SizeConfig.screenHeight * .75).h,
+              child: const Center(
+                child: Text('No data!'),
+              ),
             );
           },
         ),
@@ -285,82 +315,178 @@ customerType1Field({
   );
 }
 
-customerCodeTypeAheadFormField({
+customerNameField({
   required BuildContext context,
   required TextEditingController custCodeController,
+  required TextEditingController custNameController,
   required TextEditingController contactNumberController,
   required TextEditingController addressController,
-  required CustomerRepo customerRepo,
+  required TextEditingController provinceController,
+  required TextEditingController cityMunicipalityController,
+  required TextEditingController brgyController,
 }) {
-  return TypeAheadFormField(
-    autovalidateMode: AutovalidateMode.always,
-    textFieldConfiguration: TextFieldConfiguration(
-      textInputAction: TextInputAction.next,
-      controller: custCodeController,
-      decoration: customInputDecoration(
-        labelText: 'Customer Code',
-        prefixIcon: const Icon(Icons.person),
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () {
-                custCodeController.clear();
-                context.read<CustomerBloc>().add(FetchCustomerFromAPI());
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                custCodeController.clear();
-                contactNumberController.clear();
-                addressController.clear();
-                context.read<OrderCustDetailsBloc>().add(ChangeCustCode(
-                    customerId: null, custCode: custCodeController));
-                context
-                    .read<OrderCustDetailsBloc>()
-                    .add(ChangeContactNumber(contactNumberController));
-                context
-                    .read<OrderCustDetailsBloc>()
-                    .add(ChangeAddress(addressController));
-              },
-            ),
-          ],
+  return CustomFieldModalChoices(
+    controller: custNameController,
+    labelText: 'Customer Name',
+    onTap: () {
+      context.read<CustomerBloc>().add(FetchCustomerFromLocal());
+      showMaterialModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10.r),
+            topRight: Radius.circular(10.r),
+          ),
         ),
-      ),
-    ),
-    suggestionsCallback: customerRepo.getSuggestions,
-    itemBuilder: (context, dynamic customer) {
-      return ListTile(
-        title: Text(customer.name),
+        builder: (_) => BlocBuilder<CustomerBloc, CustomerState>(
+          builder: (_, state) {
+            if (state is CustomerLoadedState) {
+              return SafeArea(
+                child: SizedBox(
+                  height: (SizeConfig.screenHeight * .75).h,
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                        ),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: CustomTextField(
+                            labelText: 'Search by keyword',
+                            onChanged: (value) {
+                              context.read<CustomerBloc>().add(
+                                    SearchCustomerByKeyword(value),
+                                  );
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Expanded(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: state.customers.length,
+                          itemBuilder: (_, index) {
+                            return ListTile(
+                              title: Text(state.customers[index].name),
+                              selected: custNameController.text ==
+                                  state.customers[index].name,
+                              selectedColor: Constant.onSelectedColor,
+                              onTap: () {
+                                custCodeController.text =
+                                    state.customers[index].code;
+
+                                custNameController.text =
+                                    state.customers[index].name;
+
+                                contactNumberController.text =
+                                    state.customers[index].contactNumber ?? '';
+
+                                addressController.text =
+                                    state.customers[index].address ?? '';
+
+                                provinceController.text =
+                                    state.customers[index].province ?? '';
+
+                                cityMunicipalityController.text =
+                                    state.customers[index].cityMunicipality ??
+                                        '';
+
+                                brgyController.text =
+                                    state.customers[index].brgy ?? '';
+
+                                context.read<OrderCustDetailsBloc>().add(
+                                    ChangeCustCode(
+                                        customerId: state.customers[index].id,
+                                        custCode: custCodeController));
+
+                                context.read<OrderCustDetailsBloc>().add(
+                                    ChangeContactNumber(
+                                        contactNumberController));
+                                context
+                                    .read<OrderCustDetailsBloc>()
+                                    .add(ChangeAddress(addressController));
+
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          separatorBuilder: (_, index) {
+                            return const Divider(
+                              thickness: 1,
+                              color: Color(0xFFBDBDBD),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else if (state is CustomerLoadingState) {
+              return SizedBox(
+                height: (SizeConfig.screenHeight * .75).h,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            return SizedBox(
+              height: (SizeConfig.screenHeight * .75).h,
+              child: const Center(
+                child: Text('No data!'),
+              ),
+            );
+          },
+        ),
       );
     },
-    transitionBuilder: (context, suggestionsBox, controller) {
-      return suggestionsBox;
-    },
-    onSuggestionSelected: (dynamic selectedCustomer) {
-      custCodeController.text = selectedCustomer.code;
-
-      contactNumberController.text = selectedCustomer.contactNumber ?? '';
-
-      addressController.text = selectedCustomer.address ?? '';
-
-      context.read<OrderCustDetailsBloc>().add(ChangeCustCode(
-          customerId: selectedCustomer.id, custCode: custCodeController));
-      context
-          .read<OrderCustDetailsBloc>()
-          .add(ChangeContactNumber(contactNumberController));
-      context
-          .read<OrderCustDetailsBloc>()
-          .add(ChangeAddress(addressController));
-    },
-    validator: (_) {
-      if (context.read<OrderCustDetailsBloc>().state.custCode.invalid) {
-        return "Required field!";
-      }
-      return null;
-    },
+    prefixIcon: const Icon(Icons.person),
+    suffixIcon: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: () async {
+            context.read<CustomerBloc>().add(FetchCustomerFromAPI());
+            custCodeController.clear();
+            custNameController.clear();
+            contactNumberController.clear();
+            addressController.clear();
+            context.read<OrderCustDetailsBloc>().add(
+                ChangeCustCode(customerId: null, custCode: custCodeController));
+            context
+                .read<OrderCustDetailsBloc>()
+                .add(ChangeContactNumber(contactNumberController));
+            context
+                .read<OrderCustDetailsBloc>()
+                .add(ChangeAddress(addressController));
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            custCodeController.clear();
+            custNameController.clear();
+            contactNumberController.clear();
+            addressController.clear();
+            context.read<OrderCustDetailsBloc>().add(
+                ChangeCustCode(customerId: null, custCode: custCodeController));
+            context
+                .read<OrderCustDetailsBloc>()
+                .add(ChangeContactNumber(contactNumberController));
+            context
+                .read<OrderCustDetailsBloc>()
+                .add(ChangeAddress(addressController));
+          },
+        ),
+      ],
+    ),
   );
 }
 
@@ -399,12 +525,12 @@ customerContactNumberField({
                               content: Text(message),
                             ),
                           );
-                      } on Exception catch (e) {
+                      } on HttpException catch (e) {
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
                           ..showSnackBar(
                             SnackBar(
-                              content: Text(e.toString()),
+                              content: Text(e.message),
                             ),
                           );
                       }
@@ -470,12 +596,12 @@ customerAddressField({
                                 content: Text(message),
                               ),
                             );
-                        } on Exception catch (e) {
+                        } on HttpException catch (e) {
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               SnackBar(
-                                content: Text(e.toString()),
+                                content: Text(e.message),
                               ),
                             );
                         }

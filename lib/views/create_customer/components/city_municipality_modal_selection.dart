@@ -5,14 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-import '/widget/custom_error_dialog.dart';
+import '/global_bloc/ph_location_bloc/city_municipality_bloc/bloc.dart';
 import '/data/repositories/repositories.dart';
-import '/global_bloc/ph_location_bloc/province_bloc/bloc.dart';
 import '/views/create_customer/bloc/bloc.dart';
 import '/widget/custom_choices_modal.dart';
+import '/widget/custom_error_dialog.dart';
 import '/widget/custom_text_field.dart';
 
-provinceModalSelection({
+cityMunicipalityModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
   required TextEditingController provinceController,
@@ -21,9 +21,10 @@ provinceModalSelection({
 }) {
   var heightSized = MediaQuery.of(context).size.height;
   return CustomFieldModalChoices(
-    controller: provinceController,
+    controller: cityMunicipalityController,
+    labelText: 'City / Municipality',
     onTap: () {
-      context.read<ProvinceBloc>().add(FetchProvinceFromLocal());
+      context.read<CityMunicipalityBloc>().add(FetchCityMunicipalityFromApi());
       showMaterialModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -32,14 +33,15 @@ provinceModalSelection({
             topRight: Radius.circular(10.r),
           ),
         ),
-        builder: (_) => BlocConsumer<ProvinceBloc, ProvinceState>(
-          listener: (_, state) {
-            if (state is ProvinceErrorState) {
+        builder: (_) =>
+            BlocConsumer<CityMunicipalityBloc, CityMunicipalityState>(
+          listener: (context, state) {
+            if (state is CityMunicipalityErrorState) {
               customErrorDialog(context, state.message);
             }
           },
           builder: (_, state) {
-            if (state is ProvinceLoadedState) {
+            if (state is CityMunicipalityLoadedState) {
               return SafeArea(
                 child: SizedBox(
                   height: (heightSized * .75).h,
@@ -55,8 +57,8 @@ provinceModalSelection({
                           child: CustomTextField(
                             labelText: 'Search by keyword',
                             onChanged: (value) {
-                              context.read<ProvinceBloc>().add(
-                                    SearchProvinceByKeyword(value),
+                              context.read<CityMunicipalityBloc>().add(
+                                    SearchCityMunicipalityByKeyword(value),
                                   );
                             },
                           ),
@@ -68,16 +70,17 @@ provinceModalSelection({
                       Expanded(
                         child: ListView.separated(
                           shrinkWrap: true,
-                          itemCount: state.provinces.length,
+                          itemCount: state.citiesMunicipalities.length,
                           itemBuilder: (_, index) {
                             return ListTile(
-                              title: Text(state.provinces[index].name!),
+                              title:
+                                  Text(state.citiesMunicipalities[index].name),
                               selectedColor: Constant.onSelectedColor,
-                              selected: provinceController.text ==
-                                  state.provinces[index].name!,
+                              selected: cityMunicipalityController.text ==
+                                  state.citiesMunicipalities[index].name,
                               onTap: () {
-                                provinceController.text =
-                                    state.provinces[index].name!;
+                                cityMunicipalityController.text =
+                                    state.citiesMunicipalities[index].name;
 
                                 context
                                     .read<AddCustomerBloc>()
@@ -88,11 +91,8 @@ provinceModalSelection({
                                       brgy: brgyController,
                                     ));
 
-                                phLocationRepo.selectedProvinceCode = {
-                                  "code": state.provinces[index].code!,
-                                  "isDistrict":
-                                      state.provinces[index].isDistrict ?? false
-                                };
+                                phLocationRepo.selectedCityMunicipalityCode =
+                                    state.citiesMunicipalities[index].code;
 
                                 Navigator.of(context).pop();
                               },
@@ -110,7 +110,7 @@ provinceModalSelection({
                   ),
                 ),
               );
-            } else if (state is ProvinceLoadingState) {
+            } else if (state is CityMunicipalityLoadingState) {
               return SizedBox(
                 height: (heightSized * .75).h,
                 child: const Center(
@@ -128,7 +128,6 @@ provinceModalSelection({
         ),
       );
     },
-    labelText: 'Province',
     prefixIcon: const Icon(LineIcons.city),
     suffixIcon: Row(
       mainAxisSize: MainAxisSize.min,
@@ -136,22 +135,24 @@ provinceModalSelection({
         IconButton(
           icon: const Icon(Icons.refresh),
           onPressed: () async {
-            context.read<ProvinceBloc>().add(FetchProvinceFromApi());
-            provinceController.clear();
+            context
+                .read<CityMunicipalityBloc>()
+                .add(FetchCityMunicipalityFromApi());
+            cityMunicipalityController.clear();
           },
         ),
         IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            provinceController.clear();
-            phLocationRepo.selectedProvinceCode.clear();
-            context
-                .read<AddCustomerBloc>()
-                .add(ChangeProvinceCityMunicipalityBrgy(
-                  province: provinceController,
-                  cityMunicipality: cityMunicipalityController,
-                  brgy: brgyController,
-                ));
+            cityMunicipalityController.clear();
+            phLocationRepo.selectedCityMunicipalityCode = '';
+            context.read<AddCustomerBloc>().add(
+                  ChangeProvinceCityMunicipalityBrgy(
+                    province: provinceController,
+                    cityMunicipality: cityMunicipalityController,
+                    brgy: brgyController,
+                  ),
+                );
           },
         ),
       ],

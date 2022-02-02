@@ -9,8 +9,8 @@ class AddCustomerState extends Equatable {
   final TextField firstName;
   final TextField lastName;
   final TextField province;
-  final TextField city;
-  final TextField municipality;
+  final TextField cityMunicipality;
+
   final TextField brgy;
   final TextField custType;
   final TextField address;
@@ -23,8 +23,7 @@ class AddCustomerState extends Equatable {
     this.firstName = const TextField.pure(),
     this.lastName = const TextField.pure(),
     this.province = const TextField.pure(),
-    this.city = const TextField.pure(),
-    this.municipality = const TextField.pure(),
+    this.cityMunicipality = const TextField.pure(),
     this.brgy = const TextField.pure(),
     this.custType = const TextField.pure(),
     this.address = const TextField.pure(),
@@ -38,8 +37,7 @@ class AddCustomerState extends Equatable {
     TextField? firstName,
     TextField? lastName,
     TextField? province,
-    TextField? city,
-    TextField? municipality,
+    TextField? cityMunicipality,
     TextField? brgy,
     TextField? custType,
     TextField? address,
@@ -52,8 +50,7 @@ class AddCustomerState extends Equatable {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       province: province ?? this.province,
-      city: city ?? this.city,
-      municipality: municipality ?? this.municipality,
+      cityMunicipality: cityMunicipality ?? this.cityMunicipality,
       brgy: brgy ?? this.brgy,
       address: address ?? this.address,
       contactNumber: contactNumber ?? this.contactNumber,
@@ -68,8 +65,7 @@ class AddCustomerState extends Equatable {
         firstName,
         lastName,
         province,
-        city,
-        municipality,
+        cityMunicipality,
         brgy,
         code,
         custType,

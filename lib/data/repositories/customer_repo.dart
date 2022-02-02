@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../api_services/apis.dart';
 import '../repositories/app_repo.dart';
 
@@ -22,8 +24,8 @@ class CustomerRepo {
         _customers = List<CustomerModel>.from(
             response.data['data'].map((i) => CustomerModel.fromJson(i)));
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 
@@ -36,8 +38,8 @@ class CustomerRepo {
         _customers.add(CustomerModel.fromJson(response.data['data']));
         return response.data['message'];
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw Exception(e.message);
     }
     return message;
   }
@@ -58,26 +60,35 @@ class CustomerRepo {
             CustomerModel.fromJson(response.data['data']);
         message = response.data['message'];
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
     return message;
   }
 
-  List<CustomerModel> getSuggestions(String name) {
-    if (custType == null) {
+  List<CustomerModel> searchByKeyword(String name) {
+    if (custType == null && name.isNotEmpty) {
       return _customers
           .where((e) => e.name.toLowerCase().contains(name.toLowerCase()))
           .toList();
+    } else if (name.isNotEmpty && custType! > 0) {
+      return _customers
+          .where((e) =>
+              e.name.toLowerCase().contains(name.toLowerCase()) &&
+              e.custType == custType)
+          .toList();
     }
-    return _customers
-        .where((e) =>
-            e.name.toLowerCase().contains(name.toLowerCase()) &&
-            e.custType == custType)
-        .toList();
+    return _customers;
   }
 
-  List<CustomerModel> get customers => [..._customers];
+  List<CustomerModel> get customers {
+    if (custType != null) {
+      return [
+        ..._customers.where((cust) => cust.custType == custType).toList()
+      ];
+    }
+    return [..._customers];
+  }
 
   ///Singleton factory
   static final CustomerRepo _instance = CustomerRepo._internal();

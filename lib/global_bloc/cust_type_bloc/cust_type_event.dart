@@ -8,3 +8,11 @@ abstract class CustTypeEvent extends Equatable {
 class FetchCustTypeFromLocal extends CustTypeEvent {}
 
 class FetchCustTypeFromAPI extends CustTypeEvent {}
+
+class SearchCustTypeByKeyword extends CustTypeEvent {
+  final String keyword;
+
+  SearchCustTypeByKeyword(this.keyword);
+  @override
+  List<Object> get props => [keyword];
+}

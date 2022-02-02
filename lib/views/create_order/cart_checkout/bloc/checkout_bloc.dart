@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:delicious_ordering_app/data/repositories/repositories.dart';
 import 'package:delicious_ordering_app/views/create_order/cart_checkout/bloc/bloc.dart';
 
@@ -52,8 +54,8 @@ class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
           await _orderRepo.postNewOrder(_checkOutRepo.checkoutData.toJson());
       _cartRepo.clearCart();
       emit(CheckOutState.success(message));
-    } on Exception catch (e) {
-      emit(CheckOutState.error(e.toString()));
+    } on HttpException catch (e) {
+      emit(CheckOutState.error(e.message));
     }
   }
 }

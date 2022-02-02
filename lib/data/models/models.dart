@@ -8,6 +8,6 @@ export 'disc_type/disc_type_model.dart';
 export 'order/order_model.dart';
 export 'customer_type/customer_type_model.dart';
 export 'ph_location/province/province_model.dart';
-export 'ph_location/city/city_model.dart';
+export 'ph_location/city_municipality/city_municipality_model.dart';
 export 'ph_location/municipality/municipality_model.dart';
 export 'ph_location/brgy/brgy_model.dart';

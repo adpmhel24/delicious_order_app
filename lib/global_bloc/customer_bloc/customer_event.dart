@@ -10,10 +10,10 @@ class FetchCustomerFromLocal extends CustomerEvent {}
 
 class FetchCustomerFromAPI extends CustomerEvent {}
 
-class CustomerSearchByKeyword extends CustomerEvent {
+class SearchCustomerByKeyword extends CustomerEvent {
   final String keyword;
 
-  const CustomerSearchByKeyword(this.keyword);
+  const SearchCustomerByKeyword(this.keyword);
   @override
   List<Object?> get props => [keyword];
 }

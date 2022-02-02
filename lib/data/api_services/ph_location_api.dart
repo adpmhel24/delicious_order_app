@@ -12,7 +12,7 @@ class PhLocationApiService {
     try {
       _response = await _dio.get(path);
     } on DioError catch (e) {
-      throw Exception(e.toString());
+      throw Exception(e.message);
     }
     return _response;
   }

@@ -1,3 +1,4 @@
+import 'package:delicious_ordering_app/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,39 +33,46 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: GlobalBloc.blocProviders,
-      child: ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: () => MaterialApp.router(
-          builder: (context, child) {
-            ScreenUtil.setContext(context);
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-              child: child!,
-            );
-          },
-          routeInformationParser: _appRouter.defaultRouteParser(),
-          routerDelegate: _appRouter.delegate(),
-          theme: ThemeData(
-            appBarTheme: const AppBarTheme().copyWith(
-              backgroundColor: Colors.amber,
-              titleTextStyle: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFB3541E),
-                fontStyle: FontStyle.italic,
-                fontFamily: GoogleFonts.merriweather().fontFamily,
-                letterSpacing: 1.0,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return OrientationBuilder(builder: (context, orientation) {
+            SizeConfig().init(constraints, orientation);
+            return ScreenUtilInit(
+              designSize: const Size(360, 690),
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: () => MaterialApp.router(
+                builder: (context, child) {
+                  ScreenUtil.setContext(context);
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                    child: child!,
+                  );
+                },
+                routeInformationParser: _appRouter.defaultRouteParser(),
+                routerDelegate: _appRouter.delegate(),
+                theme: ThemeData(
+                  appBarTheme: const AppBarTheme().copyWith(
+                    backgroundColor: Colors.amber,
+                    titleTextStyle: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFB3541E),
+                      fontStyle: FontStyle.italic,
+                      fontFamily: GoogleFonts.merriweather().fontFamily,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                  iconTheme: const IconThemeData().copyWith(
+                    size: 20.h,
+                  ),
+                  elevatedButtonTheme: elevatedButtonTheme(),
+                  textTheme: textTheme(),
+                ),
               ),
-            ),
-            iconTheme: const IconThemeData().copyWith(
-              size: 20.h,
-            ),
-            elevatedButtonTheme: elevatedButtonTheme(),
-            textTheme: textTheme(),
-          ),
-        ),
+            );
+          });
+        },
       ),
     );
   }

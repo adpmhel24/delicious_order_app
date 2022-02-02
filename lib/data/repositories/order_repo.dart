@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../models/models.dart';
 import '../api_services/apis.dart';
 import './repositories.dart';
@@ -15,8 +17,8 @@ class OrderRepo {
     try {
       response = await _orderAPI.postNewOrder(
           token: _authRepository.currentUser.token, data: data);
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
     return response.data['message'];
   }
@@ -30,10 +32,10 @@ class OrderRepo {
         _orders = List<OrderModel>.from(
             response.data['data'].map((i) => OrderModel.fromJson(i)));
       } else {
-        throw Exception(response.data['message']);
+        throw HttpException(response.data['message']);
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 

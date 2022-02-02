@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:formz/formz.dart';
@@ -52,9 +54,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         bool isLoggedIn = _authRepository.isLoggedIn();
         emit(state.copyWith(
             status: FormzStatus.submissionSuccess, isLoginSuccess: isLoggedIn));
-      } catch (e) {
+      } on HttpException catch (e) {
         emit(state.copyWith(
-            status: FormzStatus.submissionFailure, message: e.toString()));
+            status: FormzStatus.submissionFailure, message: e.message));
       }
     }
   }

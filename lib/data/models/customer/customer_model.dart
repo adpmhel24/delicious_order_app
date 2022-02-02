@@ -1,29 +1,55 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'customer_model.g.dart';
+
+@JsonSerializable()
 class CustomerModel {
   int? id;
   late String code;
   late String name;
+
+  @JsonKey(name: "first_name")
+  String? firstName;
+
+  @JsonKey(name: "last_name")
+  String? lastName;
+
+  @JsonKey(name: "cust_type")
   int? custType;
+
   String? address;
-  String? dateCreated;
-  String? dateUpdated;
-  int? createdBy;
-  int? updatedBy;
+
+  String? province;
+
+  @JsonKey(name: "city_municipality")
+  String? cityMunicipality;
+
+  String? brgy;
   double? balance;
+
+  @JsonKey(name: "dep_balance")
   double? depBalance;
+
+  @JsonKey(name: "is_confidential")
   bool? isConfidential;
+
+  @JsonKey(name: "is_active")
   bool? isActive;
+
+  @JsonKey(name: "contact_number")
   String? contactNumber;
 
   CustomerModel({
     this.id,
     required this.code,
     required this.name,
+    this.firstName,
+    this.lastName,
     this.custType,
     this.address,
-    this.dateCreated,
-    this.dateUpdated,
-    this.createdBy,
-    this.updatedBy,
+    this.province,
+    this.cityMunicipality,
+    this.brgy,
     this.balance,
     this.depBalance,
     this.isConfidential,
@@ -31,39 +57,8 @@ class CustomerModel {
     this.contactNumber,
   });
 
-  CustomerModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    code = json['code'];
-    name = json['name'];
-    custType = json['cust_type'];
-    address = json['address'];
-    dateCreated = json['date_created'];
-    dateUpdated = json['date_updated'];
-    createdBy = json['created_by'];
-    updatedBy = json['updated_by'];
-    balance = json['balance'];
-    depBalance = json['dep_balance'];
-    isConfidential = json['is_confidential'];
-    isActive = json['is_active'];
-    contactNumber = json['contact_number'];
-  }
+  factory CustomerModel.fromJson(Map<String, dynamic> json) =>
+      _$CustomerModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['code'] = code;
-    data['name'] = name;
-    data['cust_type'] = custType;
-    data['address'] = address;
-    data['date_created'] = dateCreated;
-    data['date_updated'] = dateUpdated;
-    data['created_by'] = createdBy;
-    data['updated_by'] = updatedBy;
-    data['balance'] = balance;
-    data['dep_balance'] = depBalance;
-    data['is_confidential'] = isConfidential;
-    data['is_active'] = isActive;
-    data['contact_number'] = contactNumber;
-    return data;
-  }
+  Map<String, dynamic> toJson() => _$CustomerModelToJson(this);
 }

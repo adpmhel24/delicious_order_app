@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc.dart';
 import '/data/repositories/repositories.dart';
@@ -10,11 +12,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<RemoveItemFromCart>(onRemoveFromCart);
     on<UpdateDiscount>(onUpdateDiscount);
     on<UpdateDeliveryFee>(onUpdateDelfee);
-    on<UpdateTenderedAmount>(onUpdateTenderedAmnt);
-
-    // on<ToggleIsSelectedCartItem>(onToggleSelectedItem);
-    // on<ToggleSelectAllCartItem>(onToggleSelectAllItem);
-    // on<RemoveItemIfSelected>(onRemoveItemIfSelected);
+    on<UpdateOtherFee>(onUpdateOtherFee);
   }
 
   void onLoadCart(LoadCart event, Emitter<CartState> emit) {
@@ -25,8 +23,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       } else {
         emit(EmptyCart());
       }
-    } on Exception catch (e) {
-      emit(CartError(e.toString()));
+    } on HttpException catch (e) {
+      emit(CartError(e.message));
     }
   }
 
@@ -35,16 +33,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     await _cartRepo.clearCart();
     emit(EmptyCart());
   }
-
-  // void onRemoveItemIfSelected(
-  //     RemoveItemIfSelected event, Emitter<CartState> emit) {
-  //   emit(CartLoading());
-  //   _cartRepo.removeItemIfSelected();
-  //   if (_cartRepo.cartItems.isEmpty) {
-  //     emit(EmptyCart());
-  //   }
-  //   emit(CartLoaded(_cartRepo.cartItems));
-  // }
 
   void onRemoveFromCart(RemoveItemFromCart event, Emitter<CartState> emit) {
     emit(CartLoading());
@@ -65,25 +53,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(CartUpdateDelFeeState(_cartRepo.delfee.toString()));
   }
 
-  void onUpdateTenderedAmnt(
-    UpdateTenderedAmount event,
+  void onUpdateOtherFee(
+    UpdateOtherFee event,
     Emitter<CartState> emit,
   ) {
-    _cartRepo.changeTenderedAmnt(event.tenderedAmount);
-    emit(CartUpdateTenderedAmountState(_cartRepo.tenderedAmnt.toString()));
+    _cartRepo.changeOtherFee(event.otherFee);
+    emit(CartUpdateTenderedAmountState(_cartRepo.otherfee.toString()));
   }
-
-  // void onToggleSelectedItem(
-  //     ToggleIsSelectedCartItem event, Emitter<CartState> emit) {
-  //   emit(CartLoading());
-  //   _cartRepo.toggleIsSelected(event.index);
-  //   emit(CartLoaded(_cartRepo.cartItems));
-  // }
-
-  // void onToggleSelectAllItem(
-  //     ToggleSelectAllCartItem event, Emitter<CartState> emit) {
-  //   emit(CartLoading());
-  //   _cartRepo.toggleSelectAllItems();
-  //   emit(CartLoaded(_cartRepo.cartItems));
-  // }
 }

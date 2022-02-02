@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import '../models/models.dart';
@@ -18,12 +20,22 @@ class CustomerTypeRepo {
         _customerTypes = List<CustomerTypeModel>.from(
             response.data['data'].map((e) => CustomerTypeModel.fromJson(e)));
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 
   List<CustomerTypeModel> get customerTypes => [..._customerTypes];
+
+  List<CustomerTypeModel> searchByKeyword(String keyword) {
+    if (keyword.isNotEmpty) {
+      return _customerTypes
+          .where((custType) =>
+              custType.name.toLowerCase().contains(keyword.toLowerCase()))
+          .toList();
+    }
+    return _customerTypes;
+  }
 
   ///Singleton factory
   static final CustomerTypeRepo _instance = CustomerTypeRepo._internal();

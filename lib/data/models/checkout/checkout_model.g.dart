@@ -16,7 +16,7 @@ CheckOutModel _$CheckOutModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['delivery_date'] as String),
       custCode: json['cust_code'] as String?,
       delfee: (json['delfee'] as num?)?.toDouble() ?? 0.00,
-      tenderamt: (json['tenderamt'] as num?)?.toDouble() ?? 0.00,
+      otherfee: (json['otherfee'] as num?)?.toDouble() ?? 0.00,
       address: json['address'] as String?,
       remarks: json['remarks'] as String?,
       rows: (json['rows'] as List<dynamic>?)
@@ -24,10 +24,9 @@ CheckOutModel _$CheckOutModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       contactNumber: json['contact_number'] as String?,
       customerId: json['customer_id'] as int? ?? -1,
-    )
-      ..custType = json['cust_type'] as String?
-      ..paymentMethod = json['payment_method'] as String?
-      ..deliveryMethod = json['delivery_method'] as String?;
+      paymentMethod: json['payment_method'] as String?,
+      deliveryMethod: json['delivery_method'] as String?,
+    )..custType = json['cust_type'] as String?;
 
 Map<String, dynamic> _$CheckOutModelToJson(CheckOutModel instance) {
   final val = <String, dynamic>{
@@ -37,7 +36,7 @@ Map<String, dynamic> _$CheckOutModelToJson(CheckOutModel instance) {
     'address': instance.address,
     'remarks': instance.remarks,
     'delfee': instance.delfee,
-    'tenderamt': instance.tenderamt,
+    'otherfee': instance.otherfee,
     'contact_number': instance.contactNumber,
   };
 

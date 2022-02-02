@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '/data/repositories/repositories.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc.dart';
@@ -17,8 +19,8 @@ class SalesTypeBloc extends Bloc<SalesTypeEvent, SalesTypeState> {
         await _salesTypeRepo.fetchFromAPI();
       }
       emit(SalesTypeLoadedState(_salesTypeRepo.salesType));
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 
@@ -28,8 +30,8 @@ class SalesTypeBloc extends Bloc<SalesTypeEvent, SalesTypeState> {
     try {
       await _salesTypeRepo.fetchFromAPI();
       emit(SalesTypeLoadedState(_salesTypeRepo.salesType));
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 }

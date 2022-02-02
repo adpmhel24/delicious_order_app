@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc.dart';
@@ -9,7 +11,7 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
   CustomerBloc() : super(CustomerInitState()) {
     on<FetchCustomerFromLocal>(onFetchFromLocal);
     on<FetchCustomerFromAPI>(onFetchFromAPI);
-    on<CustomerSearchByKeyword>(onSearchByKeyword);
+    on<SearchCustomerByKeyword>(onSearchCustomerByKeyword);
     on<FilterCustomerByCustType>(onFilterByCustType);
   }
 
@@ -21,8 +23,8 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
         await _customerRepo.fetchCustomerFromAPI();
       }
       emit(CustomerLoadedState(_customerRepo.customers));
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 
@@ -32,22 +34,18 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
     try {
       await _customerRepo.fetchCustomerFromAPI();
       emit(CustomerLoadedState(_customerRepo.customers));
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 
-  void onSearchByKeyword(
-      CustomerSearchByKeyword event, Emitter<CustomerState> emit) async {
+  void onSearchCustomerByKeyword(
+      SearchCustomerByKeyword event, Emitter<CustomerState> emit) async {
     emit(CustomerLoadingState());
     try {
-      if (event.keyword.isEmpty) {
-        emit(EmptyState());
-      } else {
-        emit(CustomerLoadedState(_customerRepo.getSuggestions(event.keyword)));
-      }
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(CustomerLoadedState(_customerRepo.searchByKeyword(event.keyword)));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 
@@ -56,8 +54,8 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
     emit(CustomerLoadingState());
     try {
       _customerRepo.custType = event.custType;
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 }

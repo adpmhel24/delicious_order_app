@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import '../models/models.dart';
 import '../api_services/apis.dart';
@@ -22,8 +24,8 @@ class DiscountTypeRepo {
       } else {
         throw Exception(response.data['message']);
       }
-    } on Exception catch (e) {
-      throw Exception(e);
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 

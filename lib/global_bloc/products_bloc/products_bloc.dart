@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/data/repositories/repositories.dart';
@@ -23,8 +25,8 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       } else {
         emit(NoDataState());
       }
-    } catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 
@@ -36,8 +38,8 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       if (!_productsRepo.isNotEmpty()) {
         await _productsRepo.fetchProducts();
       }
-    } catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
     emit(LoadedProductsState(_productsRepo.products));
   }
@@ -48,8 +50,8 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     try {
       var products = await _productsRepo.searchByKeyword(event.keyword);
       emit(LoadedProductsState(products));
-    } on Exception catch (e) {
-      emit(ErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ErrorState(e.message));
     }
   }
 }

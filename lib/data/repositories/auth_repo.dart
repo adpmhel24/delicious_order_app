@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:delicious_ordering_app/data/repositories/app_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,8 +41,8 @@ class AuthRepository extends ChangeNotifier {
       } else {
         throw Exception(response.data['message']);
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
     }
   }
 

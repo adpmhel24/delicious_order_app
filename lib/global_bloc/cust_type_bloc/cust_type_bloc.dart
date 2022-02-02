@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc.dart';
@@ -9,6 +11,7 @@ class CustTypeBloc extends Bloc<CustTypeEvent, CustTypeState> {
   CustTypeBloc() : super(CustTypeInitState()) {
     on<FetchCustTypeFromLocal>(onFetchCustTypeFromLocal);
     on<FetchCustTypeFromAPI>(onFetchCustTypeFromAPI);
+    on<SearchCustTypeByKeyword>(onSearchCustyTypeByKeyword);
   }
 
   void onFetchCustTypeFromLocal(
@@ -18,8 +21,8 @@ class CustTypeBloc extends Bloc<CustTypeEvent, CustTypeState> {
       if (_customerTypeRepo.customerTypes.isEmpty) {
         await _customerTypeRepo.fetchCustomerType();
       }
-    } on Exception catch (e) {
-      emit(CusTypeErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(CusTypeErrorState(e.message));
     }
     emit(CustTypeLoadedState(_customerTypeRepo.customerTypes));
   }
@@ -29,9 +32,15 @@ class CustTypeBloc extends Bloc<CustTypeEvent, CustTypeState> {
     emit(CustTypeLoadingState());
     try {
       await _customerTypeRepo.fetchCustomerType();
-    } on Exception catch (e) {
-      emit(CusTypeErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(CusTypeErrorState(e.message));
     }
     emit(CustTypeLoadedState(_customerTypeRepo.customerTypes));
+  }
+
+  void onSearchCustyTypeByKeyword(
+      SearchCustTypeByKeyword event, Emitter<CustTypeState> emit) {
+    emit(CustTypeLoadingState());
+    emit(CustTypeLoadedState(_customerTypeRepo.searchByKeyword(event.keyword)));
   }
 }

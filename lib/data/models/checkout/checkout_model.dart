@@ -14,11 +14,14 @@ class CheckOutModel {
   @JsonKey(name: "cust_code")
   String? custCode;
 
+  @JsonKey(name: 'cust_name', toJson: toNull, includeIfNull: false)
+  String? custName;
+
   String? address;
   String? remarks;
 
   double? delfee;
-  double? tenderamt;
+  double? otherfee;
 
   @JsonKey(name: 'contact_number')
   String? contactNumber;
@@ -42,12 +45,14 @@ class CheckOutModel {
     this.deliveryDate,
     this.custCode,
     this.delfee = 0.00,
-    this.tenderamt = 0.00,
+    this.otherfee = 0.00,
     this.address,
     this.remarks,
     this.rows,
     this.contactNumber,
     this.customerId = -1,
+    this.paymentMethod,
+    this.deliveryMethod,
   });
 
   factory CheckOutModel.fromJson(Map<String, dynamic> json) =>

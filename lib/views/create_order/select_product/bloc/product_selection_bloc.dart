@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '/data/repositories/repositories.dart';
 import '/utils/validators.dart';
 import 'package:flutter/material.dart';
@@ -81,9 +83,9 @@ class ProductSelectionBloc
       emit(state.copyWith(
           status: FormzStatus.submissionSuccess,
           message: "Successfully added!"));
-    } on Exception catch (e) {
+    } on HttpException catch (e) {
       emit(state.copyWith(
-          status: FormzStatus.submissionFailure, message: e.toString()));
+          status: FormzStatus.submissionFailure, message: e.message));
     }
   }
 
@@ -94,8 +96,8 @@ class ProductSelectionBloc
     try {
       _cartRepo.deleteFromCart(event.cartItem);
       emit(state.copyWith(isUndo: true));
-    } on Exception catch (e) {
-      emit(state.copyWith(message: e.toString()));
+    } on HttpException catch (e) {
+      emit(state.copyWith(message: e.message));
     }
   }
 }

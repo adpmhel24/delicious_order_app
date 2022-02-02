@@ -43,12 +43,12 @@ class UpdateDeliveryFee extends CartEvent {
   List<Object?> get props => [delfee];
 }
 
-class UpdateTenderedAmount extends CartEvent {
-  final double tenderedAmount;
-  UpdateTenderedAmount(this.tenderedAmount);
+class UpdateOtherFee extends CartEvent {
+  final double otherFee;
+  UpdateOtherFee(this.otherFee);
 
   @override
-  List<Object?> get props => [tenderedAmount];
+  List<Object?> get props => [otherFee];
 }
 
 // class ToggleIsSelectedCartItem extends CartEvent {

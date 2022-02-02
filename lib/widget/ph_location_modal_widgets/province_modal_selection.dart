@@ -8,7 +8,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '/widget/custom_error_dialog.dart';
 import '/data/repositories/repositories.dart';
 import '/global_bloc/ph_location_bloc/province_bloc/bloc.dart';
-import '/views/create_customer/bloc/bloc.dart';
 import '/widget/custom_choices_modal.dart';
 import '/widget/custom_text_field.dart';
 
@@ -16,8 +15,6 @@ provinceModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
   required TextEditingController provinceController,
-  required TextEditingController cityMunicipalityController,
-  required TextEditingController brgyController,
 }) {
   var heightSized = MediaQuery.of(context).size.height;
   return CustomFieldModalChoices(
@@ -79,15 +76,6 @@ provinceModalSelection({
                                 provinceController.text =
                                     state.provinces[index].name!;
 
-                                context
-                                    .read<AddCustomerBloc>()
-                                    .add(ChangeProvinceCityMunicipalityBrgy(
-                                      province: provinceController,
-                                      cityMunicipality:
-                                          cityMunicipalityController,
-                                      brgy: brgyController,
-                                    ));
-
                                 phLocationRepo.selectedProvinceCode = {
                                   "code": state.provinces[index].code!,
                                   "isDistrict":
@@ -145,13 +133,6 @@ provinceModalSelection({
           onPressed: () {
             provinceController.clear();
             phLocationRepo.selectedProvinceCode.clear();
-            context
-                .read<AddCustomerBloc>()
-                .add(ChangeProvinceCityMunicipalityBrgy(
-                  province: provinceController,
-                  cityMunicipality: cityMunicipalityController,
-                  brgy: brgyController,
-                ));
           },
         ),
       ],

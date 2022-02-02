@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/data/repositories/repositories.dart';
 import './bloc.dart';
@@ -18,8 +20,8 @@ class ProvinceBloc extends Bloc<ProvinceEvent, ProvinceState> {
         await _phLocationRepo.fetchProvinces();
       }
       emit(ProvinceLoadedState(_phLocationRepo.provinces));
-    } on Exception catch (e) {
-      emit(ProvinceErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ProvinceErrorState(e.message));
     }
   }
 
@@ -29,8 +31,8 @@ class ProvinceBloc extends Bloc<ProvinceEvent, ProvinceState> {
     try {
       await _phLocationRepo.fetchProvinces();
       emit(ProvinceLoadedState(_phLocationRepo.provinces));
-    } on Exception catch (e) {
-      emit(ProvinceErrorState(e.toString()));
+    } on HttpException catch (e) {
+      emit(ProvinceErrorState(e.message));
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc.dart';
@@ -17,8 +19,8 @@ class DiscTypeBloc extends Bloc<DiscTypeEvent, DiscTypeState> {
       if (_discountTypeRepo.discTypes.isEmpty) {
         await _discountTypeRepo.fetchDiscType();
       }
-    } on Exception catch (e) {
-      emit(DiscTypeError(e.toString()));
+    } on HttpException catch (e) {
+      emit(DiscTypeError(e.message));
     }
     emit(DiscTypeLoadedState(_discountTypeRepo.discTypes));
   }
@@ -28,8 +30,8 @@ class DiscTypeBloc extends Bloc<DiscTypeEvent, DiscTypeState> {
     emit(DiscTypeLoadingState());
     try {
       await _discountTypeRepo.fetchDiscType();
-    } on Exception catch (e) {
-      emit(DiscTypeError(e.toString()));
+    } on HttpException catch (e) {
+      emit(DiscTypeError(e.message));
     }
     emit(DiscTypeLoadedState(_discountTypeRepo.discTypes));
   }

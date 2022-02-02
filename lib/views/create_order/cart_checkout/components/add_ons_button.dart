@@ -23,13 +23,13 @@ class AddOnButtons extends StatefulWidget {
 class _AddOnButtonsState extends State<AddOnButtons> {
   final TextEditingController _discAmountController = TextEditingController();
   final TextEditingController _delFeeController = TextEditingController();
-  final TextEditingController _tenderAmntController = TextEditingController();
+  final TextEditingController _otherFeeController = TextEditingController();
 
   @override
   void dispose() {
     _discAmountController.dispose();
     _delFeeController.dispose();
-    _tenderAmntController.dispose();
+    _otherFeeController.dispose();
     super.dispose();
   }
 
@@ -37,7 +37,7 @@ class _AddOnButtonsState extends State<AddOnButtons> {
   void initState() {
     _discAmountController.text = widget._cartRepo.discount.toString();
     _delFeeController.text = widget._cartRepo.delfee.toString();
-    _tenderAmntController.text = widget._cartRepo.tenderedAmnt.toString();
+    _otherFeeController.text = widget._cartRepo.otherfee.toString();
     super.initState();
   }
 
@@ -81,7 +81,7 @@ class _AddOnButtonsState extends State<AddOnButtons> {
                 width: 10.w,
               ),
               AddOnButton(
-                label: 'Add Tendered Amount',
+                label: 'Add Other Fee',
                 icon: const Icon(LineIcons.moneyBill),
                 onPressed: () {
                   showDialog(
@@ -89,15 +89,15 @@ class _AddOnButtonsState extends State<AddOnButtons> {
                       context: context,
                       builder: (BuildContext context) {
                         return CustomizedDialog(
-                          title: 'Add Tendered Amount',
-                          controller: _tenderAmntController,
+                          title: 'Add Other Fee',
+                          controller: _otherFeeController,
                           onPressed: () {
                             context.read<CartBloc>().add(
-                                  UpdateTenderedAmount(
+                                  UpdateOtherFee(
                                     double.parse(
-                                        _tenderAmntController.text.isEmpty
+                                        _otherFeeController.text.isEmpty
                                             ? '0'
-                                            : _tenderAmntController.text),
+                                            : _otherFeeController.text),
                                   ),
                                 );
                             Navigator.of(context).pop();
