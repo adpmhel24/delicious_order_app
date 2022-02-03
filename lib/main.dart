@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
               minTextAdapt: true,
               splitScreenMode: true,
               builder: () => MaterialApp.router(
+                debugShowCheckedModeBanner: false,
                 builder: (context, child) {
                   ScreenUtil.setContext(context);
                   return MediaQuery(

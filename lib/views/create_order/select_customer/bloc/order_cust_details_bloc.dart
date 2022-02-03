@@ -21,7 +21,6 @@ class OrderCustDetailsBloc
     emit(state.copyWith(
       custType: custType,
       status: Formz.validate([
-        custType,
         state.custCode,
         state.contactNumber,
         state.address,
@@ -39,7 +38,6 @@ class OrderCustDetailsBloc
       customerId: custId,
       status: Formz.validate([
         custCode,
-        state.custType,
         state.contactNumber,
         state.address,
       ]),
@@ -54,7 +52,6 @@ class OrderCustDetailsBloc
     emit(state.copyWith(
       contactNumber: contactNumber,
       status: Formz.validate([
-        state.custType,
         state.custCode,
         contactNumber,
         state.address,
@@ -69,7 +66,6 @@ class OrderCustDetailsBloc
     emit(state.copyWith(
       address: address,
       status: Formz.validate([
-        state.custType,
         state.custCode,
         state.contactNumber,
         address,

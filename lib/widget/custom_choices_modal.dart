@@ -7,7 +7,7 @@ class CustomFieldModalChoices extends StatelessWidget {
     required TextEditingController controller,
     required String labelText,
     required Widget prefixIcon,
-    required Widget suffixIcon,
+    Widget? suffixIcon,
     final TextInputAction? textInputAction,
     final AutovalidateMode? autovalidateMode,
     final String? Function(String?)? validator,
@@ -25,7 +25,7 @@ class CustomFieldModalChoices extends StatelessWidget {
   final TextEditingController _controller;
   final String _labelText;
   final Widget _prefixIcon;
-  final Widget _suffixIcon;
+  final Widget? _suffixIcon;
   final TextInputAction? _textInputAction;
   final AutovalidateMode? _autovalidateMode;
   final String? Function(String?)? _validator;

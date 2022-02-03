@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import '/router/router.gr.dart';
-import '/views/orders/bloc/orders_bloc.dart';
-import '/widget/app_drawer.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
+
+import '/router/router.gr.dart';
+import '/views/orders/bloc/bloc.dart';
+import '/widget/app_drawer.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
@@ -46,7 +47,13 @@ class _OrderScreenState extends State<OrderScreen> {
               currentIndex: tabsRouter.activeIndex,
               onTap: (index) {
                 // here we switch between tabs
-
+                if (index == 0) {
+                  context.read<OrdersBloc>().add(FetchForConfirmOrders());
+                } else if (index == 1) {
+                  context.read<OrdersBloc>().add(FetchForConfirmOrders());
+                } else if (index == 2) {
+                  context.read<OrdersBloc>().add(FetchCompletedOrders());
+                }
                 tabsRouter.setActiveIndex(index);
               },
               items: const [

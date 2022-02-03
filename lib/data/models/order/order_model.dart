@@ -22,6 +22,7 @@ class OrderModel {
   double doctotal;
   double? gross;
   double delfee;
+  double otherfee;
   double? tenderamt;
 
   @JsonKey(name: "delivery_date")
@@ -43,13 +44,14 @@ class OrderModel {
       this.paymentStatus,
       this.transtype,
       required this.doctotal,
-      this.gross,
+      this.gross = 0.00,
       required this.delfee,
-      this.tenderamt,
+      this.tenderamt = 0.00,
       required this.deliveryDate,
       this.address,
       this.disctype,
-      this.discprcnt,
+      this.discprcnt = 0.00,
+      this.otherfee = 0.00,
       required this.rows});
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>

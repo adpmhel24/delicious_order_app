@@ -27,6 +27,7 @@ cityMunicipalityModalSelection({
       context.read<CityMunicipalityBloc>().add(FetchCityMunicipalityFromApi());
       showMaterialModalBottomSheet(
         context: context,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10.r),
@@ -68,42 +69,51 @@ cityMunicipalityModalSelection({
                         height: 10.h,
                       ),
                       Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: state.citiesMunicipalities.length,
-                          itemBuilder: (_, index) {
-                            return ListTile(
-                              title:
-                                  Text(state.citiesMunicipalities[index].name),
-                              selectedColor: Constant.onSelectedColor,
-                              selected: cityMunicipalityController.text ==
-                                  state.citiesMunicipalities[index].name,
-                              onTap: () {
-                                cityMunicipalityController.text =
-                                    state.citiesMunicipalities[index].name;
-
-                                context
-                                    .read<AddCustomerBloc>()
-                                    .add(ChangeProvinceCityMunicipalityBrgy(
-                                      province: provinceController,
-                                      cityMunicipality:
-                                          cityMunicipalityController,
-                                      brgy: brgyController,
-                                    ));
-
-                                phLocationRepo.selectedCityMunicipalityCode =
-                                    state.citiesMunicipalities[index].code;
-
-                                Navigator.of(context).pop();
-                              },
-                            );
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await Future.delayed(
+                                const Duration(milliseconds: 200));
+                            context
+                                .read<CityMunicipalityBloc>()
+                                .add(FetchCityMunicipalityFromApi());
                           },
-                          separatorBuilder: (_, index) {
-                            return const Divider(
-                              thickness: 1,
-                              color: Color(0xFFBDBDBD),
-                            );
-                          },
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: state.citiesMunicipalities.length,
+                            itemBuilder: (_, index) {
+                              return ListTile(
+                                title: Text(
+                                    state.citiesMunicipalities[index].name),
+                                selectedColor: Constant.onSelectedColor,
+                                selected: cityMunicipalityController.text ==
+                                    state.citiesMunicipalities[index].name,
+                                onTap: () {
+                                  cityMunicipalityController.text =
+                                      state.citiesMunicipalities[index].name;
+
+                                  context
+                                      .read<AddCustomerBloc>()
+                                      .add(ChangeProvinceCityMunicipalityBrgy(
+                                        province: provinceController,
+                                        cityMunicipality:
+                                            cityMunicipalityController,
+                                        brgy: brgyController,
+                                      ));
+
+                                  phLocationRepo.selectedCityMunicipalityCode =
+                                      state.citiesMunicipalities[index].code;
+
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                            separatorBuilder: (_, index) {
+                              return const Divider(
+                                thickness: 1,
+                                color: Color(0xFFBDBDBD),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],

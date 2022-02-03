@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,7 +38,7 @@ class OrderAPI {
         }),
       );
     } on DioError catch (e) {
-      throw Exception(e.response!.data['message']);
+      throw HttpException(e.response!.data['message']);
     }
     return response;
   }

@@ -27,6 +27,7 @@ brgyModalSelection({
     onTap: () {
       context.read<BrgyBloc>().add(FetchBrgyFromApi());
       showMaterialModalBottomSheet(
+        enableDrag: false,
         context: context,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -68,37 +69,44 @@ brgyModalSelection({
                         height: 10.h,
                       ),
                       Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: state.brgys.length,
-                          itemBuilder: (_, index) {
-                            return ListTile(
-                              title: Text(state.brgys[index].name),
-                              selectedColor: Constant.onSelectedColor,
-                              selected: brgyController.text ==
-                                  state.brgys[index].name,
-                              onTap: () {
-                                brgyController.text = state.brgys[index].name;
-
-                                context
-                                    .read<AddCustomerBloc>()
-                                    .add(ChangeProvinceCityMunicipalityBrgy(
-                                      province: provinceController,
-                                      cityMunicipality:
-                                          cityMunicipalityController,
-                                      brgy: brgyController,
-                                    ));
-
-                                Navigator.of(context).pop();
-                              },
-                            );
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await Future.delayed(
+                                const Duration(milliseconds: 200));
+                            context.read<BrgyBloc>().add(FetchBrgyFromApi());
                           },
-                          separatorBuilder: (_, index) {
-                            return const Divider(
-                              thickness: 1,
-                              color: Color(0xFFBDBDBD),
-                            );
-                          },
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: state.brgys.length,
+                            itemBuilder: (_, index) {
+                              return ListTile(
+                                title: Text(state.brgys[index].name),
+                                selectedColor: Constant.onSelectedColor,
+                                selected: brgyController.text ==
+                                    state.brgys[index].name,
+                                onTap: () {
+                                  brgyController.text = state.brgys[index].name;
+
+                                  context.read<AddCustomerBloc>().add(
+                                        ChangeProvinceCityMunicipalityBrgy(
+                                          province: provinceController,
+                                          cityMunicipality:
+                                              cityMunicipalityController,
+                                          brgy: brgyController,
+                                        ),
+                                      );
+
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                            separatorBuilder: (_, index) {
+                              return const Divider(
+                                thickness: 1,
+                                color: Color(0xFFBDBDBD),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],

@@ -23,6 +23,7 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
       address: json['address'] as String?,
       disctype: json['disctype'] as String?,
       discprcnt: (json['discprcnt'] as num?)?.toDouble(),
+      otherfee: (json['otherfee'] as num?)?.toDouble() ?? 0.00,
       rows: (json['rows'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)
           .toList(),
@@ -41,6 +42,7 @@ Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
       'doctotal': instance.doctotal,
       'gross': instance.gross,
       'delfee': instance.delfee,
+      'otherfee': instance.otherfee,
       'tenderamt': instance.tenderamt,
       'delivery_date': instance.deliveryDate.toIso8601String(),
       'address': instance.address,

@@ -1,10 +1,8 @@
-import 'package:delicious_ordering_app/utils/currency_formater.dart';
-
-import '/data/models/models.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
-
 import 'package:intl/intl.dart';
+
+import '/utils/currency_formater.dart';
+import '/data/models/models.dart';
 
 class OrderItem extends StatefulWidget {
   final OrderModel order;
@@ -23,9 +21,7 @@ class _OrderItemState extends State<OrderItem> {
     var deviceInfo = MediaQuery.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: _expanded
-          ? min((20 * 20) + (widget.order.rows!.length) * 39, 800)
-          : 200,
+      height: _expanded ? 500 : 150,
       child: Card(
         margin: const EdgeInsets.all(10),
         child: Column(
@@ -35,7 +31,7 @@ class _OrderItemState extends State<OrderItem> {
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
                     children: [
                       Text(
                         'Order #: ',
@@ -44,12 +40,13 @@ class _OrderItemState extends State<OrderItem> {
                       Text(
                         '${widget.order.id}',
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              color: const Color(0xFF632626),
                               fontWeight: FontWeight.bold,
                             ),
                       ),
                     ],
                   ),
-                  Row(
+                  Wrap(
                     children: [
                       Text(
                         'Transaction Date: ',
@@ -57,48 +54,41 @@ class _OrderItemState extends State<OrderItem> {
                       ),
                       Text(
                         DateFormat('MM/dd/yyyy').format(widget.order.transdate),
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              color: const Color(0xFF632626),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
-                  Row(
+                  Wrap(
                     children: [
-                      Text(
+                      const Text(
                         'Delivery Date: ',
-                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       Text(
                         DateFormat('MM/dd/yyyy')
                             .format(widget.order.deliveryDate),
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              color: const Color(0xFF632626),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
-                  Row(
+                  Wrap(
                     children: [
-                      Text(
+                      const Text(
                         'Customer: ',
-                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       Text(
                         '${widget.order.custCode}',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              color: const Color(0xFF632626),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
-                  ),
-                  Text(
-                    'Delivery Address : ${widget.order.address}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  FittedBox(
-                    child: Text(
-                      'Remarks : ${widget.order.remarks}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
                   ),
                 ],
               ),
@@ -115,18 +105,50 @@ class _OrderItemState extends State<OrderItem> {
               // decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: _expanded
-                  ? min((7 * 20) + (widget.order.rows!.length) * 39, 700)
-                  : 0,
+              height: _expanded ? 380 : 0,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
+                  Expanded(
                     child: ListView(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                      // physics: const NeverScrollableScrollPhysics(),
                       children: [
+                        Wrap(
+                          children: [
+                            const Text(
+                              'Delivery Address: ',
+                            ),
+                            Text(
+                              '${widget.order.address}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                    color: const Color(0xFF632626),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        Wrap(
+                          children: [
+                            const Text(
+                              'Remarks: ',
+                            ),
+                            Text(
+                              '${widget.order.remarks}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                    color: const Color(0xFF632626),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
+                        ),
                         const Divider(thickness: 1),
                         ...widget.order.rows!
                             .map(
@@ -207,6 +229,20 @@ class _OrderItemState extends State<OrderItem> {
                             Text(
                               formatStringToDecimal(
                                 widget.order.delfee.toString(),
+                                hasCurrency: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Other Fee',
+                            ),
+                            Text(
+                              formatStringToDecimal(
+                                widget.order.otherfee.toString(),
                                 hasCurrency: true,
                               ),
                             ),

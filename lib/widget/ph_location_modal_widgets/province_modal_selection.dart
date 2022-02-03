@@ -15,6 +15,7 @@ provinceModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
   required TextEditingController provinceController,
+  Widget? suffixIcon,
 }) {
   var heightSized = MediaQuery.of(context).size.height;
   return CustomFieldModalChoices(
@@ -23,6 +24,7 @@ provinceModalSelection({
       context.read<ProvinceBloc>().add(FetchProvinceFromLocal());
       showMaterialModalBottomSheet(
         context: context,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10.r),
@@ -63,35 +65,45 @@ provinceModalSelection({
                         height: 10.h,
                       ),
                       Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: state.provinces.length,
-                          itemBuilder: (_, index) {
-                            return ListTile(
-                              title: Text(state.provinces[index].name!),
-                              selectedColor: Constant.onSelectedColor,
-                              selected: provinceController.text ==
-                                  state.provinces[index].name!,
-                              onTap: () {
-                                provinceController.text =
-                                    state.provinces[index].name!;
-
-                                phLocationRepo.selectedProvinceCode = {
-                                  "code": state.provinces[index].code!,
-                                  "isDistrict":
-                                      state.provinces[index].isDistrict ?? false
-                                };
-
-                                Navigator.of(context).pop();
-                              },
-                            );
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await Future.delayed(
+                                const Duration(milliseconds: 200));
+                            context
+                                .read<ProvinceBloc>()
+                                .add(FetchProvinceFromApi());
                           },
-                          separatorBuilder: (_, index) {
-                            return const Divider(
-                              thickness: 1,
-                              color: Color(0xFFBDBDBD),
-                            );
-                          },
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: state.provinces.length,
+                            itemBuilder: (_, index) {
+                              return ListTile(
+                                title: Text(state.provinces[index].name!),
+                                selectedColor: Constant.onSelectedColor,
+                                selected: provinceController.text ==
+                                    state.provinces[index].name!,
+                                onTap: () {
+                                  provinceController.text =
+                                      state.provinces[index].name!;
+
+                                  phLocationRepo.selectedProvinceCode = {
+                                    "code": state.provinces[index].code!,
+                                    "isDistrict":
+                                        state.provinces[index].isDistrict ??
+                                            false
+                                  };
+
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                            separatorBuilder: (_, index) {
+                              return const Divider(
+                                thickness: 1,
+                                color: Color(0xFFBDBDBD),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -118,24 +130,6 @@ provinceModalSelection({
     },
     labelText: 'Province',
     prefixIcon: const Icon(LineIcons.city),
-    suffixIcon: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: () async {
-            context.read<ProvinceBloc>().add(FetchProvinceFromApi());
-            provinceController.clear();
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            provinceController.clear();
-            phLocationRepo.selectedProvinceCode.clear();
-          },
-        ),
-      ],
-    ),
+    suffixIcon: suffixIcon,
   );
 }

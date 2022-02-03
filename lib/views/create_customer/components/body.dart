@@ -104,7 +104,9 @@ class _BodyState extends State<Body> {
                   SizedBox(height: 15.w),
                   _customerContactNumber(context, state),
                   SizedBox(height: 15.w),
-                  provinceModalSelection(
+                  _customerAddressField(context, state),
+                  SizedBox(height: 15.w),
+                  brgyModalSelection(
                     context: context,
                     provinceController: _provinceController,
                     cityMunicipalityController: _cityMunicipalityController,
@@ -120,15 +122,13 @@ class _BodyState extends State<Body> {
                     phLocationRepo: _phLocationRepo,
                   ),
                   SizedBox(height: 15.w),
-                  brgyModalSelection(
+                  provinceModalSelection(
                     context: context,
                     provinceController: _provinceController,
                     cityMunicipalityController: _cityMunicipalityController,
                     brgyController: _brgyController,
                     phLocationRepo: _phLocationRepo,
                   ),
-                  SizedBox(height: 15.w),
-                  _customerAddressField(context, state),
                 ],
               );
             },

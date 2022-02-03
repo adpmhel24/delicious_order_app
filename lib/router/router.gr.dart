@@ -36,7 +36,8 @@ class AppRouter extends _i11.RootStackRouter {
   @override
   final Map<String, _i11.PageFactory> pagesMap = {
     LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>();
+      final args = routeData.argsAs<LoginRouteArgs>(
+          orElse: () => const LoginRouteArgs());
       return _i11.MaterialPageX<dynamic>(
           routeData: routeData,
           child: _i1.LoginScreen(
@@ -112,7 +113,7 @@ class AppRouter extends _i11.RootStackRouter {
 /// generated route for
 /// [_i1.LoginScreen]
 class LoginRoute extends _i11.PageRouteInfo<LoginRouteArgs> {
-  LoginRoute({_i12.Key? key, required dynamic Function(bool) onLoginCallback})
+  LoginRoute({_i12.Key? key, dynamic Function(bool)? onLoginCallback})
       : super(LoginRoute.name,
             path: '/login',
             args: LoginRouteArgs(key: key, onLoginCallback: onLoginCallback));
@@ -121,11 +122,11 @@ class LoginRoute extends _i11.PageRouteInfo<LoginRouteArgs> {
 }
 
 class LoginRouteArgs {
-  const LoginRouteArgs({this.key, required this.onLoginCallback});
+  const LoginRouteArgs({this.key, this.onLoginCallback});
 
   final _i12.Key? key;
 
-  final dynamic Function(bool) onLoginCallback;
+  final dynamic Function(bool)? onLoginCallback;
 
   @override
   String toString() {

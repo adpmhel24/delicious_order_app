@@ -1,11 +1,5 @@
 import 'dart:io';
-
-import 'package:delicious_ordering_app/utils/constant.dart';
-import 'package:delicious_ordering_app/utils/size_config.dart';
-import 'package:delicious_ordering_app/widget/custom_text_field.dart';
-import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/brgy_modal_selection.dart';
-import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/city_municipality_modal_selection.dart';
-import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/province_modal_selection.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +11,13 @@ import '/global_bloc/customer_bloc/bloc.dart';
 import '/widget/custom_choices_modal.dart';
 import '/data/repositories/repositories.dart';
 import './bloc/bloc.dart';
+import '/utils/constant.dart';
+import '/utils/size_config.dart';
+import '/widget/custom_text_field.dart';
+import '/widget/custom_warning_dialog.dart';
+import '/widget/ph_location_modal_widgets/brgy_modal_selection.dart';
+import '/widget/ph_location_modal_widgets/city_municipality_modal_selection.dart';
+import '/widget/ph_location_modal_widgets/province_modal_selection.dart';
 
 class CustomerSelectionScreen extends StatefulWidget {
   const CustomerSelectionScreen({Key? key}) : super(key: key);
@@ -160,26 +161,189 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
                 height: 15.h,
               ),
               provinceModalSelection(
-                context: context,
-                phLocationRepo: _phLocationRepo,
-                provinceController: _provinceController,
-              ),
+                  context: context,
+                  phLocationRepo: _phLocationRepo,
+                  provinceController: _provinceController,
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: context
+                                .watch<OrderCustDetailsBloc>()
+                                .state
+                                .custCode
+                                .valid
+                            ? () {
+                                customWarningDialog(
+                                  context: context,
+                                  message:
+                                      "Are you sure you want to update customer's Province?",
+                                  onPositiveClick: () async {
+                                    try {
+                                      String message =
+                                          await _custRepo.updateCustomer(
+                                        customerId:
+                                            int.parse(state.customerId.value),
+                                        data: {
+                                          "province": _provinceController.text
+                                        },
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(message),
+                                          ),
+                                        );
+                                    } on HttpException catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(e.message),
+                                          ),
+                                        );
+                                    }
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              }
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _provinceController.clear();
+                          _phLocationRepo.selectedProvinceCode.clear();
+                        },
+                      ),
+                    ],
+                  )),
               SizedBox(
                 height: 15.h,
               ),
               cityMunicipalityModalSelection(
-                context: context,
-                cityMunicipalityController: _cityMunicipalityController,
-                phLocationRepo: _phLocationRepo,
-              ),
+                  context: context,
+                  cityMunicipalityController: _cityMunicipalityController,
+                  phLocationRepo: _phLocationRepo,
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: context
+                                .watch<OrderCustDetailsBloc>()
+                                .state
+                                .custCode
+                                .valid
+                            ? () {
+                                customWarningDialog(
+                                  context: context,
+                                  message:
+                                      "Are you sure you want to customer's City or Municipality?",
+                                  onPositiveClick: () async {
+                                    try {
+                                      String message =
+                                          await _custRepo.updateCustomer(
+                                        customerId:
+                                            int.parse(state.customerId.value),
+                                        data: {
+                                          "city_municipality":
+                                              _cityMunicipalityController.text
+                                        },
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(message),
+                                          ),
+                                        );
+                                    } on HttpException catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(e.message),
+                                          ),
+                                        );
+                                    }
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              }
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _cityMunicipalityController.clear();
+                          _phLocationRepo.selectedCityMunicipalityCode = '';
+                        },
+                      ),
+                    ],
+                  )),
               SizedBox(
                 height: 15.h,
               ),
               brgyModalSelection(
-                context: context,
-                phLocationRepo: _phLocationRepo,
-                brgyController: _brgyController,
-              ),
+                  context: context,
+                  phLocationRepo: _phLocationRepo,
+                  brgyController: _brgyController,
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: context
+                                .watch<OrderCustDetailsBloc>()
+                                .state
+                                .custCode
+                                .valid
+                            ? () {
+                                customWarningDialog(
+                                  context: context,
+                                  message:
+                                      "Are you sure you want to customer's Barangay?",
+                                  onPositiveClick: () async {
+                                    try {
+                                      String message =
+                                          await _custRepo.updateCustomer(
+                                        customerId:
+                                            int.parse(state.customerId.value),
+                                        data: {"brgy": _brgyController.text},
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(message),
+                                          ),
+                                        );
+                                    } on HttpException catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(e.message),
+                                          ),
+                                        );
+                                    }
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              }
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _brgyController.clear();
+                        },
+                      ),
+                    ],
+                  )),
               SizedBox(
                 height: 15.h,
               ),
@@ -510,30 +674,38 @@ customerContactNumberField({
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: state.contactNumber.valid
-                  ? () async {
-                      try {
-                        String message = await customerRepo.updateCustomer(
-                          customerId: int.parse(state.customerId.value),
-                          data: {
-                            "contact_number": contactNumberController.text
-                          },
-                        );
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(message),
-                            ),
-                          );
-                      } on HttpException catch (e) {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(e.message),
-                            ),
-                          );
-                      }
+                  ? () {
+                      customWarningDialog(
+                        context: context,
+                        message:
+                            "Are you sure you want to update customer's Contact Number?",
+                        onPositiveClick: () async {
+                          try {
+                            String message = await customerRepo.updateCustomer(
+                              customerId: int.parse(state.customerId.value),
+                              data: {
+                                "contact_number": contactNumberController.text
+                              },
+                            );
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(message),
+                                ),
+                              );
+                          } on HttpException catch (e) {
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(e.message),
+                                ),
+                              );
+                          }
+                          AutoRouter.of(context).pop();
+                        },
+                      );
                     }
                   : null,
             ),
@@ -584,27 +756,39 @@ customerAddressField({
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: state.address.valid
-                    ? () async {
-                        try {
-                          String message = await customerRepo.updateCustomer(
-                              customerId: int.parse(state.customerId.value),
-                              data: {"address": addressController.text});
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(message),
-                              ),
-                            );
-                        } on HttpException catch (e) {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(e.message),
-                              ),
-                            );
-                        }
+                    ? () {
+                        customWarningDialog(
+                          context: context,
+                          message:
+                              "Are you sure you want to update customer's Street Address?",
+                          onPositiveClick: () async {
+                            try {
+                              String message = await customerRepo
+                                  .updateCustomer(
+                                      customerId:
+                                          int.parse(state.customerId.value),
+                                      data: {
+                                    "address": addressController.text
+                                  });
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  SnackBar(
+                                    content: Text(message),
+                                  ),
+                                );
+                            } on HttpException catch (e) {
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.message),
+                                  ),
+                                );
+                            }
+                            AutoRouter.of(context).pop();
+                          },
+                        );
                       }
                     : null,
               ),

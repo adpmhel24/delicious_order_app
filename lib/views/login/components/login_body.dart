@@ -30,12 +30,15 @@ class LoginBody extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(height: 50.h),
-                    SizedBox(
-                      height: 200.h,
-                      width: 300.w,
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        fit: BoxFit.fitWidth,
+                    AspectRatio(
+                      aspectRatio: 4 / 2,
+                      child: SizedBox(
+                        height: 200.h,
+                        width: 300.w,
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
                     ),
                     SizedBox(height: 18.h),

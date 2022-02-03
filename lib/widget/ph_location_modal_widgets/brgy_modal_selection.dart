@@ -16,6 +16,7 @@ brgyModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
   required TextEditingController brgyController,
+  Widget? suffixIcon,
 }) {
   var heightSized = MediaQuery.of(context).size.height;
   return CustomFieldModalChoices(
@@ -25,6 +26,7 @@ brgyModalSelection({
       context.read<BrgyBloc>().add(FetchBrgyFromApi());
       showMaterialModalBottomSheet(
         context: context,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10.r),
@@ -65,28 +67,35 @@ brgyModalSelection({
                         height: 10.h,
                       ),
                       Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: state.brgys.length,
-                          itemBuilder: (_, index) {
-                            return ListTile(
-                              title: Text(state.brgys[index].name),
-                              selectedColor: Constant.onSelectedColor,
-                              selected: brgyController.text ==
-                                  state.brgys[index].name,
-                              onTap: () {
-                                brgyController.text = state.brgys[index].name;
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await Future.delayed(
+                                const Duration(milliseconds: 200));
+                            context.read<BrgyBloc>().add(FetchBrgyFromApi());
+                          },
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: state.brgys.length,
+                            itemBuilder: (_, index) {
+                              return ListTile(
+                                title: Text(state.brgys[index].name),
+                                selectedColor: Constant.onSelectedColor,
+                                selected: brgyController.text ==
+                                    state.brgys[index].name,
+                                onTap: () {
+                                  brgyController.text = state.brgys[index].name;
 
-                                Navigator.of(context).pop();
-                              },
-                            );
-                          },
-                          separatorBuilder: (_, index) {
-                            return const Divider(
-                              thickness: 1,
-                              color: Color(0xFFBDBDBD),
-                            );
-                          },
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                            separatorBuilder: (_, index) {
+                              return const Divider(
+                                thickness: 1,
+                                color: Color(0xFFBDBDBD),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -112,23 +121,6 @@ brgyModalSelection({
       );
     },
     prefixIcon: const Icon(LineIcons.building),
-    suffixIcon: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: () async {
-            context.read<BrgyBloc>().add(FetchBrgyFromApi());
-            brgyController.clear();
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            brgyController.clear();
-          },
-        ),
-      ],
-    ),
+    suffixIcon: suffixIcon,
   );
 }

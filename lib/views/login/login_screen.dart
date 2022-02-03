@@ -11,10 +11,9 @@ import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_error_dialog.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key, required this.onLoginCallback})
-      : super(key: key);
+  const LoginScreen({Key? key, this.onLoginCallback}) : super(key: key);
 
-  final Function(bool loggedIn) onLoginCallback;
+  final Function(bool loggedIn)? onLoginCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class LoginScreen extends StatelessWidget {
             builder: (_, state) => BlocListener<LoginBloc, LoginState>(
               listener: (context, state) {
                 if (state.status.isSubmissionSuccess) {
-                  onLoginCallback.call(true);
+                  onLoginCallback?.call(true);
                 } else if (state.status.isSubmissionFailure) {
                   customErrorDialog(context, state.message);
                 } else if (state.status.isSubmissionInProgress) {
