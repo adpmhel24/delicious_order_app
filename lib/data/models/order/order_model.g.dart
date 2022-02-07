@@ -16,13 +16,13 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
       paymentStatus: json['payment_status'] as int?,
       transtype: json['transtype'] as String?,
       doctotal: (json['doctotal'] as num).toDouble(),
-      gross: (json['gross'] as num?)?.toDouble(),
+      gross: (json['gross'] as num?)?.toDouble() ?? 0.00,
       delfee: (json['delfee'] as num).toDouble(),
-      tenderamt: (json['tenderamt'] as num?)?.toDouble(),
+      tenderamt: (json['tenderamt'] as num?)?.toDouble() ?? 0.00,
       deliveryDate: DateTime.parse(json['delivery_date'] as String),
       address: json['address'] as String?,
       disctype: json['disctype'] as String?,
-      discprcnt: (json['discprcnt'] as num?)?.toDouble(),
+      discprcnt: (json['discprcnt'] as num?)?.toDouble() ?? 0.00,
       otherfee: (json['otherfee'] as num?)?.toDouble() ?? 0.00,
       rows: (json['rows'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)

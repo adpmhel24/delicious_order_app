@@ -1,9 +1,19 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../models.dart';
 
 part 'customer_model.g.dart';
 
 @JsonSerializable()
 class CustomerModel {
+  static List<CustomerAddressModel?> customerAddressFromJson(
+      List<dynamic> data) {
+    if (data.isNotEmpty) {
+      return data.map((e) => CustomerAddressModel.fromJson(e!)).toList();
+    } else {
+      return [];
+    }
+  }
+
   int? id;
   late String code;
   late String name;
@@ -39,6 +49,9 @@ class CustomerModel {
   @JsonKey(name: "contact_number")
   String? contactNumber;
 
+  @JsonKey(fromJson: customerAddressFromJson)
+  List<CustomerAddressModel?> details;
+
   CustomerModel({
     this.id,
     required this.code,
@@ -55,6 +68,7 @@ class CustomerModel {
     this.isConfidential,
     this.isActive,
     this.contactNumber,
+    required this.details,
   });
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) =>

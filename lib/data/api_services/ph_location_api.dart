@@ -1,4 +1,4 @@
-// https://psgc.gitlab.io/api/provinces/
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 
@@ -12,7 +12,7 @@ class PhLocationApiService {
     try {
       _response = await _dio.get(path);
     } on DioError catch (e) {
-      throw Exception(e.message);
+      throw HttpException(e.message);
     }
     return _response;
   }

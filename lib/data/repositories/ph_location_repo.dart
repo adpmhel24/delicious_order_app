@@ -112,12 +112,9 @@ class PhLocationRepo {
     if (selectedCityMunicipalityCode.isNotEmpty) {
       path =
           '/cities-municipalities/$selectedCityMunicipalityCode/barangays.json';
-    } else if (selectedProvinceCode.isNotEmpty) {
-      path = "/provinces/${selectedProvinceCode["code"]}/barangays.json";
     } else {
-      path = '/barangays.json';
+      path = "/provinces/${selectedProvinceCode["code"]}/barangays.json";
     }
-
     Response response;
     try {
       response = await _phApiService.fetchData(path);

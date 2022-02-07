@@ -1,0 +1,4 @@
+#Sun Feb 06 20:55:07 SGT 2022
+base.0=D\:\\Development\\flutter\\delicious_ordering_app\\android\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

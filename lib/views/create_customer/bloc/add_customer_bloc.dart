@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:delicious_ordering_app/data/models/models.dart';
+
 import '/data/repositories/repositories.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import 'bloc.dart';
 import 'text_field_validator.dart';
+import 'package:uuid/uuid.dart';
 
 class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
   final CustomerRepo _customerRepo = AppRepo.customerRepository;
@@ -17,9 +20,9 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
     on<ChangeCustomerType>(onCustomerTypeChange);
     on<ChangeCustAddress>(onChangeAddress);
     on<ChangeCustContactNumber>(onChangeContactNumber);
-    on<ChangeProvinceCityMunicipalityBrgy>(
-        onChangeProvinceCityMunicipalityBrgy);
+    on<AddCustomerAddressEvent>(onChangeProvinceCityMunicipalityBrgy);
     on<PostNewCustomer>(onSubmit);
+    on<DeleteAddressEvent>(onDeleteAddressEvent);
   }
 
   void onCustomerCodeChange(
@@ -33,13 +36,13 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
           state.firstName,
           state.lastName,
           state.contactNumber,
-          state.address,
         ])));
   }
 
   void onCustomerFirstNameChange(
       ChangeFirstName event, Emitter<AddCustomerState> emit) {
     final firstName = TextField.dirty(event.firstName);
+
     emit(
       state.copyWith(
         firstName: firstName,
@@ -48,7 +51,6 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
           state.lastName,
           state.code,
           state.custType,
-          state.address,
           state.contactNumber,
         ]),
       ),
@@ -66,7 +68,6 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
           state.firstName,
           state.code,
           state.custType,
-          state.address,
           state.contactNumber,
         ]),
       ),
@@ -84,7 +85,26 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
           state.firstName,
           state.lastName,
           state.code,
-          state.address,
+          state.contactNumber,
+        ]),
+      ),
+    );
+  }
+
+  onDeleteAddressEvent(
+      DeleteAddressEvent event, Emitter<AddCustomerState> emit) {
+    List<CustomerAddressModel> _details = state.details;
+
+    _details.removeAt(event.index);
+
+    emit(
+      state.copyWith(
+        details: _details,
+        status: Formz.validate([
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
           state.contactNumber,
         ]),
       ),
@@ -92,22 +112,33 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
   }
 
   void onChangeProvinceCityMunicipalityBrgy(
-      ChangeProvinceCityMunicipalityBrgy event,
-      Emitter<AddCustomerState> emit) {
-    final province = TextField.dirty(event.province.text);
-    final cityMunicipality = TextField.dirty(event.cityMunicipality.text);
-    final brgy = TextField.dirty(event.brgy.text);
+      AddCustomerAddressEvent event, Emitter<AddCustomerState> emit) {
+    var uuid = const Uuid();
+    List<CustomerAddressModel> _details = [];
+    if (state.details.isEmpty) {
+      _details.add(CustomerAddressModel.fromJson({
+        "uid": uuid.v1(),
+        "street_address": event.address,
+        "brgy": event.brgy,
+        "city_municipality": event.cityMunicipality
+      }));
+    } else {
+      _details.add(CustomerAddressModel.fromJson({
+        "uid": uuid.v1(),
+        "street_address": event.address,
+        "brgy": event.brgy,
+        "city_municipality": event.cityMunicipality
+      }));
+      _details.addAll(state.details);
+    }
     emit(
       state.copyWith(
-        province: province,
-        cityMunicipality: cityMunicipality,
-        brgy: brgy,
+        details: _details,
         status: Formz.validate([
           state.custType,
           state.firstName,
           state.lastName,
           state.code,
-          state.address,
           state.contactNumber,
         ]),
       ),
@@ -136,7 +167,6 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
         contactNumber: contactNumber,
         status: Formz.validate([
           contactNumber,
-          state.address,
           state.custType,
           state.firstName,
           state.lastName,
@@ -155,13 +185,13 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
       "cust_type": int.parse(state.custType.value),
       "address": state.address.value,
       "contact_number": state.contactNumber.value,
-      "province": state.province.value,
-      "city_municipality": state.cityMunicipality.value,
-      "brgy": state.brgy.value,
     };
 
     try {
-      var message = await _customerRepo.addNewCustomer({"header": data});
+      var message = await _customerRepo.addNewCustomer({
+        "header": data,
+        "details": state.details.map((e) => e.toJson()).toList(),
+      });
       emit(state.copyWith(
           status: FormzStatus.submissionSuccess, message: message));
     } on HttpException catch (e) {

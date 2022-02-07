@@ -8,6 +8,8 @@ abstract class CityMunicipalityEvent extends Equatable {
 
 class FetchCityMunicipalityFromApi extends CityMunicipalityEvent {}
 
+class FetchCityMunicipalityFromLocal extends CityMunicipalityEvent {}
+
 class SearchCityMunicipalityByKeyword extends CityMunicipalityEvent {
   final String keyword;
 

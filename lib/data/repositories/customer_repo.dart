@@ -39,7 +39,7 @@ class CustomerRepo {
         return response.data['message'];
       }
     } on HttpException catch (e) {
-      throw Exception(e.message);
+      throw HttpException(e.message);
     }
     return message;
   }

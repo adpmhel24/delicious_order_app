@@ -22,7 +22,9 @@ cityMunicipalityModalSelection({
     controller: cityMunicipalityController,
     labelText: 'City / Municipality',
     onTap: () {
-      context.read<CityMunicipalityBloc>().add(FetchCityMunicipalityFromApi());
+      context
+          .read<CityMunicipalityBloc>()
+          .add(FetchCityMunicipalityFromLocal());
       showMaterialModalBottomSheet(
         enableDrag: false,
         context: context,

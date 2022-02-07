@@ -32,6 +32,7 @@ dependencies:
   auto_route: ^3.2.2
   auto_route_generator: ^3.0.4
   badges: ^2.0.2
+  basic_utils: ^4.0.1
   bloc_concurrency: ^0.2.0
   bottom_navy_bar: ^6.0.0
   equatable: ^2.0.3
@@ -55,7 +56,7 @@ dependencies:
   line_icons: ^2.0.1
   modal_bottom_sheet: ^2.0.0
   shared_preferences: ^2.0.12
-  basic_utils: ^4.0.1
+  uuid: 3.0.5
   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:delicious_ordering_app/utils/constant.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +7,7 @@ import 'package:formz/formz.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/data/repositories/repositories.dart';
+import '/utils/constant.dart';
 import '/router/router.gr.dart';
 import '/views/create_customer/bloc/bloc.dart';
 import '/widget/custom_choices_modal.dart';
@@ -14,9 +15,6 @@ import '/widget/custom_error_dialog.dart';
 import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_success_dialog.dart';
 import '/widget/custom_text_field.dart';
-import 'brgy_modal_selection.dart';
-import 'city_municipality_modal_selection.dart';
-import 'province_modal_selection.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -58,6 +56,7 @@ class _BodyState extends State<Body> {
   Widget build(BuildContext context) {
     CustomerTypeRepo _custTypeRepo = AppRepo.customerTypeRepository;
     return SingleChildScrollView(
+      physics: const ScrollPhysics(),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.w),
         child: Padding(
@@ -81,6 +80,7 @@ class _BodyState extends State<Body> {
             },
             builder: (context, state) {
               return Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
@@ -104,31 +104,125 @@ class _BodyState extends State<Body> {
                   SizedBox(height: 15.w),
                   _customerContactNumber(context, state),
                   SizedBox(height: 15.w),
-                  _customerAddressField(context, state),
-                  SizedBox(height: 15.w),
-                  brgyModalSelection(
-                    context: context,
-                    provinceController: _provinceController,
-                    cityMunicipalityController: _cityMunicipalityController,
-                    brgyController: _brgyController,
-                    phLocationRepo: _phLocationRepo,
+                  const Divider(
+                    thickness: 1,
+                    color: Color(0xFFBDBDBD),
                   ),
-                  SizedBox(height: 15.w),
-                  cityMunicipalityModalSelection(
-                    context: context,
-                    provinceController: _provinceController,
-                    cityMunicipalityController: _cityMunicipalityController,
-                    brgyController: _brgyController,
-                    phLocationRepo: _phLocationRepo,
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: state.details.length,
+                      itemBuilder: (_, index) {
+                        // return ListTile(
+                        //   title: const Text("Address"),
+                        //   subtitle: Column(
+                        //     children: [
+                        //       Text(state.details[index]['brgy']),
+                        //       Text(state.details[index]['city_municipality']),
+                        //     ],
+                        //   ),
+                        // );
+                        return Dismissible(
+                          key: Key(state.details[index].uid ?? ''),
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            color: Colors.red,
+                            child: const Icon(Icons.delete),
+                          ),
+                          onDismissed: (direction) {
+                            context
+                                .read<AddCustomerBloc>()
+                                .add(DeleteAddressEvent(index));
+                          },
+                          direction: DismissDirection.endToStart,
+                          child: Card(
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Wrap(
+                                      children: [
+                                        Text(
+                                          'Street Address: ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1!
+                                              .copyWith(
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(state
+                                                .details[index].streetAddress ??
+                                            ''),
+                                      ],
+                                    ),
+                                    Wrap(
+                                      children: [
+                                        Text(
+                                          'Barangay: ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1!
+                                              .copyWith(
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(state.details[index].brgy ?? ''),
+                                      ],
+                                    ),
+                                    Wrap(
+                                      children: [
+                                        Text(
+                                          'City / Municipality: ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1!
+                                              .copyWith(
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(state.details[index]
+                                                .cityMunicipality ??
+                                            ''),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (_, index) {
+                        return const Divider(
+                          thickness: 1,
+                          color: Color(0xFFBDBDBD),
+                        );
+                      },
+                    ),
                   ),
-                  SizedBox(height: 15.w),
-                  provinceModalSelection(
-                    context: context,
-                    provinceController: _provinceController,
-                    cityMunicipalityController: _cityMunicipalityController,
-                    brgyController: _brgyController,
-                    phLocationRepo: _phLocationRepo,
-                  ),
+                  // brgyModalSelection(
+                  //   context: context,
+                  //   provinceController: _provinceController,
+                  //   cityMunicipalityController: _cityMunicipalityController,
+                  //   brgyController: _brgyController,
+                  //   phLocationRepo: _phLocationRepo,
+                  // ),
+                  // SizedBox(height: 15.w),
+                  // cityMunicipalityModalSelection(
+                  //   context: context,
+                  //   provinceController: _provinceController,
+                  //   cityMunicipalityController: _cityMunicipalityController,
+                  //   brgyController: _brgyController,
+                  //   phLocationRepo: _phLocationRepo,
+                  // ),
                 ],
               );
             },
@@ -171,35 +265,35 @@ class _BodyState extends State<Body> {
     );
   }
 
-  CustomTextField _customerAddressField(
-      BuildContext context, AddCustomerState state) {
-    return CustomTextField(
-      autovalidateMode: AutovalidateMode.always,
-      textInputAction: TextInputAction.newline,
-      minLines: 3,
-      maxLines: 6,
-      controller: _custAddressController,
-      labelText: 'Street Address',
-      prefixIcon: const Icon(Icons.home),
-      suffixIcon: IconButton(
-        onPressed: () {
-          _custAddressController.clear();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeCustAddress(_custAddressController.text));
-        },
-        icon: const Icon(Icons.close),
-      ),
-      validator: (_) {
-        return (state.address.invalid) ? "Required field!" : null;
-      },
-      onChanged: (value) {
-        context
-            .read<AddCustomerBloc>()
-            .add(ChangeCustAddress(_custAddressController.text));
-      },
-    );
-  }
+  // CustomTextField _customerAddressField(
+  //     BuildContext context, AddCustomerState state) {
+  //   return CustomTextField(
+  //     autovalidateMode: AutovalidateMode.always,
+  //     textInputAction: TextInputAction.newline,
+  //     minLines: 3,
+  //     maxLines: 6,
+  //     controller: _custAddressController,
+  //     labelText: 'Street Address',
+  //     prefixIcon: const Icon(Icons.home),
+  //     suffixIcon: IconButton(
+  //       onPressed: () {
+  //         _custAddressController.clear();
+  //         context
+  //             .read<AddCustomerBloc>()
+  //             .add(ChangeCustAddress(_custAddressController.text));
+  //       },
+  //       icon: const Icon(Icons.close),
+  //     ),
+  //     validator: (_) {
+  //       return (state.address.invalid) ? "Required field!" : null;
+  //     },
+  //     onChanged: (value) {
+  //       context
+  //           .read<AddCustomerBloc>()
+  //           .add(ChangeCustAddress(_custAddressController.text));
+  //     },
+  //   );
+  // }
 
   CustomTextField _customerFirstNameField(
       BuildContext context, AddCustomerState state) {
@@ -222,11 +316,14 @@ class _BodyState extends State<Body> {
         return (state.firstName.invalid) ? "Required field!" : null;
       },
       onChanged: (value) {
-        _firstNameController.value = TextEditingValue(
-          // text: StringUtils.capitalize(value[0]),
-          text: value[0].toUpperCase() + value.substring(1),
-          selection: TextSelection.collapsed(offset: value.length),
-        );
+        if (value.isNotEmpty) {
+          _firstNameController.value = TextEditingValue(
+            // text: StringUtils.capitalize(value[0]),
+            text: value[0].toUpperCase() + value.substring(1),
+            selection: TextSelection.collapsed(offset: value.length),
+          );
+        }
+
         context
             .read<AddCustomerBloc>()
             .add(ChangeFirstName(_firstNameController.text));
@@ -255,10 +352,12 @@ class _BodyState extends State<Body> {
         return (state.lastName.invalid) ? "Required field!" : null;
       },
       onChanged: (value) {
-        _lastNameController.value = TextEditingValue(
-          text: value[0].toUpperCase() + value.substring(1),
-          selection: TextSelection.collapsed(offset: value.length),
-        );
+        if (value.isNotEmpty) {
+          _lastNameController.value = TextEditingValue(
+            text: value[0].toUpperCase() + value.substring(1),
+            selection: TextSelection.collapsed(offset: value.length),
+          );
+        }
 
         context
             .read<AddCustomerBloc>()

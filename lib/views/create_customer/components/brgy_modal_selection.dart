@@ -8,7 +8,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/global_bloc/ph_location_bloc/brgy_bloc/bloc.dart';
 import '/data/repositories/repositories.dart';
-import '/views/create_customer/bloc/bloc.dart';
+// import '/views/create_customer/bloc/bloc.dart';
 import '/widget/custom_choices_modal.dart';
 import '/widget/custom_error_dialog.dart';
 import '/widget/custom_text_field.dart';
@@ -16,8 +16,6 @@ import '/widget/custom_text_field.dart';
 brgyModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
-  required TextEditingController provinceController,
-  required TextEditingController cityMunicipalityController,
   required TextEditingController brgyController,
 }) {
   var heightSized = MediaQuery.of(context).size.height;
@@ -87,15 +85,6 @@ brgyModalSelection({
                                 onTap: () {
                                   brgyController.text = state.brgys[index].name;
 
-                                  context.read<AddCustomerBloc>().add(
-                                        ChangeProvinceCityMunicipalityBrgy(
-                                          province: provinceController,
-                                          cityMunicipality:
-                                              cityMunicipalityController,
-                                          brgy: brgyController,
-                                        ),
-                                      );
-
                                   Navigator.of(context).pop();
                                 },
                               );
@@ -146,13 +135,6 @@ brgyModalSelection({
           icon: const Icon(Icons.close),
           onPressed: () {
             brgyController.clear();
-            context.read<AddCustomerBloc>().add(
-                  ChangeProvinceCityMunicipalityBrgy(
-                    province: provinceController,
-                    cityMunicipality: cityMunicipalityController,
-                    brgy: brgyController,
-                  ),
-                );
           },
         ),
       ],

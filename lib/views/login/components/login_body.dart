@@ -28,8 +28,9 @@ class LoginBody extends StatelessWidget {
                   bottom: MediaQuery.of(context).viewPadding.bottom.h,
                 ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 50.h),
+                    SizedBox(height: 100.h),
                     AspectRatio(
                       aspectRatio: 4 / 2,
                       child: SizedBox(

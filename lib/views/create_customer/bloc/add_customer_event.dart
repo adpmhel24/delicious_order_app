@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 
 abstract class AddCustomerEvent extends Equatable {
   const AddCustomerEvent();
@@ -57,19 +56,26 @@ class ChangeLastName extends AddCustomerEvent {
 //   List<Object> get props => [brgy];
 // }
 
-class ChangeProvinceCityMunicipalityBrgy extends AddCustomerEvent {
-  final TextEditingController province;
-  final TextEditingController cityMunicipality;
-  final TextEditingController brgy;
+class AddCustomerAddressEvent extends AddCustomerEvent {
+  final String address;
+  final String brgy;
+  final String cityMunicipality;
 
-  const ChangeProvinceCityMunicipalityBrgy({
-    required this.province,
-    required this.cityMunicipality,
+  const AddCustomerAddressEvent({
+    required this.address,
     required this.brgy,
+    required this.cityMunicipality,
   });
 
   @override
-  List<Object> get props => [province, cityMunicipality, brgy];
+  List<Object> get props => [cityMunicipality, brgy];
+}
+
+class DeleteAddressEvent extends AddCustomerEvent {
+  final int index;
+  const DeleteAddressEvent(this.index);
+  @override
+  List<Object> get props => [index];
 }
 
 class ChangeCustomerType extends AddCustomerEvent {

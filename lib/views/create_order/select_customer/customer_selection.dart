@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:delicious_ordering_app/data/models/customer_address/customer_address_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,9 +16,6 @@ import '/utils/constant.dart';
 import '/utils/size_config.dart';
 import '/widget/custom_text_field.dart';
 import '/widget/custom_warning_dialog.dart';
-import '/widget/ph_location_modal_widgets/brgy_modal_selection.dart';
-import '/widget/ph_location_modal_widgets/city_municipality_modal_selection.dart';
-import '/widget/ph_location_modal_widgets/province_modal_selection.dart';
 
 class CustomerSelectionScreen extends StatefulWidget {
   const CustomerSelectionScreen({Key? key}) : super(key: key);
@@ -39,6 +37,8 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
       TextEditingController();
   final TextEditingController _brgyController = TextEditingController();
   final TextEditingController _custTypeController = TextEditingController();
+
+  late List<CustomerAddressModel?> _addresses = [];
 
   @override
   void initState() {
@@ -90,10 +90,21 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
     super.dispose();
   }
 
+  void addCustomerAddresses(List<CustomerAddressModel?> custAdresses) {
+    setState(() {
+      _addresses = custAdresses;
+    });
+  }
+
+  void clearAddress() {
+    setState(() {
+      _addresses = [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     CustomerRepo _custRepo = AppRepo.customerRepository;
-    PhLocationRepo _phLocationRepo = AppRepo.phLocationRepository;
     return BlocBuilder<OrderCustDetailsBloc, OrderCustDetailsState>(
         builder: (context, state) {
       return SingleChildScrollView(
@@ -128,6 +139,8 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
                 provinceController: _provinceController,
                 cityMunicipalityController: _cityMunicipalityController,
                 brgyController: _brgyController,
+                addAddressesFunc: addCustomerAddresses,
+                clearAddress: clearAddress,
               ),
               SizedBox(
                 height: 15.h,
@@ -160,197 +173,11 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
               SizedBox(
                 height: 15.h,
               ),
-              provinceModalSelection(
-                  context: context,
-                  phLocationRepo: _phLocationRepo,
-                  provinceController: _provinceController,
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: context
-                                .watch<OrderCustDetailsBloc>()
-                                .state
-                                .custCode
-                                .valid
-                            ? () {
-                                customWarningDialog(
-                                  context: context,
-                                  message:
-                                      "Are you sure you want to update customer's Province?",
-                                  onPositiveClick: () async {
-                                    try {
-                                      String message =
-                                          await _custRepo.updateCustomer(
-                                        customerId:
-                                            int.parse(state.customerId.value),
-                                        data: {
-                                          "province": _provinceController.text
-                                        },
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(message),
-                                          ),
-                                        );
-                                    } on HttpException catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(e.message),
-                                          ),
-                                        );
-                                    }
-                                    Navigator.of(context).pop();
-                                  },
-                                );
-                              }
-                            : null,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _provinceController.clear();
-                          _phLocationRepo.selectedProvinceCode.clear();
-                        },
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                height: 15.h,
-              ),
-              cityMunicipalityModalSelection(
-                  context: context,
-                  cityMunicipalityController: _cityMunicipalityController,
-                  phLocationRepo: _phLocationRepo,
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: context
-                                .watch<OrderCustDetailsBloc>()
-                                .state
-                                .custCode
-                                .valid
-                            ? () {
-                                customWarningDialog(
-                                  context: context,
-                                  message:
-                                      "Are you sure you want to customer's City or Municipality?",
-                                  onPositiveClick: () async {
-                                    try {
-                                      String message =
-                                          await _custRepo.updateCustomer(
-                                        customerId:
-                                            int.parse(state.customerId.value),
-                                        data: {
-                                          "city_municipality":
-                                              _cityMunicipalityController.text
-                                        },
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(message),
-                                          ),
-                                        );
-                                    } on HttpException catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(e.message),
-                                          ),
-                                        );
-                                    }
-                                    Navigator.of(context).pop();
-                                  },
-                                );
-                              }
-                            : null,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _cityMunicipalityController.clear();
-                          _phLocationRepo.selectedCityMunicipalityCode = '';
-                        },
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                height: 15.h,
-              ),
-              brgyModalSelection(
-                  context: context,
-                  phLocationRepo: _phLocationRepo,
-                  brgyController: _brgyController,
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: context
-                                .watch<OrderCustDetailsBloc>()
-                                .state
-                                .custCode
-                                .valid
-                            ? () {
-                                customWarningDialog(
-                                  context: context,
-                                  message:
-                                      "Are you sure you want to customer's Barangay?",
-                                  onPositiveClick: () async {
-                                    try {
-                                      String message =
-                                          await _custRepo.updateCustomer(
-                                        customerId:
-                                            int.parse(state.customerId.value),
-                                        data: {"brgy": _brgyController.text},
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(message),
-                                          ),
-                                        );
-                                    } on HttpException catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(e.message),
-                                          ),
-                                        );
-                                    }
-                                    Navigator.of(context).pop();
-                                  },
-                                );
-                              }
-                            : null,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _brgyController.clear();
-                        },
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                height: 15.h,
-              ),
               customerAddressField(
                 context: context,
                 addressController: _addressController,
                 customerRepo: _custRepo,
+                addresses: _addresses,
               ),
             ],
           ),
@@ -488,6 +315,8 @@ customerNameField({
   required TextEditingController provinceController,
   required TextEditingController cityMunicipalityController,
   required TextEditingController brgyController,
+  required Function addAddressesFunc,
+  required Function clearAddress,
 }) {
   return CustomFieldModalChoices(
     controller: custNameController,
@@ -551,18 +380,8 @@ customerNameField({
                                 contactNumberController.text =
                                     state.customers[index].contactNumber ?? '';
 
-                                addressController.text =
-                                    state.customers[index].address ?? '';
-
-                                provinceController.text =
-                                    state.customers[index].province ?? '';
-
-                                cityMunicipalityController.text =
-                                    state.customers[index].cityMunicipality ??
-                                        '';
-
-                                brgyController.text =
-                                    state.customers[index].brgy ?? '';
+                                addAddressesFunc(
+                                    state.customers[index].details);
 
                                 context.read<OrderCustDetailsBloc>().add(
                                     ChangeCustCode(
@@ -572,9 +391,6 @@ customerNameField({
                                 context.read<OrderCustDetailsBloc>().add(
                                     ChangeContactNumber(
                                         contactNumberController));
-                                context
-                                    .read<OrderCustDetailsBloc>()
-                                    .add(ChangeAddress(addressController));
 
                                 Navigator.of(context).pop();
                               },
@@ -630,6 +446,7 @@ customerNameField({
             context
                 .read<OrderCustDetailsBloc>()
                 .add(ChangeAddress(addressController));
+            clearAddress();
           },
         ),
         IconButton(
@@ -639,6 +456,8 @@ customerNameField({
             custNameController.clear();
             contactNumberController.clear();
             addressController.clear();
+            clearAddress();
+
             context.read<OrderCustDetailsBloc>().add(
                 ChangeCustCode(customerId: null, custCode: custCodeController));
             context
@@ -737,6 +556,7 @@ customerAddressField({
   required BuildContext context,
   required TextEditingController addressController,
   required CustomerRepo customerRepo,
+  required List<CustomerAddressModel?> addresses,
 }) {
   return BlocBuilder<OrderCustDetailsBloc, OrderCustDetailsState>(
     buildWhen: (prevState, currState) => prevState.address != currState.address,
@@ -745,6 +565,13 @@ customerAddressField({
         autovalidateMode: AutovalidateMode.always,
         keyboardType: TextInputType.multiline,
         controller: addressController,
+        readOnly: true,
+        onTap: () {
+          getCustomerAddress(
+              context: context,
+              addressController: addressController,
+              addresses: addresses);
+        },
         minLines: 3,
         maxLines: 6,
         decoration: customInputDecoration(
@@ -845,5 +672,110 @@ customInputDecoration({
     prefixIcon: prefixIcon,
     suffixIcon: suffixIcon,
     contentPadding: EdgeInsets.symmetric(horizontal: 14.h, vertical: 16.w),
+  );
+}
+
+getCustomerAddress({
+  required BuildContext context,
+  required TextEditingController addressController,
+  required List<CustomerAddressModel?> addresses,
+}) {
+  showMaterialModalBottomSheet(
+    context: context,
+    enableDrag: false,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(10.r),
+        topRight: Radius.circular(10.r),
+      ),
+    ),
+    builder: (_) {
+      return SizedBox(
+        height: (MediaQuery.of(context).size.height * .5).h,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.separated(
+              itemBuilder: (_, index) {
+                return Card(
+                  child: InkWell(
+                    onTap: () {
+                      addressController.text =
+                          "${addresses[index]!.streetAddress} ,"
+                          "Brgy. ${addresses[index]!.brgy} ,"
+                          "${addresses[index]!.cityMunicipality}";
+                      AutoRouter.of(context).pop();
+                      context
+                          .read<OrderCustDetailsBloc>()
+                          .add(ChangeAddress(addressController));
+                    },
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Wrap(
+                              children: [
+                                Text(
+                                  'Street Address: ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1!
+                                      .copyWith(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                Text(addresses[index]!.streetAddress ?? ''),
+                              ],
+                            ),
+                            Wrap(
+                              children: [
+                                Text(
+                                  'Barangay: ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1!
+                                      .copyWith(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                Text(addresses[index]!.brgy ?? ''),
+                              ],
+                            ),
+                            Wrap(
+                              children: [
+                                Text(
+                                  'City / Municipality: ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1!
+                                      .copyWith(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                Text(addresses[index]!.cityMunicipality ?? ''),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              separatorBuilder: (_, index) {
+                return const Divider(
+                  thickness: 1,
+                  color: Color(0xFFBDBDBD),
+                );
+              },
+              itemCount: addresses.length),
+        ),
+      );
+    },
   );
 }
