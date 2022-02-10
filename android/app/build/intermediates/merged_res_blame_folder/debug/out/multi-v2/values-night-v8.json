@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\Development\\flutter\\delicious_ordering_app\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "outputFile": "F:\\flutter\\delicious_order_app\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
             "map": [
                 {
-                    "source": "D:\\Development\\flutter\\delicious_ordering_app\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "F:\\flutter\\delicious_order_app\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

@@ -12,6 +12,7 @@ class CustomFieldModalChoices extends StatelessWidget {
     final AutovalidateMode? autovalidateMode,
     final String? Function(String?)? validator,
     final Function()? onTap,
+    final Function(String)? onChanged,
   })  : _controller = controller,
         _labelText = labelText,
         _prefixIcon = prefixIcon,
@@ -19,6 +20,7 @@ class CustomFieldModalChoices extends StatelessWidget {
         _textInputAction = textInputAction,
         _autovalidateMode = autovalidateMode,
         _validator = validator,
+        _onChanged = onChanged,
         _onTap = onTap,
         super(key: key);
 
@@ -30,6 +32,7 @@ class CustomFieldModalChoices extends StatelessWidget {
   final AutovalidateMode? _autovalidateMode;
   final String? Function(String?)? _validator;
   final Function()? _onTap;
+  final Function(String)? _onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,7 @@ class CustomFieldModalChoices extends StatelessWidget {
       keyboardType: TextInputType.none,
       onTap: _onTap,
       controller: _controller,
+      onChanged: _onChanged,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),

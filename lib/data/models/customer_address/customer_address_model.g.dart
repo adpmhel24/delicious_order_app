@@ -13,6 +13,7 @@ CustomerAddressModel _$CustomerAddressModelFromJson(
       streetAddress: json['street_address'] as String?,
       cityMunicipality: json['city_municipality'] as String?,
       brgy: json['brgy'] as String?,
+      otherDetails: json['other_details'] as String?,
     );
 
 Map<String, dynamic> _$CustomerAddressModelToJson(
@@ -29,5 +30,6 @@ Map<String, dynamic> _$CustomerAddressModelToJson(
   val['street_address'] = instance.streetAddress;
   val['city_municipality'] = instance.cityMunicipality;
   val['brgy'] = instance.brgy;
+  val['other_details'] = instance.otherDetails;
   return val;
 }

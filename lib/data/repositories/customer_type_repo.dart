@@ -37,6 +37,22 @@ class CustomerTypeRepo {
     return _customerTypes;
   }
 
+  Future<String> addNewCustType(Map<String, dynamic> data) async {
+    Response response;
+    String message = 'Unknown error';
+    try {
+      response = await _customerAPI.addNewCustomerType(
+          token: _authRepository.currentUser.token, data: data);
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        message = response.data['message'];
+        _customerTypes.add(CustomerTypeModel.fromJson(response.data['data']));
+      }
+    } on HttpException catch (e) {
+      throw HttpException(e.message);
+    }
+    return message;
+  }
+
   ///Singleton factory
   static final CustomerTypeRepo _instance = CustomerTypeRepo._internal();
 

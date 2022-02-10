@@ -18,7 +18,7 @@ class CustomerAPI {
             "Authorization": "Bearer " + token,
           }));
     } on DioError catch (e) {
-      throw Exception(e.response!.data['message']);
+      throw HttpException(e.response!.data['message']);
     }
     return response;
   }
@@ -37,7 +37,7 @@ class CustomerAPI {
         ),
       );
     } on DioError catch (e) {
-      throw Exception(e.response!.data['message']);
+      throw HttpException(e.response!.data['message']);
     }
     return response;
   }
@@ -76,7 +76,48 @@ class CustomerAPI {
             "Content-Type": "application/json",
           }));
     } on DioError catch (e) {
-      throw Exception(e.response!.data['message']);
+      throw HttpException(e.response!.data['message']);
+    }
+    return response;
+  }
+
+  Future<Response> updateCustomerDetails({
+    required String token,
+    required String customerId,
+    required Map<String, dynamic> data,
+  }) async {
+    Response response;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Dio dio = DioSettings(prefs.getString("url")!).dio();
+    try {
+      response = await dio.post('/api/customer/details/new/$customerId',
+          data: data,
+          options: Options(headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+          }));
+    } on DioError catch (e) {
+      throw HttpException(e.response!.data['message']);
+    }
+    return response;
+  }
+
+  Future<Response> addNewCustomerType({
+    required String token,
+    required Map<String, dynamic> data,
+  }) async {
+    Response response;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Dio dio = DioSettings(prefs.getString("url")!).dio();
+    try {
+      response = await dio.post('/api/custtype/new',
+          data: data,
+          options: Options(headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+          }));
+    } on DioError catch (e) {
+      throw HttpException(e.response!.data['message']);
     }
     return response;
   }

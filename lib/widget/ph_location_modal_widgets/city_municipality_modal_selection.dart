@@ -15,12 +15,17 @@ cityMunicipalityModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
   required TextEditingController cityMunicipalityController,
+  String? labelText,
   Widget? suffixIcon,
+  AutovalidateMode? autovalidateMode,
+  String? Function(String?)? validator,
+  Function(String)? onChanged,
 }) {
   var heightSized = MediaQuery.of(context).size.height;
   return CustomFieldModalChoices(
     controller: cityMunicipalityController,
-    labelText: 'City / Municipality',
+    labelText: labelText ?? 'City / Municipality',
+    onChanged: onChanged,
     onTap: () {
       context
           .read<CityMunicipalityBloc>()
@@ -131,5 +136,6 @@ cityMunicipalityModalSelection({
     },
     prefixIcon: const Icon(LineIcons.city),
     suffixIcon: suffixIcon,
+    validator: validator,
   );
 }

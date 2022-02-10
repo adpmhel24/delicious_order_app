@@ -16,25 +16,16 @@ class CustomerAddressModel {
 
   String? brgy;
 
+  @JsonKey(name: "other_details")
+  String? otherDetails;
+
   CustomerAddressModel({
     this.uid = '',
     this.streetAddress,
     this.cityMunicipality,
     this.brgy,
+    this.otherDetails,
   });
-
-  CustomerAddressModel copyWith({
-    String? uid,
-    String? streetAddress,
-    String? cityMunicipality,
-    String? brgy,
-  }) {
-    return CustomerAddressModel(
-        uid: uid ?? this.uid,
-        streetAddress: streetAddress ?? this.streetAddress,
-        cityMunicipality: cityMunicipality ?? this.cityMunicipality,
-        brgy: brgy ?? this.brgy);
-  }
 
   factory CustomerAddressModel.fromJson(Map<String, dynamic> json) =>
       _$CustomerAddressModelFromJson(json);

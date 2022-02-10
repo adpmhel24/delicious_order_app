@@ -1,5 +1,6 @@
 import 'package:delicious_ordering_app/utils/size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,8 +10,11 @@ import 'router/router.gr.dart';
 import 'router/router_guard.dart';
 
 void main() {
-  // ignore: prefer_const_constructors
-  runApp(MyApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Color.fromARGB(100, 88, 122, 50),
+    systemNavigationBarColor: Colors.grey,
+  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {

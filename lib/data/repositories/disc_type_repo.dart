@@ -22,7 +22,7 @@ class DiscountTypeRepo {
         _discTypes = List<DiscTypeModel>.from(
             response.data['data'].map((i) => DiscTypeModel.fromJson(i)));
       } else {
-        throw Exception(response.data['message']);
+        throw HttpException(response.data['message']);
       }
     } on HttpException catch (e) {
       throw HttpException(e.message);

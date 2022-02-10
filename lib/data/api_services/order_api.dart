@@ -18,7 +18,7 @@ class OrderAPI {
             "Authorization": "Bearer " + token,
           }));
     } on DioError catch (e) {
-      throw Exception(e.response!.data['message']);
+      throw HttpException(e.response!.data['message']);
     }
     return response;
   }

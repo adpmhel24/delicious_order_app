@@ -22,7 +22,7 @@ class SalesTypeRepo {
         _salesTypes = List<SalesTypeModel>.from(
             response.data['data'].map((i) => SalesTypeModel.fromJson(i)));
       } else {
-        throw Exception(response.data['message']);
+        throw HttpException(response.data['message']);
       }
     } on HttpException catch (e) {
       throw HttpException(e.message);

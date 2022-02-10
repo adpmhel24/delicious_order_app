@@ -9,7 +9,7 @@ class CustomTextField extends StatelessWidget {
     TextInputAction? textInputAction,
     Widget? prefixIcon,
     Widget? suffixIcon,
-    TextInputType? keyBoardType,
+    TextInputType? keyboardType,
     int? minLines,
     int? maxLines,
     String? Function(String?)? validator,
@@ -19,12 +19,13 @@ class CustomTextField extends StatelessWidget {
     TextAlign? textAlign,
     Function(String value)? onChanged,
     AutovalidateMode? autovalidateMode,
+    TextStyle? labelStyle,
   })  : _controller = controller,
         _labelText = labelText,
         _prefixIcon = prefixIcon,
         _suffixIcon = suffixIcon,
         _textInputAction = textInputAction,
-        _keyboardType = keyBoardType,
+        _keyboardType = keyboardType,
         _minLines = minLines,
         _maxLines = maxLines,
         _validator = validator,
@@ -34,6 +35,7 @@ class CustomTextField extends StatelessWidget {
         _textAlign = textAlign,
         _onChanged = onChanged,
         _autovalidateMode = autovalidateMode,
+        _labelStyle = labelStyle,
         super(key: key);
 
   final TextEditingController? _controller;
@@ -51,6 +53,7 @@ class CustomTextField extends StatelessWidget {
   final TextAlign? _textAlign;
   final Function(String value)? _onChanged;
   final AutovalidateMode? _autovalidateMode;
+  final TextStyle? _labelStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +80,11 @@ class CustomTextField extends StatelessWidget {
         filled: true,
         fillColor: const Color(0xFFeeeee4),
         labelText: _labelText,
-        labelStyle: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w400,
-        ),
+        labelStyle: _labelStyle ??
+            TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+            ),
         prefixIcon: _prefixIcon,
         suffixIcon: _suffixIcon,
         contentPadding: EdgeInsets.symmetric(horizontal: 14.h, vertical: 16.w),

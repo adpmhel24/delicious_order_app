@@ -38,6 +38,8 @@ class CheckOutModel {
   @JsonKey(name: 'delivery_method')
   String? deliveryMethod;
 
+  String? salestype;
+
   List<Map<String, dynamic>>? rows;
 
   CheckOutModel({
@@ -53,6 +55,7 @@ class CheckOutModel {
     this.customerId = -1,
     this.paymentMethod,
     this.deliveryMethod,
+    this.salestype,
   });
 
   factory CheckOutModel.fromJson(Map<String, dynamic> json) =>

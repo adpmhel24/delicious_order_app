@@ -39,7 +39,7 @@ class AuthRepository extends ChangeNotifier {
         _authenticated = true;
         notifyListeners();
       } else {
-        throw Exception(response.data['message']);
+        throw HttpException(response.data['message']);
       }
     } on HttpException catch (e) {
       throw HttpException(e.message);

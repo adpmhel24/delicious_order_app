@@ -1,15 +1,17 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:delicious_ordering_app/presentation/master_data/customer_type/create_screen/create_screen.dart';
 
-import '/views/create_customer/new_customer.dart';
-import '/views/orders/components/completed_order.dart';
-import '/views/orders/components/for_pickup_deliver.dart';
-import '/views/orders/components/pending_order.dart';
-import '/views/orders/orders_screen.dart';
-import '/views/login/login_screen.dart';
-import '/views/create_order/select_customer/customer_selection.dart';
-import '/views/create_order/select_product/product_selection.dart';
-import '/views/create_order/create_order_screen.dart';
-import '/views/create_order/cart_checkout/cart.dart';
+import '../presentation/master_data/customer_type/customer_type_screen.dart';
+import '/presentation/create_customer/new_customer.dart';
+import '/presentation/orders/components/completed_order.dart';
+import '/presentation/orders/components/for_pickup_deliver.dart';
+import '/presentation/orders/components/pending_order.dart';
+import '/presentation/orders/orders_screen.dart';
+import '/presentation/login/login_screen.dart';
+import '/presentation/create_order/select_customer/customer_selection.dart';
+import '/presentation/create_order/select_product/product_selection.dart';
+import '/presentation/create_order/create_order_screen.dart';
+import '/presentation/create_order/cart_checkout/cart.dart';
 
 import './router_guard.dart';
 
@@ -37,6 +39,14 @@ import './router_guard.dart';
         AutoRoute(page: CompletedOrderScreen, path: 'completed_order'),
       ],
     ),
+    AutoRoute(
+        page: CustomerTypeScreen,
+        guards: [RouteGuard],
+        path: '/customer_types'),
+    AutoRoute(
+        page: CreateCustomerType,
+        guards: [RouteGuard],
+        path: '/create_customer_types'),
   ],
 )
 class $AppRouter {}

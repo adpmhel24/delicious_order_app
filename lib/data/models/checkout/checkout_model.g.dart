@@ -26,6 +26,7 @@ CheckOutModel _$CheckOutModelFromJson(Map<String, dynamic> json) =>
       customerId: json['customer_id'] as int? ?? -1,
       paymentMethod: json['payment_method'] as String?,
       deliveryMethod: json['delivery_method'] as String?,
+      salestype: json['salestype'] as String?,
     )
       ..custName = json['cust_name'] as String?
       ..custType = json['cust_type'] as String?;
@@ -53,6 +54,7 @@ Map<String, dynamic> _$CheckOutModelToJson(CheckOutModel instance) {
   writeNotNull('customer_id', CheckOutModel.toNull(instance.customerId));
   val['payment_method'] = instance.paymentMethod;
   val['delivery_method'] = instance.deliveryMethod;
+  val['salestype'] = instance.salestype;
   val['rows'] = instance.rows;
   return val;
 }

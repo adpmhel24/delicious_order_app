@@ -16,12 +16,18 @@ brgyModalSelection({
   required BuildContext context,
   required PhLocationRepo phLocationRepo,
   required TextEditingController brgyController,
+  String? labelText,
   Widget? suffixIcon,
+  AutovalidateMode? autovalidateMode,
+  String? Function(String?)? validator,
+  Function(String)? onChanged,
 }) {
   var heightSized = MediaQuery.of(context).size.height;
   return CustomFieldModalChoices(
+    autovalidateMode: autovalidateMode,
     controller: brgyController,
-    labelText: 'Barangay',
+    labelText: labelText ?? 'Barangay',
+    onChanged: onChanged,
     onTap: () {
       context.read<BrgyBloc>().add(FetchBrgyFromApi());
       showMaterialModalBottomSheet(
@@ -84,7 +90,6 @@ brgyModalSelection({
                                     state.brgys[index].name,
                                 onTap: () {
                                   brgyController.text = state.brgys[index].name;
-
                                   Navigator.of(context).pop();
                                 },
                               );
@@ -122,5 +127,6 @@ brgyModalSelection({
     },
     prefixIcon: const Icon(LineIcons.building),
     suffixIcon: suffixIcon,
+    validator: validator,
   );
 }
