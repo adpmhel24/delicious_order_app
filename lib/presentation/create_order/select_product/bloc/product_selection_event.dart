@@ -1,4 +1,3 @@
-import '/data/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -105,19 +104,34 @@ class TotalChanged extends ProductSelectionEvent {
 }
 
 class UndoCart extends ProductSelectionEvent {
-  final CartItem cartItem;
+  final int productId;
 
-  const UndoCart(this.cartItem);
+  const UndoCart(this.productId);
 
   @override
-  List<Object?> get props => [cartItem];
+  List<Object?> get props => [productId];
 }
 
 class AddingToCart extends ProductSelectionEvent {
-  final CartItem cartItem;
+  final int productId;
+  final String itemCode;
+  final String itemName;
+  final String uom;
 
-  const AddingToCart(this.cartItem);
+  const AddingToCart({
+    required this.productId,
+    required this.itemCode,
+    required this.itemName,
+    required this.uom,
+  });
 
   @override
-  List<Object?> get props => [cartItem];
+  List<Object?> get props => [productId, itemCode, itemName, uom];
+
+  // final CartItem cartItem;
+
+  // const AddingToCart(this.cartItem);
+
+  // @override
+  // List<Object?> get props => [cartItem];
 }

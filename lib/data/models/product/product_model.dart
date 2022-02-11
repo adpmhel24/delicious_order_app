@@ -1,5 +1,5 @@
 class ProductModel {
-  int? id;
+  late int id;
   late String itemCode;
   late String itemName;
   String? uom;
@@ -12,7 +12,7 @@ class ProductModel {
   bool isSelected = false;
 
   ProductModel({
-    this.id,
+    required this.id,
     required this.itemCode,
     required this.itemName,
     this.uom,

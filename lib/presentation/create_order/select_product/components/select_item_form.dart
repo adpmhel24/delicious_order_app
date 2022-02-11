@@ -10,14 +10,18 @@ import 'package:formz/formz.dart';
 
 class SelectItemForm extends StatefulWidget {
   final ProductModel product;
-  const SelectItemForm({Key? key, required this.product}) : super(key: key);
+  final BuildContext selectionProductionContext;
+  const SelectItemForm(
+      {Key? key,
+      required this.product,
+      required this.selectionProductionContext})
+      : super(key: key);
 
   @override
   _SelectItemFormState createState() => _SelectItemFormState();
 }
 
 class _SelectItemFormState extends State<SelectItemForm> {
-  late ProductSelectionBloc _orderBloc;
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _discPrcntController = TextEditingController();
@@ -27,7 +31,6 @@ class _SelectItemFormState extends State<SelectItemForm> {
 
   @override
   void initState() {
-    _orderBloc = BlocProvider.of<ProductSelectionBloc>(context, listen: false);
     _quantityController.text = '1.00';
     _discPrcntController.text = '0.00';
     _discAmntController.text = '0.00';
@@ -100,7 +103,7 @@ class _SelectItemFormState extends State<SelectItemForm> {
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: BlocConsumer<ProductSelectionBloc, ProductSelectionState>(
-          listener: (context, state) {
+          listener: (_, state) {
             if (state.status == FormzStatus.submissionSuccess) {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context)
@@ -111,7 +114,9 @@ class _SelectItemFormState extends State<SelectItemForm> {
                     action: SnackBarAction(
                       label: 'Undo',
                       onPressed: () {
-                        _orderBloc.add(UndoCart(CartItem.fromJson(data)));
+                        BlocProvider.of<ProductSelectionBloc>(
+                                widget.selectionProductionContext)
+                            .add(UndoCart(widget.product.id));
                       },
                     ),
                   ),
@@ -141,10 +146,13 @@ class _SelectItemFormState extends State<SelectItemForm> {
                     labelText: 'Item Name',
                     controller: _itemNameController,
                     readOnly: true,
+                    enabled: false,
                     prefixIcon: const Icon(LineIcons.breadSlice),
                   ),
                   SizedBox(height: 15.h),
                   _quantityField(),
+                  SizedBox(height: 15.h),
+                  _unitPriceField(),
                   SizedBox(height: 15.h),
                   Row(
                     children: [
@@ -158,27 +166,19 @@ class _SelectItemFormState extends State<SelectItemForm> {
                     ],
                   ),
                   SizedBox(height: 15.h),
-                  _unitPriceField(),
-                  SizedBox(height: 15.h),
                   _totalAmountField(),
                   SizedBox(height: 15.h),
                   ElevatedButton(
                     onPressed: (state.status == FormzStatus.valid)
                         ? () {
-                            data = {
-                              "id": widget.product.id,
-                              "item_code": widget.product.itemCode,
-                              "item_name": widget.product.itemName,
-                              "quantity":
-                                  double.parse(_quantityController.text),
-                              "unit_price":
-                                  double.parse(_unitPriceController.text),
-                              "total": double.parse(_totalController.text),
-                              "uom": widget.product.uom,
-                            };
-                            context
-                                .read<ProductSelectionBloc>()
-                                .add(AddingToCart(CartItem.fromJson(data)));
+                            context.read<ProductSelectionBloc>().add(
+                                  AddingToCart(
+                                    productId: widget.product.id,
+                                    itemCode: widget.product.itemCode,
+                                    itemName: widget.product.itemName,
+                                    uom: widget.product.uom!,
+                                  ),
+                                );
                           }
                         : null,
                     child: const Text('Add To Cart'),
@@ -223,6 +223,8 @@ class _SelectItemFormState extends State<SelectItemForm> {
   _unitPriceField() {
     return CustomTextField(
       labelText: 'Unit Price',
+      readOnly: true,
+      enabled: false,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       controller: _unitPriceController,
       prefixIcon: const Icon(
@@ -242,6 +244,18 @@ class _SelectItemFormState extends State<SelectItemForm> {
       prefixIcon: const Icon(
         LineIcons.tag,
       ),
+      suffixIcon: const Icon(LineIcons.percent),
+      onChanged: (_) {
+        context.read<ProductSelectionBloc>().add(
+              DiscPercentageChanged(
+                quantityController: _quantityController,
+                unitPriceController: _unitPriceController,
+                discPercentageController: _discPrcntController,
+                discAmountController: _discAmntController,
+                totalController: _totalController,
+              ),
+            );
+      },
     );
   }
 
@@ -252,9 +266,7 @@ class _SelectItemFormState extends State<SelectItemForm> {
       labelStyle: TextStyle(
         fontSize: 12.sp,
       ),
-      prefixIcon: const Icon(
-        LineIcons.tag,
-      ),
+      prefixIcon: const Icon(LineIcons.wavyMoneyBill),
       onChanged: (_) {
         context.read<ProductSelectionBloc>().add(
               DiscountAmountChanged(
@@ -274,125 +286,10 @@ class _SelectItemFormState extends State<SelectItemForm> {
       controller: _totalController,
       readOnly: true,
       labelText: 'Total Amount',
+      enabled: false,
       prefixIcon: const Icon(
         LineIcons.moneyBill,
       ),
     );
   }
 }
-
-// class BuildQuantityField extends StatelessWidget {
-//   const BuildQuantityField({
-//     Key? key,
-//     required TextEditingController quantityController,
-//     required TextEditingController unitPriceController,
-//     required TextEditingController totalController,
-//   })  : _quantityController = quantityController,
-//         _unitPriceController = unitPriceController,
-//         _totalController = totalController,
-//         super(key: key);
-
-//   final TextEditingController _quantityController;
-//   final TextEditingController _unitPriceController;
-//   final TextEditingController _totalController;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<ProductSelectionBloc, ProductSelectionState>(
-//       buildWhen: (previous, current) => previous.quantity != current.quantity,
-//       builder: (context, state) {
-//         return TextFormField(
-//           textInputAction: TextInputAction.next,
-//           controller: _quantityController,
-//           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-//           autovalidateMode: AutovalidateMode.always,
-//           decoration: const InputDecoration(
-//             labelText: 'Quantity',
-//             prefixIcon: Icon(
-//               Icons.format_list_numbered,
-//             ),
-//           ),
-//           onChanged: (quantity) {
-//             context.read<ProductSelectionBloc>().add(QuantityChanged(
-//                 quantityController: _quantityController,
-//                 unitPriceController: _unitPriceController,
-//                 totalController: _totalController));
-//           },
-//           validator: (_) {
-//             return (state.quantity.invalid) ? "Invalid quantity!" : null;
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
-
-// class BuildPriceField extends StatelessWidget {
-//   final TextEditingController priceController;
-//   final Function onChanged;
-//   const BuildPriceField(
-//       {Key? key, required this.priceController, required this.onChanged})
-//       : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<ProductSelectionBloc, ProductSelectionState>(
-//       builder: (context, state) {
-//         return TextFormField(
-//           readOnly: true,
-//           textInputAction: TextInputAction.next,
-//           controller: priceController,
-//           autovalidateMode: AutovalidateMode.always,
-//           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-//           decoration: const InputDecoration(
-//             labelText: 'Price',
-//             prefixIcon: Icon(Icons.attach_money),
-//           ),
-//           onChanged: (price) {
-//             onChanged(price);
-//             context.read<ProductSelectionBloc>().add(PriceChanged(price));
-//           },
-//           validator: (_) {
-//             return (state.price.invalid) ? "Invalid price!" : null;
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
-
-// class BuildTotalAmount extends StatelessWidget {
-//   final TextEditingController totalAmountController;
-//   final Function onChanged;
-//   const BuildTotalAmount({
-//     Key? key,
-//     required this.totalAmountController,
-//     required this.onChanged,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<ProductSelectionBloc, ProductSelectionState>(
-//       builder: (context, state) {
-//         return TextFormField(
-//           readOnly: true,
-//           textInputAction: TextInputAction.done,
-//           controller: totalAmountController,
-//           autovalidateMode: AutovalidateMode.always,
-//           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-//           decoration: const InputDecoration(
-//             labelText: 'Total',
-//             prefixIcon: Icon(Icons.attach_money),
-//           ),
-//           onChanged: (total) {
-//             onChanged(total);
-//             context.read<ProductSelectionBloc>().add(TotalChanged(total));
-//           },
-//           validator: (_) {
-//             return (state.total.invalid) ? "Invalid total!" : null;
-//           },
-//         );
-//       },
-//     );
-//   }
-// }

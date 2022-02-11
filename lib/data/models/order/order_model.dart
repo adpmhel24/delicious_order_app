@@ -12,18 +12,22 @@ class OrderModel {
   String? custCode;
   String? docstatus;
 
-  @JsonKey(name: "delivery_status")
-  int? deliveryStatus;
+  @JsonKey(name: "order_status")
+  int? orderStatus;
 
   @JsonKey(name: "payment_status")
   int? paymentStatus;
 
   String? transtype;
   double doctotal;
-  double? gross;
+
+  @JsonKey(name: "row_discount")
+  double rowDiscount;
+
+  double gross;
   double delfee;
   double otherfee;
-  double? tenderamt;
+  double tenderamt;
 
   @JsonKey(name: "delivery_date")
   DateTime deliveryDate;
@@ -40,10 +44,11 @@ class OrderModel {
       this.remarks,
       this.custCode,
       this.docstatus,
-      this.deliveryStatus,
+      this.orderStatus,
       this.paymentStatus,
       this.transtype,
       required this.doctotal,
+      required this.rowDiscount,
       this.gross = 0.00,
       required this.delfee,
       this.tenderamt = 0.00,
@@ -53,6 +58,15 @@ class OrderModel {
       this.discprcnt = 0.00,
       this.otherfee = 0.00,
       required this.rows});
+
+  String getOrderStatus() {
+    if (orderStatus == 0) {
+      return "For Confirmation";
+    } else if (orderStatus == 1 || orderStatus == 2) {
+      return "Confirmed";
+    }
+    return "Delivered";
+  }
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>
       _$OrderModelFromJson(json);

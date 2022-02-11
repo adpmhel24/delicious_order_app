@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:delicious_ordering_app/data/models/cart_item/cart_item_model.dart';
 
 import '/data/repositories/repositories.dart';
 import 'package:flutter/material.dart';
@@ -12,49 +12,58 @@ class ProductSelectionBloc
     extends Bloc<ProductSelectionEvent, ProductSelectionState> {
   final CartRepo _cartRepo = AppRepo.cartRepository;
   ProductSelectionBloc() : super(const ProductSelectionState()) {
-    on<QuantityChanged>(_onQuantityChange);
+    on<QuantityChanged>(_onQuantityChanged);
     on<PriceChanged>(_onPriceChange);
     on<TotalChanged>(_onTotalChange);
     on<DiscountAmountChanged>(_onDiscountAmountChanged);
+    on<DiscPercentageChanged>(_onDiscPercentageChanged);
     on<AddingToCart>(_onAddingToCart);
     on<UndoCart>(_onUndo);
   }
 
-  void _onQuantityChange(
+  void _onQuantityChanged(
     QuantityChanged event,
     Emitter<ProductSelectionState> emit,
   ) {
-    final quantity = InputField.dirty(event.quantityController.text);
-    final price = InputField.dirty(event.unitPriceController.text);
-    final discAmnt = InputField.dirty(event.discAmountController.text);
-    var discPrcntage = InputField.dirty(event.discPercentageController.text);
-    var total = InputField.dirty(event.totalController.text);
+    TextEditingController quantityController = event.quantityController;
+    TextEditingController priceController = event.unitPriceController;
+    TextEditingController discAmntController = event.discAmountController;
+    TextEditingController totalNetAmntController = event.totalController;
+    TextEditingController discPrcntController = event.discPercentageController;
 
-    double newTotal = 0;
-    if (quantity.value.isNotEmpty) {
-      newTotal = double.parse(quantity.value.isEmpty ? '1' : quantity.value) *
-              double.parse(price.value) -
-          double.parse(discAmnt.value.isEmpty ? '0' : discAmnt.value);
+    double netAmountTotal = 0;
+    double discountPercnt = 0;
+    double grossAmnt = 0;
 
-      event.discPercentageController.text = ((discAmnt.value.isEmpty
-                  ? 0.00
-                  : double.parse(discAmnt.value) / newTotal) *
-              100)
-          .toStringAsFixed(2);
+    grossAmnt = (double.tryParse(quantityController.text) ?? 0) *
+        double.parse(priceController.text);
 
-      event.totalController.text = newTotal.toStringAsFixed(2).toString();
-      discPrcntage = InputField.dirty(event.discPercentageController.text);
-      total = InputField.dirty(event.totalController.text);
-    }
+    discAmntController.text = 0.toStringAsFixed(2);
+    netAmountTotal = grossAmnt - double.parse(discAmntController.text);
+    discountPercnt = (double.parse(discAmntController.text) / grossAmnt) * 100;
+
+    discPrcntController.text = discountPercnt.toStringAsFixed(2);
+    totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+
+    final quantityField = InputField.dirty(quantityController.text);
+    final priceField = InputField.dirty(priceController.text);
+    final discPrcntField = InputField.dirty(discPrcntController.text);
+    final discAmntField = InputField.dirty(discAmntController.text);
+    final netTotalAmnt = InputField.dirty(totalNetAmntController.text);
 
     emit(state.copyWith(
-      quantity: quantity,
-      total: total,
-      price: price,
-      discAmount: discAmnt,
-      discPercentage: discPrcntage,
-      status: Formz.validate(
-          [total, quantity, state.discAmount, state.discPercentage]),
+      quantity: quantityField,
+      price: priceField,
+      discAmount: discAmntField,
+      discPercentage: discPrcntField,
+      total: netTotalAmnt,
+      status: Formz.validate([
+        quantityField,
+        priceField,
+        discAmntField,
+        discPrcntField,
+        netTotalAmnt,
+      ]),
     ));
   }
 
@@ -62,45 +71,77 @@ class ProductSelectionBloc
     DiscountAmountChanged event,
     Emitter<ProductSelectionState> emit,
   ) {
-    final discountAmount = InputField.dirty(event.discAmountController.text);
+    TextEditingController discAmntController = event.discAmountController;
+    TextEditingController totalNetAmntController = event.totalController;
+    TextEditingController discPrcntController = event.discPercentageController;
 
-    double newTotal = 0;
-    String disPerc = '';
+    double netAmountTotal = 0;
+    double discountPercnt = 0;
+    double grossAmnt = 0;
 
-    if (discountAmount.value.isNotEmpty) {
-      newTotal = double.parse(event.quantityController.text) *
-              double.parse(state.price.value) -
-          double.parse(discountAmount.value);
+    // compute gross amount
+    grossAmnt = (double.tryParse(state.quantity.value) ?? 0) *
+        double.parse(state.price.value);
+    // compute net amount
+    netAmountTotal =
+        grossAmnt - (double.tryParse(discAmntController.text) ?? 0);
+    // compute discount percentage
+    discountPercnt =
+        ((double.tryParse(discAmntController.text) ?? 0) / grossAmnt) * 100;
 
-      // compute discountPercentage
-      disPerc = ((double.parse(discountAmount.value) /
-                  (double.parse(state.quantity.value) *
-                      double.parse(state.price.value))) *
-              100)
-          .toStringAsFixed(2);
+    discPrcntController.text = discountPercnt.toStringAsFixed(2);
+    totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
 
-      event.discPercentageController.text = disPerc;
-
-      event.totalController.value = TextEditingValue(
-        text: newTotal.toStringAsFixed(2).toString(),
-        selection: TextSelection.fromPosition(
-          TextPosition(offset: newTotal.toString().length),
-        ),
-      );
-    }
-
-    final total = InputField.dirty(newTotal.toString());
-    final discPercentage = InputField.dirty(disPerc);
+    final discPrcntField = InputField.dirty(discPrcntController.text);
+    final discAmntField = InputField.dirty(discAmntController.text);
+    final netTotalAmnt = InputField.dirty(totalNetAmntController.text);
 
     emit(state.copyWith(
-      discAmount: discountAmount,
-      discPercentage: discPercentage,
-      total: total,
+      discAmount: discAmntField,
+      discPercentage: discPrcntField,
+      total: netTotalAmnt,
       status: Formz.validate([
-        discPercentage,
-        discountAmount,
+        discAmntField,
+        discPrcntField,
+        netTotalAmnt,
         state.quantity,
-        total,
+      ]),
+    ));
+  }
+
+  void _onDiscPercentageChanged(
+    DiscPercentageChanged event,
+    Emitter<ProductSelectionState> emit,
+  ) {
+    TextEditingController discPercntController = event.discPercentageController;
+    TextEditingController discAmntController = event.discAmountController;
+    TextEditingController netTotalController = event.totalController;
+
+    double netTotal = 0;
+    double discAmnt = 0;
+    double grossTotal = 0;
+
+    grossTotal = (double.tryParse(state.quantity.value) ?? 0) *
+        double.parse(state.price.value);
+
+    discAmnt = grossTotal * (double.parse(discPercntController.text) / 100);
+    netTotal = grossTotal - discAmnt;
+
+    discAmntController.text = discAmnt.toStringAsFixed(2);
+    netTotalController.text = netTotal.toStringAsFixed(2);
+    final discAmntField = InputField.dirty(discAmntController.text);
+    final discPercntField = InputField.dirty(discPercntController.text);
+    final netTotalField = InputField.dirty(netTotalController.text);
+
+    emit(state.copyWith(
+      discAmount: discAmntField,
+      discPercentage: discPercntField,
+      total: netTotalField,
+      status: Formz.validate([
+        discAmntField,
+        discPercntField,
+        netTotalField,
+        state.quantity,
       ]),
     ));
   }
@@ -131,9 +172,20 @@ class ProductSelectionBloc
     AddingToCart event,
     Emitter<ProductSelectionState> emit,
   ) async {
-    emit(state.copyWith(isSubmitting: true));
+    emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await _cartRepo.addToCart(event.cartItem);
+      Map<String, dynamic> data = {
+        "id": event.productId,
+        "item_code": event.itemCode,
+        "item_name": event.itemName,
+        "uom": event.uom,
+        "quantity": double.tryParse(state.quantity.value),
+        "unit_price": double.tryParse(state.price.value),
+        "disc_amount": double.tryParse(state.discAmount.value),
+        "discprcnt": double.tryParse(state.discPercentage.value),
+        "total": double.tryParse(state.total.value),
+      };
+      await _cartRepo.addToCart(CartItem.fromJson(data));
       emit(state.copyWith(
           status: FormzStatus.submissionSuccess,
           message: "Successfully added!"));
@@ -147,11 +199,12 @@ class ProductSelectionBloc
     UndoCart event,
     Emitter<ProductSelectionState> emit,
   ) async {
+    emit(state.copyWith(isUndo: false));
     try {
-      _cartRepo.deleteFromCart(event.cartItem);
+      _cartRepo.removeByProductId(event.productId);
       emit(state.copyWith(isUndo: true));
-    } on HttpException catch (e) {
-      emit(state.copyWith(message: e.message));
+    } on Exception catch (e) {
+      emit(state.copyWith(message: e.toString()));
     }
   }
 }

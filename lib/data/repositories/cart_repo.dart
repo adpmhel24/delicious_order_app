@@ -73,8 +73,12 @@ class CartRepo {
 
   // Delete Item From The Cart
   void deleteFromCart(CartItem cartItem) {
-    int index = _cartItems.indexWhere(
-        (e) => e.id == cartItem.id && e.unitPrice == cartItem.unitPrice);
+    int index = _cartItems.indexWhere((e) => e.id == cartItem.id);
+    _cartItems.removeAt(index);
+  }
+
+  void removeByProductId(int id) {
+    int index = _cartItems.indexWhere((e) => e.id == id);
     _cartItems.removeAt(index);
   }
 

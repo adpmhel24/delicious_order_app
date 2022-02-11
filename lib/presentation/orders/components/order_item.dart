@@ -1,4 +1,6 @@
+import 'package:delicious_ordering_app/utils/size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '/utils/currency_formater.dart';
@@ -18,10 +20,9 @@ class _OrderItemState extends State<OrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    var deviceInfo = MediaQuery.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: _expanded ? 500 : 150,
+      height: _expanded ? 650 : 150,
       child: Card(
         margin: const EdgeInsets.all(10),
         child: Column(
@@ -35,14 +36,14 @@ class _OrderItemState extends State<OrderItem> {
                     children: [
                       Text(
                         'Order #: ',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyText2,
                       ),
                       Text(
                         '${widget.order.id}',
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                              color: const Color(0xFF632626),
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: const Color(0xFF632626),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -50,14 +51,14 @@ class _OrderItemState extends State<OrderItem> {
                     children: [
                       Text(
                         'Transaction Date: ',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyText2,
                       ),
                       Text(
                         DateFormat('MM/dd/yyyy').format(widget.order.transdate),
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                              color: const Color(0xFF632626),
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: const Color(0xFF632626),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -69,10 +70,10 @@ class _OrderItemState extends State<OrderItem> {
                       Text(
                         DateFormat('MM/dd/yyyy')
                             .format(widget.order.deliveryDate),
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                              color: const Color(0xFF632626),
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: const Color(0xFF632626),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -83,10 +84,24 @@ class _OrderItemState extends State<OrderItem> {
                       ),
                       Text(
                         '${widget.order.custCode}',
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                              color: const Color(0xFF632626),
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: const Color(0xFF632626),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Wrap(
+                    children: [
+                      const Text(
+                        'Order Status: ',
+                      ),
+                      Text(
+                        widget.order.getOrderStatus(),
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: const Color(0xFF632626),
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -102,18 +117,15 @@ class _OrderItemState extends State<OrderItem> {
               ),
             ),
             AnimatedContainer(
-              // decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: _expanded ? 380 : 0,
+              height: _expanded ? 500 : 0,
               child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: ListView(
                       shrinkWrap: true,
-                      // physics: const NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         Wrap(
                           children: [
@@ -124,11 +136,11 @@ class _OrderItemState extends State<OrderItem> {
                               '${widget.order.address}',
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1!
+                                  .bodyText2!
                                   .copyWith(
-                                    color: const Color(0xFF632626),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      color: const Color(0xFF632626),
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -141,66 +153,84 @@ class _OrderItemState extends State<OrderItem> {
                               '${widget.order.remarks}',
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1!
+                                  .bodyText2!
                                   .copyWith(
-                                    color: const Color(0xFF632626),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      color: const Color(0xFF632626),
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                         const Divider(thickness: 1),
                         ...widget.order.rows!
                             .map(
-                              (prod) => Row(
-                                // mainAxisAlignment:
-                                //     MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        right: deviceInfo.size.width * .02),
-                                    padding: EdgeInsets.all(
-                                        deviceInfo.size.width * .012),
-                                    child: SizedBox(
-                                      width: deviceInfo.size.width * .350,
-                                      child: Text(
-                                        prod['item_code'],
-                                      ),
-                                    ),
+                              (prod) => Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                        width: 1.0,
+                                        color: Colors.lightBlue.shade900),
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        right: deviceInfo.size.width * .02),
-                                    padding: EdgeInsets.all(
-                                        deviceInfo.size.width * .012),
-                                    child: SizedBox(
-                                      width: deviceInfo.size.width * .2,
-                                      child: Text(
-                                        '${formatStringToDecimal(
-                                          prod['quantity'].toString(),
-                                        )} x ${formatStringToDecimal(
-                                          prod['unit_price'].toString(),
-                                          hasCurrency: true,
-                                        )}',
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        right: deviceInfo.size.width * .02),
-                                    padding: EdgeInsets.all(
-                                        deviceInfo.size.width * .012),
-                                    child: SizedBox(
-                                      width: deviceInfo.size.width * .17,
-                                      child: Text(
-                                        formatStringToDecimal(
-                                          prod['linetotal'].toString(),
-                                          hasCurrency: true,
+                                ),
+                                child: Row(
+                                  children: <Widget>[
+                                    Flexible(
+                                      // flex: 2,
+                                      child: SizedBox(
+                                        width:
+                                            (SizeConfig.screenWidth - 10) * .60,
+                                        child: Text(
+                                          prod['item_code'],
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Flexible(
+                                      child: SizedBox(
+                                        width:
+                                            (SizeConfig.screenWidth - 10) * .40,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Quantity: ${formatStringToDecimal(
+                                                prod['quantity'].toString(),
+                                              )}',
+                                            ),
+                                            SizedBox(
+                                              height: 5.h,
+                                            ),
+                                            Text(
+                                              'Price: ${formatStringToDecimal(
+                                                prod['unit_price'].toString(),
+                                                hasCurrency: true,
+                                              )}',
+                                            ),
+                                            SizedBox(
+                                              height: 5.h,
+                                            ),
+                                            Text(
+                                              "Discount: ${prod['discprcnt']}%",
+                                              style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 179, 43, 33),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5.h,
+                                            ),
+                                            Text(
+                                              "Subtotal: ${formatStringToDecimal(
+                                                prod['linetotal'].toString(),
+                                                hasCurrency: true,
+                                              )}",
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                             .toList(),
@@ -209,11 +239,14 @@ class _OrderItemState extends State<OrderItem> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Total Amount',
+                              'Subtotal',
                             ),
                             Text(
                               formatStringToDecimal(
-                                (widget.order.doctotal - widget.order.delfee)
+                                (widget.order.gross -
+                                        widget.order.rowDiscount -
+                                        widget.order.delfee -
+                                        widget.order.otherfee)
                                     .toString(),
                                 hasCurrency: true,
                               ),
@@ -252,13 +285,38 @@ class _OrderItemState extends State<OrderItem> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Doctotal',
+                              'Discount',
+                            ),
+                            Text(
+                              formatStringToDecimal(
+                                widget.order.rowDiscount.toString(),
+                                hasCurrency: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Order Total',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               formatStringToDecimal(
                                 widget.order.doctotal.toString(),
                                 hasCurrency: true,
                               ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         )

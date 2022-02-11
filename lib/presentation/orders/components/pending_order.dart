@@ -22,12 +22,14 @@ class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
 
   Future<void> _refresh(BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 200));
-    BlocProvider.of<OrdersBloc>(context).add(FetchForConfirmOrders());
+    BlocProvider.of<OrdersBloc>(context).add(FetchForConfirmOrders(
+        _startdateController.text, _enddateController.text));
   }
 
   @override
   void initState() {
-    context.read<OrdersBloc>().add(FetchForConfirmOrders());
+    context.read<OrdersBloc>().add(FetchForConfirmOrders(
+        _startdateController.text, _enddateController.text));
     super.initState();
   }
 
@@ -70,7 +72,9 @@ class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
                       startDateController: _startdateController,
                       endDateController: _enddateController,
                       onSubmit: () {
-                        context.read<OrdersBloc>().add(FetchForConfirmOrders());
+                        context.read<OrdersBloc>().add(FetchForConfirmOrders(
+                            _startdateController.text,
+                            _enddateController.text));
                         Navigator.of(context).pop();
                       });
                 },

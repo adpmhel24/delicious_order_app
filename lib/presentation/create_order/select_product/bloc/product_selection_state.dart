@@ -11,8 +11,6 @@ class ProductSelectionState extends Equatable {
       this.discPercentage = const InputField.pure(),
       this.discAmount = const InputField.pure(),
       this.total = const InputField.pure(),
-      this.isSuccess = false,
-      this.isSubmitting = false,
       this.isUndo = false,
       this.message = 'Ordering failed!'});
 
@@ -23,8 +21,6 @@ class ProductSelectionState extends Equatable {
   final InputField discPercentage;
   final InputField discAmount;
   final String message;
-  final bool isSuccess;
-  final bool isSubmitting;
   final bool isUndo;
 
   ProductSelectionState copyWith({
@@ -35,8 +31,6 @@ class ProductSelectionState extends Equatable {
     InputField? discAmount,
     InputField? total,
     String? message,
-    bool? isSuccess,
-    bool? isSubmitting,
     bool? isUndo,
   }) {
     return ProductSelectionState(
@@ -47,8 +41,6 @@ class ProductSelectionState extends Equatable {
       discAmount: discAmount ?? this.discAmount,
       total: total ?? this.total,
       message: message ?? this.message,
-      isSuccess: isSuccess ?? this.isSuccess,
-      isSubmitting: isSubmitting ?? this.isSubmitting,
       isUndo: isUndo ?? this.isUndo,
     );
   }
@@ -61,9 +53,7 @@ class ProductSelectionState extends Equatable {
         discAmount,
         price,
         message,
-        isSuccess,
         total,
-        isSubmitting,
         isUndo
       ];
 }

@@ -88,7 +88,7 @@ bottomButton() {
                       context.read<CheckOutBloc>().add(ProceedCheckOut());
                     }
                   : null,
-              child: const Text('Add Order'),
+              child: const Text('Place Order'),
             );
           },
         );

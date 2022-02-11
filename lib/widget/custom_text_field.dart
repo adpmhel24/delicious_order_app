@@ -20,6 +20,7 @@ class CustomTextField extends StatelessWidget {
     Function(String value)? onChanged,
     AutovalidateMode? autovalidateMode,
     TextStyle? labelStyle,
+    bool? enabled,
   })  : _controller = controller,
         _labelText = labelText,
         _prefixIcon = prefixIcon,
@@ -36,6 +37,7 @@ class CustomTextField extends StatelessWidget {
         _onChanged = onChanged,
         _autovalidateMode = autovalidateMode,
         _labelStyle = labelStyle,
+        _enabled = enabled,
         super(key: key);
 
   final TextEditingController? _controller;
@@ -54,6 +56,7 @@ class CustomTextField extends StatelessWidget {
   final Function(String value)? _onChanged;
   final AutovalidateMode? _autovalidateMode;
   final TextStyle? _labelStyle;
+  final bool? _enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +64,7 @@ class CustomTextField extends StatelessWidget {
       autovalidateMode: _autovalidateMode,
       textInputAction: _textInputAction,
       keyboardType: _keyboardType,
+      enabled: _enabled,
       controller: _controller,
       minLines: _minLines,
       maxLines: _maxLines,

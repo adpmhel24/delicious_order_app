@@ -57,7 +57,8 @@ class ProductCard extends StatelessWidget {
         controller: ModalScrollController.of(context),
         child: BlocProvider.value(
           value: BlocProvider.of<ProductSelectionBloc>(context),
-          child: SelectItemForm(product: product),
+          child: SelectItemForm(
+              product: product, selectionProductionContext: context),
         ),
       ),
     );

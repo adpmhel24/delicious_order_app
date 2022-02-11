@@ -16,6 +16,14 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  int currentpage = 0;
+
+  List<String> appBarTitles = [
+    'Pending Orders',
+    'Confirmed Orders',
+    'Delivered Orders',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OrdersBloc>(
@@ -30,7 +38,7 @@ class _OrderScreenState extends State<OrderScreen> {
           final tabsRouter = AutoTabsRouter.of(context);
           return Scaffold(
             appBar: AppBar(
-              title: const Text('My Orders'),
+              title: Text(appBarTitles[currentpage]),
             ),
             drawer: const AppDrawer(),
             body: FadeTransition(
@@ -49,8 +57,11 @@ class _OrderScreenState extends State<OrderScreen> {
                 // here we switch between tabs
 
                 tabsRouter.setActiveIndex(index);
+                setState(() {
+                  currentpage = index;
+                });
                 if (index == 0) {
-                  context.read<OrdersBloc>().add(FetchForConfirmOrders());
+                  context.read<OrdersBloc>().add(const FetchForConfirmOrders());
                 } else if (index == 1) {
                   BlocProvider.of<OrdersBloc>(context)
                       .add(FetchForDeliveryOrders());
@@ -65,11 +76,11 @@ class _OrderScreenState extends State<OrderScreen> {
                   icon: Icon(LineIcons.list),
                 ),
                 BottomNavigationBarItem(
-                  label: 'For Pickup / Delivery',
+                  label: 'Confirmed Orders',
                   icon: Icon(LineIcons.truckMoving),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Completed',
+                  label: 'Delivered Orders',
                   icon: Icon(LineIcons.check),
                 )
               ],
