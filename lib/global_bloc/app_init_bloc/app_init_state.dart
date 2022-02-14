@@ -1,5 +1,6 @@
 import 'package:delicious_ordering_app/data/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 abstract class AppInitState extends Equatable {
   // ignore: prefer_const_constructors_in_immutables
@@ -20,11 +21,12 @@ class AddedNewURlState extends AppInitState {
 }
 
 class NewUpdateAvailable extends AppInitState {
-  final VersionModel versionModel;
+  final VersionModel availableVersion;
+  final PackageInfo devicePackageInfo;
 
-  NewUpdateAvailable(this.versionModel);
+  NewUpdateAvailable(this.availableVersion, this.devicePackageInfo);
   @override
-  List<Object> get props => [versionModel];
+  List<Object> get props => [availableVersion, devicePackageInfo];
 }
 
 class NoUpdateAvailable extends AppInitState {}

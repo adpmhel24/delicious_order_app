@@ -19,10 +19,15 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
     } else {
       emit(AddedNewURlState(prefs.getString("url")!));
     }
-    if (await _versionRepo.isUpdatedAvailable()) {
-      emit(NewUpdateAvailable(_versionRepo.currentVersion));
-    } else {
-      emit(NoUpdateAvailable());
+
+    if (prefs.getString("url") != null) {
+      // Check if there's update available after adding url.
+      if (await _versionRepo.isUpdatedAvailable()) {
+        emit(NewUpdateAvailable(
+            _versionRepo.currentVersion, _versionRepo.packageInfo));
+      } else {
+        emit(NoUpdateAvailable());
+      }
     }
   }
 
@@ -30,5 +35,15 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("url", event.url);
     emit(AddedNewURlState(prefs.getString("url")!));
+
+    if (prefs.getString("url") != null) {
+      // Check if there's update available after adding url.
+      if (await _versionRepo.isUpdatedAvailable()) {
+        emit(NewUpdateAvailable(
+            _versionRepo.currentVersion, _versionRepo.packageInfo));
+      } else {
+        emit(NoUpdateAvailable());
+      }
+    }
   }
 }

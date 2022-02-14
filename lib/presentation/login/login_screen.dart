@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:native_updater/native_updater.dart';
 
+import '../../widget/custom_updater_dialog.dart';
 import '/global_bloc/app_init_bloc/bloc.dart';
 import 'bloc/bloc.dart';
 import 'components/add_url_dialog.dart';
@@ -31,8 +31,6 @@ class LoginScreen extends StatelessWidget {
         builder: (BuildContext builderContext) {
           return BlocConsumer<AppInitBloc, AppInitState>(
             listener: (_, state) {
-              print(state);
-
               if (state is NoURLState) {
                 showAnimatedDialog(
                   context: context,
@@ -48,16 +46,14 @@ class LoginScreen extends StatelessWidget {
                   curve: Curves.fastOutSlowIn,
                 );
               } else if (state is NewUpdateAvailable) {
-                NativeUpdater.displayUpdateAlert(context,
-                    forceUpdate: true,
-                    appStoreUrl:
-                        'https://github.com/laikamanor/mobile-pos-v2/releases/download/v1.17/DPA.Setup.exe',
-                    iOSDescription: '<Your iOS description>',
-                    iOSUpdateButtonLabel: 'Upgrade',
-                    iOSCloseButtonLabel: 'Exit',
-                    errorText: "Error",
-                    errorCloseButtonLabel: "Close",
-                    errorSubtitle: "This version of the app isn't legit");
+                NewUpdate.displayAlert(
+                  context,
+                  message: const Text(
+                      "A version of Delicious Ordering App is available! "),
+                  appUrl:
+                      "https://github.com/adpmhel24/delicious_order_app/releases/download/v1.0.${state.availableVersion.buildNumber}/app.apk",
+                  releaseNotes: state.availableVersion.releaseNotes,
+                );
               }
             },
             builder: (_, state) => BlocListener<LoginBloc, LoginState>(
