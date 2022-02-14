@@ -1,3 +1,4 @@
+import 'package:delicious_ordering_app/widget/custom_text_field.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,17 +51,18 @@ class _AddUrlDialogState extends State<AddUrlDialog> {
               key: _formKey,
               child: Column(
                 children: [
-                  TextFormField(
+                  CustomTextField(
+                    labelText: 'URL',
                     controller: _urlController,
-                    decoration: const InputDecoration(
-                      labelText: 'URL',
-                      prefixIcon: Icon(Icons.http),
-                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Required field!';
+                      } else if (value.substring(0, 7).toLowerCase() ==
+                              'http://' ||
+                          value.substring(0, 8).toLowerCase() == 'https://') {
+                        return null;
                       }
-                      return null;
+                      return 'Invalid URL!';
                     },
                   ),
                   SizedBox(
@@ -72,7 +74,7 @@ class _AddUrlDialogState extends State<AddUrlDialog> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           context.read<AppInitBloc>().add(
-                                AddingNewURL(_urlController.text),
+                                AddingNewURL(_urlController.text.toLowerCase()),
                               );
                           Navigator.of(context).pop();
                         }

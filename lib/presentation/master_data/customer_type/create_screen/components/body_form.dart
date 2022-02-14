@@ -49,7 +49,7 @@ class _BodyFormState extends State<BodyForm> {
               },
             );
           } else if (state.status.isSubmissionFailure) {
-            customErrorDialog(context, state.message);
+            customErrorDialog(context, message: state.message);
           }
         }, builder: (_, state) {
           return Column(

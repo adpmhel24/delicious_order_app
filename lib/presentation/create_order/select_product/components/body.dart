@@ -1,3 +1,4 @@
+import 'package:delicious_ordering_app/widget/custom_error_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/widget/custom_text_field.dart';
@@ -76,6 +77,8 @@ class _BodyState extends State<Body> {
                 customLoadingDialog(context);
               } else if (state is LoadedProductsState) {
                 Navigator.of(context).pop();
+              } else if (state is ErrorState) {
+                customErrorDialog(context, message: state.message);
               }
             },
             builder: (context, state) {
@@ -86,8 +89,10 @@ class _BodyState extends State<Body> {
                 );
               } else {
                 return RefreshIndicator(
-                  child: const Center(
-                    child: Text('No Products'),
+                  child: ListView(
+                    children: const [
+                      Center(child: Text('No Product Found.')),
+                    ],
                   ),
                   onRefresh: () => _refresh(context),
                 );

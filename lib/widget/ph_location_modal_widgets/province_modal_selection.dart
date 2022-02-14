@@ -34,7 +34,7 @@ provinceModalSelection({
         builder: (_) => BlocConsumer<ProvinceBloc, ProvinceState>(
           listener: (_, state) {
             if (state is ProvinceErrorState) {
-              customErrorDialog(context, state.message);
+              customErrorDialog(context, message: state.message);
             }
           },
           builder: (_, state) {

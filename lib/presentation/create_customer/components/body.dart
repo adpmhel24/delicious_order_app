@@ -77,7 +77,7 @@ class _BodyState extends State<Body> {
               if (state.status.isSubmissionInProgress) {
                 customLoadingDialog(context);
               } else if (state.status.isSubmissionFailure) {
-                customErrorDialog(context, state.message!);
+                customErrorDialog(context, message: state.message!);
               } else if (state.status.isSubmissionSuccess) {
                 customSuccessDialog(
                     context: context,

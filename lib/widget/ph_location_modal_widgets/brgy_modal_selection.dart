@@ -42,7 +42,7 @@ brgyModalSelection({
         builder: (_) => BlocConsumer<BrgyBloc, BrgyState>(
           listener: (_, state) {
             if (state is BrgyErrorState) {
-              customErrorDialog(context, state.message);
+              customErrorDialog(context, message: state.message);
             }
           },
           builder: (_, state) {

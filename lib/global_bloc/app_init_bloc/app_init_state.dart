@@ -29,4 +29,13 @@ class NewUpdateAvailable extends AppInitState {
   List<Object> get props => [availableVersion, devicePackageInfo];
 }
 
+class CheckingUpdate extends AppInitState {}
+
+class Error extends AppInitState {
+  final String message;
+  Error(this.message);
+  @override
+  List<Object> get props => [message];
+}
+
 class NoUpdateAvailable extends AppInitState {}

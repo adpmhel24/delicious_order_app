@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../data/repositories/repositories.dart';
 import './bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,14 +21,19 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
     } else {
       emit(AddedNewURlState(prefs.getString("url")!));
     }
-
     if (prefs.getString("url") != null) {
+      emit(CheckingUpdate());
+
       // Check if there's update available after adding url.
-      if (await _versionRepo.isUpdatedAvailable()) {
-        emit(NewUpdateAvailable(
-            _versionRepo.currentVersion, _versionRepo.packageInfo));
-      } else {
-        emit(NoUpdateAvailable());
+      try {
+        if (await _versionRepo.isUpdatedAvailable()) {
+          emit(NewUpdateAvailable(
+              _versionRepo.currentVersion, _versionRepo.packageInfo));
+        } else {
+          emit(NoUpdateAvailable());
+        }
+      } on HttpException catch (e) {
+        emit(Error(e.message));
       }
     }
   }
@@ -35,14 +42,18 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("url", event.url);
     emit(AddedNewURlState(prefs.getString("url")!));
-
+    emit(CheckingUpdate());
     if (prefs.getString("url") != null) {
       // Check if there's update available after adding url.
-      if (await _versionRepo.isUpdatedAvailable()) {
-        emit(NewUpdateAvailable(
-            _versionRepo.currentVersion, _versionRepo.packageInfo));
-      } else {
-        emit(NoUpdateAvailable());
+      try {
+        if (await _versionRepo.isUpdatedAvailable()) {
+          emit(NewUpdateAvailable(
+              _versionRepo.currentVersion, _versionRepo.packageInfo));
+        } else {
+          emit(NoUpdateAvailable());
+        }
+      } on HttpException catch (e) {
+        emit(Error(e.message));
       }
     }
   }

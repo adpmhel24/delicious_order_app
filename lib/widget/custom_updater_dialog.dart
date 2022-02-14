@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewUpdate {
@@ -19,13 +18,12 @@ class NewUpdate {
     context, {
     required Text? message,
     required String appUrl,
+    required String appName,
     String? releaseNotes,
-  }) async {
-    final PackageInfo info = await PackageInfo.fromPlatform();
-
+  }) {
     // Singleton properties
     _newUpdateInstance._context = context;
-    _newUpdateInstance._appName = info.appName;
+    _newUpdateInstance._appName = appName;
     _newUpdateInstance._message = message;
     _newUpdateInstance._appUrl = appUrl;
     _newUpdateInstance._releaseNotes = releaseNotes;
@@ -37,12 +35,6 @@ class NewUpdate {
     showAnimatedDialog(
       context: _context,
       builder: (BuildContext context) {
-        // return ClassicGeneralDialogWidget(
-        //   titleText: 'Update $_appName',
-        //   contentText: _message,
-        //   positiveText: 'Okay',
-        //   onPositiveClick: onPositiveClick,
-        // );
         return WillPopScope(
           onWillPop: () async => false,
           child: AlertDialog(

@@ -28,7 +28,13 @@ class LoginAPI {
           }),
           queryParameters: {'username': username, 'password': password});
     } on DioError catch (e) {
-      throw HttpException(e.response!.data['message']);
+      if (e.response != null) {
+        throw HttpException(e.response!.data['message']);
+      } else if (e.type == DioErrorType.connectTimeout) {
+        throw const HttpException("Connection timed out");
+      } else {
+        throw HttpException(e.message);
+      }
     }
     return response;
   }

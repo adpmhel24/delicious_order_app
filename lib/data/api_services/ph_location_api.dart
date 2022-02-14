@@ -12,7 +12,13 @@ class PhLocationApiService {
     try {
       _response = await _dio.get(path);
     } on DioError catch (e) {
-      throw HttpException(e.message);
+      if (e.response != null) {
+        throw HttpException(e.response!.data['message']);
+      } else if (e.type == DioErrorType.connectTimeout) {
+        throw const HttpException("Connection timed out");
+      } else {
+        throw HttpException(e.message);
+      }
     }
     return _response;
   }

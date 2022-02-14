@@ -6,7 +6,10 @@ class DioSettings {
 
   Dio dio() {
     return Dio(
-      BaseOptions(baseUrl: url),
+      BaseOptions(
+        baseUrl: url,
+        connectTimeout: 5000,
+      ),
     )..interceptors.add(Logging());
   }
 

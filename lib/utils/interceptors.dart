@@ -6,7 +6,7 @@ class Logging extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
       print(
-          'REQUEST[${options.method}] => PATH: ${options.path} ${options.queryParameters}');
+          'REQUEST[${options.method}] => ${options.baseUrl}${options.path} ${options.queryParameters}');
     }
     return super.onRequest(options, handler);
   }
@@ -15,7 +15,7 @@ class Logging extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
       print(
-        'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}',
+        'RESPONSE[${response.statusCode}] => ${response.requestOptions.baseUrl}${response.requestOptions.path}',
       );
     }
     return super.onResponse(response, handler);
@@ -25,7 +25,7 @@ class Logging extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       print(
-        'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}',
+        'ERROR[${err.response?.statusCode}] => ${err.requestOptions.baseUrl}${err.requestOptions.path}',
       );
     }
     return super.onError(err, handler);

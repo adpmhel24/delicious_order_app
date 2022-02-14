@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -45,15 +46,27 @@ class LoginScreen extends StatelessWidget {
                   animationType: DialogTransitionType.size,
                   curve: Curves.fastOutSlowIn,
                 );
+              } else if (state is CheckingUpdate) {
+                customLoadingDialog(context);
               } else if (state is NewUpdateAvailable) {
+                Navigator.of(context).pop();
                 NewUpdate.displayAlert(
                   context,
+                  appName: state.devicePackageInfo.appName,
                   message: const Text(
                       "A version of Delicious Ordering App is available! "),
                   appUrl:
-                      "https://github.com/adpmhel24/delicious_order_app/releases/download/v1.0.${state.availableVersion.buildNumber}/app.apk",
+                      "https://github.com/adpmhel24/delicious_order_app/releases/download/v1.0.${state.availableVersion.buildNumber}/app-release.apk",
                   releaseNotes: state.availableVersion.releaseNotes,
                 );
+              } else if (state is Error) {
+                customErrorDialog(context,
+                    barrierDismissible: false,
+                    message: state.message, onPositiveClick: () {
+                  SystemNavigator.pop();
+                });
+              } else if (state is NoUpdateAvailable) {
+                Navigator.of(context).pop();
               }
             },
             builder: (_, state) => BlocListener<LoginBloc, LoginState>(
@@ -61,7 +74,7 @@ class LoginScreen extends StatelessWidget {
                 if (state.status.isSubmissionSuccess) {
                   onLoginCallback?.call(true);
                 } else if (state.status.isSubmissionFailure) {
-                  customErrorDialog(context, state.message);
+                  customErrorDialog(context, message: state.message);
                 } else if (state.status.isSubmissionInProgress) {
                   customLoadingDialog(context);
                 }

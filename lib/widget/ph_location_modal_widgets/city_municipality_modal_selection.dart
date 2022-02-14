@@ -43,7 +43,7 @@ cityMunicipalityModalSelection({
             BlocConsumer<CityMunicipalityBloc, CityMunicipalityState>(
           listener: (context, state) {
             if (state is CityMunicipalityErrorState) {
-              customErrorDialog(context, state.message);
+              customErrorDialog(context, message: state.message);
             }
           },
           builder: (_, state) {

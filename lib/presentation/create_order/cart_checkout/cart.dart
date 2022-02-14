@@ -74,7 +74,7 @@ bottomButton() {
                 },
               );
             } else if (state.isError) {
-              customErrorDialog(context, state.message);
+              customErrorDialog(context, message: state.message);
             } else if (state.isSubmitting) {
               customLoadingDialog(context);
             }

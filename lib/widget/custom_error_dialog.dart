@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
-Future<Object?> customErrorDialog(BuildContext context, String message) {
+Future<Object?> customErrorDialog(BuildContext context,
+    {required String message,
+    void Function()? onPositiveClick,
+    bool? barrierDismissible}) {
   Navigator.of(context).pop();
   return showAnimatedDialog(
+    barrierDismissible: barrierDismissible ?? true,
     context: context,
     builder: (BuildContext context) {
-      return ClassicGeneralDialogWidget(
-        titleText: 'Error!',
-        contentText: message,
-        positiveText: 'Okay',
-        onPositiveClick: () {
-          Navigator.of(context).pop();
-        },
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: ClassicGeneralDialogWidget(
+          titleText: 'Error!',
+          contentText: message,
+          positiveText: 'Okay',
+          onPositiveClick: onPositiveClick ??
+              () {
+                Navigator.of(context).pop();
+              },
+        ),
       );
     },
     animationType: DialogTransitionType.size,

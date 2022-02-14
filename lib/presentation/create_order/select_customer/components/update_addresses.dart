@@ -207,7 +207,7 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                       if (state.status.isSubmissionInProgress)
                         {customLoadingDialog(context)}
                       else if (state.status.isSubmissionFailure)
-                        {customErrorDialog(context, state.message)}
+                        {customErrorDialog(context, message: state.message)}
                       else if (state.status.isSubmissionSuccess)
                         {
                           customSuccessDialog(
