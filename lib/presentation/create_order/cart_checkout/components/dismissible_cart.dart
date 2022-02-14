@@ -25,7 +25,7 @@ class DismissibleCart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: ((_screenWidth - 10) * .35).w,
+                width: ((_screenWidth - 10) * .25).w,
                 child: Text(cartItem.itemCode),
               ),
               SizedBox(

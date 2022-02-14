@@ -85,7 +85,15 @@ bottomButton() {
                       context.watch<OrderCustDetailsBloc>().state.status ==
                           FormzStatus.valid)
                   ? () {
-                      context.read<CheckOutBloc>().add(ProceedCheckOut());
+                      customWarningDialog(
+                          context: context,
+                          message: "Are you sure you want to proceed?",
+                          onNegativeClick: () {
+                            Navigator.of(context).pop();
+                          },
+                          onPositiveClick: () {
+                            context.read<CheckOutBloc>().add(ProceedCheckOut());
+                          });
                     }
                   : null,
               child: const Text('Place Order'),
