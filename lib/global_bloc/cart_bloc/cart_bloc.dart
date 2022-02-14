@@ -10,7 +10,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCart>(onLoadCart);
     on<ClearCart>(onClearCart);
     on<RemoveItemFromCart>(onRemoveFromCart);
-    on<UpdateDiscount>(onUpdateDiscount);
     on<UpdateDeliveryFee>(onUpdateDelfee);
     on<UpdateOtherFee>(onUpdateOtherFee);
   }
@@ -41,11 +40,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(EmptyCart());
     }
     emit(CartLoaded(_cartRepo.cartItems));
-  }
-
-  void onUpdateDiscount(UpdateDiscount event, Emitter<CartState> emit) {
-    _cartRepo.changeDiscount(event.discount);
-    emit(CartUpdateDiscountState(_cartRepo.discount.toString()));
   }
 
   void onUpdateDelfee(UpdateDeliveryFee event, Emitter<CartState> emit) {

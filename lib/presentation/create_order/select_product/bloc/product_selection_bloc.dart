@@ -43,7 +43,11 @@ class ProductSelectionBloc
     discountPercnt = (double.parse(discAmntController.text) / grossAmnt) * 100;
 
     discPrcntController.text = discountPercnt.toStringAsFixed(2);
-    totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+    if (netAmountTotal <= 0) {
+      totalNetAmntController.text = '';
+    } else {
+      totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+    }
 
     final quantityField = InputField.dirty(quantityController.text);
     final priceField = InputField.dirty(priceController.text);
@@ -90,7 +94,12 @@ class ProductSelectionBloc
         ((double.tryParse(discAmntController.text) ?? 0) / grossAmnt) * 100;
 
     discPrcntController.text = discountPercnt.toStringAsFixed(2);
-    totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+    // Check if net amount is below 0
+    if (netAmountTotal <= 0) {
+      totalNetAmntController.text = '';
+    } else {
+      totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+    }
 
     final discPrcntField = InputField.dirty(discPrcntController.text);
     final discAmntField = InputField.dirty(discAmntController.text);
@@ -115,23 +124,31 @@ class ProductSelectionBloc
   ) {
     TextEditingController discPercntController = event.discPercentageController;
     TextEditingController discAmntController = event.discAmountController;
-    TextEditingController netTotalController = event.totalController;
+    TextEditingController totalNetAmntController = event.totalController;
 
-    double netTotal = 0;
+    double netAmountTotal = 0;
     double discAmnt = 0;
     double grossTotal = 0;
 
     grossTotal = (double.tryParse(state.quantity.value) ?? 0) *
         double.parse(state.price.value);
+    double disc = double.tryParse(discPercntController.text) ?? 0;
+    discAmnt = grossTotal * (disc / 100);
 
-    discAmnt = grossTotal * (double.parse(discPercntController.text) / 100);
-    netTotal = grossTotal - discAmnt;
+    netAmountTotal = grossTotal - discAmnt;
 
     discAmntController.text = discAmnt.toStringAsFixed(2);
-    netTotalController.text = netTotal.toStringAsFixed(2);
+    totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+
+    // Check if net amount is below 0
+    if (netAmountTotal <= 0) {
+      totalNetAmntController.text = '';
+    } else {
+      totalNetAmntController.text = netAmountTotal.toStringAsFixed(2);
+    }
     final discAmntField = InputField.dirty(discAmntController.text);
     final discPercntField = InputField.dirty(discPercntController.text);
-    final netTotalField = InputField.dirty(netTotalController.text);
+    final netTotalField = InputField.dirty(totalNetAmntController.text);
 
     emit(state.copyWith(
       discAmount: discAmntField,

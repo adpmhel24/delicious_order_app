@@ -1,6 +1,8 @@
 import 'package:delicious_ordering_app/widget/custom_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../widget/custom_date_range_picker.dart';
 import '/presentation/orders/bloc/bloc.dart';
@@ -10,34 +12,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'order_item.dart';
 
 class PendingOrdersScreen extends StatefulWidget {
-  const PendingOrdersScreen({Key? key}) : super(key: key);
+  final TextEditingController startdateController;
+  final TextEditingController enddateController;
+
+  const PendingOrdersScreen(
+      {Key? key,
+      required this.startdateController,
+      required this.enddateController})
+      : super(key: key);
 
   @override
   State<PendingOrdersScreen> createState() => _PendingOrdersScreenState();
 }
 
 class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
-  final TextEditingController _startdateController = TextEditingController();
-  final TextEditingController _enddateController = TextEditingController();
-
-  Future<void> _refresh(BuildContext context) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    BlocProvider.of<OrdersBloc>(context).add(FetchForConfirmOrders(
-        _startdateController.text, _enddateController.text));
-  }
-
   @override
   void initState() {
     context.read<OrdersBloc>().add(FetchForConfirmOrders(
-        _startdateController.text, _enddateController.text));
+          fromDate: widget.startdateController,
+          toDate: widget.enddateController,
+        ));
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _startdateController.dispose();
-    _enddateController.dispose();
-    super.dispose();
+  Future<void> _refresh(BuildContext context) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    context.read<OrdersBloc>().add(FetchForConfirmOrders(
+          fromDate: widget.startdateController,
+          toDate: widget.enddateController,
+        ));
   }
 
   @override
@@ -50,7 +53,7 @@ class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
             children: [
               Flexible(
                 child: CustomTextField(
-                  controller: _startdateController,
+                  controller: widget.startdateController,
                   labelText: 'Start Delivery Date',
                   readOnly: true,
                 ),
@@ -60,7 +63,7 @@ class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
               ),
               Flexible(
                 child: CustomTextField(
-                  controller: _enddateController,
+                  controller: widget.enddateController,
                   labelText: 'End Delivery Date',
                   readOnly: true,
                 ),
@@ -69,12 +72,29 @@ class _PendingOrdersScreenState extends State<PendingOrdersScreen> {
                 onPressed: () {
                   customDateRangePicker(
                       context: context,
-                      startDateController: _startdateController,
-                      endDateController: _enddateController,
+                      startDateController: widget.startdateController,
+                      endDateController: widget.enddateController,
+                      initialDateRange: PickerDateRange(
+                        DateTime.parse(
+                          widget.startdateController.text.isEmpty
+                              ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+                              : DateFormat("MM/dd/yyyy")
+                                  .parse(widget.startdateController.text)
+                                  .toString(),
+                        ),
+                        DateTime.parse(
+                          widget.enddateController.text.isEmpty
+                              ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+                              : DateFormat("MM/dd/yyyy")
+                                  .parse(widget.enddateController.text)
+                                  .toString(),
+                        ),
+                      ),
                       onSubmit: () {
                         context.read<OrdersBloc>().add(FetchForConfirmOrders(
-                            _startdateController.text,
-                            _enddateController.text));
+                              fromDate: widget.startdateController,
+                              toDate: widget.enddateController,
+                            ));
                         Navigator.of(context).pop();
                       });
                 },

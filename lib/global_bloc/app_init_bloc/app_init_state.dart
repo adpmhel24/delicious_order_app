@@ -1,3 +1,4 @@
+import 'package:delicious_ordering_app/data/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AppInitState extends Equatable {
@@ -17,3 +18,13 @@ class AddedNewURlState extends AppInitState {
   @override
   List<Object> get props => [url];
 }
+
+class NewUpdateAvailable extends AppInitState {
+  final VersionModel versionModel;
+
+  NewUpdateAvailable(this.versionModel);
+  @override
+  List<Object> get props => [versionModel];
+}
+
+class NoUpdateAvailable extends AppInitState {}

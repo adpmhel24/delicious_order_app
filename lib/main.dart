@@ -1,4 +1,3 @@
-import 'package:delicious_ordering_app/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'global_bloc/global_bloc.dart';
 import 'router/router.gr.dart';
 import 'router/router_guard.dart';
+import '/utils/size_config.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

@@ -243,8 +243,7 @@ class _OrderItemState extends State<OrderItem> {
                             ),
                             Text(
                               formatStringToDecimal(
-                                (widget.order.gross -
-                                        widget.order.rowDiscount -
+                                (widget.order.doctotal -
                                         widget.order.delfee -
                                         widget.order.otherfee)
                                     .toString(),
@@ -276,20 +275,6 @@ class _OrderItemState extends State<OrderItem> {
                             Text(
                               formatStringToDecimal(
                                 widget.order.otherfee.toString(),
-                                hasCurrency: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Discount',
-                            ),
-                            Text(
-                              formatStringToDecimal(
-                                widget.order.rowDiscount.toString(),
                                 hasCurrency: true,
                               ),
                             ),

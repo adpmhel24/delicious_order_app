@@ -241,10 +241,7 @@ class _SelectItemFormState extends State<SelectItemForm> {
       labelStyle: TextStyle(
         fontSize: 12.sp,
       ),
-      prefixIcon: const Icon(
-        LineIcons.tag,
-      ),
-      suffixIcon: const Icon(LineIcons.percent),
+      prefixIcon: const Icon(LineIcons.percent),
       onChanged: (_) {
         context.read<ProductSelectionBloc>().add(
               DiscPercentageChanged(

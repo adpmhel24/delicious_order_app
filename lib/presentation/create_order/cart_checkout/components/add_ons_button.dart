@@ -21,13 +21,11 @@ class AddOnButtons extends StatefulWidget {
 }
 
 class _AddOnButtonsState extends State<AddOnButtons> {
-  final TextEditingController _discAmountController = TextEditingController();
   final TextEditingController _delFeeController = TextEditingController();
   final TextEditingController _otherFeeController = TextEditingController();
 
   @override
   void dispose() {
-    _discAmountController.dispose();
     _delFeeController.dispose();
     _otherFeeController.dispose();
     super.dispose();
@@ -35,7 +33,6 @@ class _AddOnButtonsState extends State<AddOnButtons> {
 
   @override
   void initState() {
-    _discAmountController.text = widget._cartRepo.discount.toString();
     _delFeeController.text = widget._cartRepo.delfee.toString();
     _otherFeeController.text = widget._cartRepo.otherfee.toString();
     super.initState();

@@ -5,7 +5,8 @@ class Logging extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
-      print('REQUEST[${options.method}] => PATH: ${options.path}');
+      print(
+          'REQUEST[${options.method}] => PATH: ${options.path} ${options.queryParameters}');
     }
     return super.onRequest(options, handler);
   }

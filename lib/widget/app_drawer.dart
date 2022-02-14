@@ -38,11 +38,6 @@ class _AppDrawerState extends State<AppDrawer> {
               AutoRouter.of(context).popAndPush(const OrderScreenRoute());
             },
           ),
-          _createDrawerItem(
-            icon: Icons.list_alt_rounded,
-            text: 'Orders For Dispo',
-            onTap: () {},
-          ),
           // _createDrawerItem(
           //   icon: Icons.sell,
           //   text: 'Orders',

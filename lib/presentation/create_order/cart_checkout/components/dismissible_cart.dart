@@ -25,40 +25,52 @@ class DismissibleCart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: _screenWidth * .35,
+                width: ((_screenWidth - 10) * .35).w,
                 child: Text(cartItem.itemCode),
               ),
               SizedBox(
                 width: 5.w,
               ),
               SizedBox(
-                width: _screenWidth * .15,
-                child: Text(
-                  formatStringToDecimal(
-                    cartItem.quantity.toString(),
-                    hasCurrency: false,
-                  ),
-                  textAlign: TextAlign.center,
+                width: ((_screenWidth - 10) * .35).w,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Quanity: ${formatStringToDecimal(
+                        cartItem.quantity.toString(),
+                        hasCurrency: false,
+                      )}",
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Text(
+                      "Price: ${formatStringToDecimal(
+                        cartItem.unitPrice.toString(),
+                        hasCurrency: false,
+                      )}",
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Text(
+                      "Discount: ${formatStringToDecimal(
+                        cartItem.discprcnt.toString(),
+                        hasCurrency: false,
+                      )}%",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
                 width: 5.w,
               ),
               SizedBox(
-                width: _screenWidth * .15,
-                child: Text(
-                  formatStringToDecimal(
-                    cartItem.unitPrice.toString(),
-                    hasCurrency: true,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(
-                width: 5.w,
-              ),
-              SizedBox(
-                width: _screenWidth * .15,
+                width: ((_screenWidth - 10) * .20).w,
                 child: Text(
                   formatStringToDecimal(
                     cartItem.total.toString(),

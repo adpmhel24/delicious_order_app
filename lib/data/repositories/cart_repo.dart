@@ -3,7 +3,6 @@ import '../models/models.dart';
 
 class CartRepo {
   List<CartItem> _cartItems = [];
-  double _discount = 0;
   double _delfee = 0;
   double _otherfee = 0;
 
@@ -25,7 +24,6 @@ class CartRepo {
 
   List<CartItem> get cartItems => [..._cartItems];
 
-  double get discount => _discount;
   double get delfee => _delfee;
   double get otherfee => _otherfee;
 
@@ -37,8 +35,12 @@ class CartRepo {
     return totalAmount;
   }
 
-  void changeDiscount(double discount) {
-    _discount = discount;
+  double get totalDiscountAmount {
+    double totalDisc = 0;
+    for (var item in _cartItems) {
+      totalDisc += item.discAmount!;
+    }
+    return totalDisc;
   }
 
   void changeOtherFee(double otherFee) {
@@ -64,9 +66,7 @@ class CartRepo {
   }
 
   double get grantTotal {
-    // double totalAmount = 0;
-    // _cartItems.forEach((e) => totalAmount += e.total);
-    return totalCart + _delfee + otherfee - discount;
+    return totalCart + _delfee + otherfee;
   }
 
   int get cartItemsCount => _cartItems.length;

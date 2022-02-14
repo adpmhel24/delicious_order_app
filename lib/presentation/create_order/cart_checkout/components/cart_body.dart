@@ -73,7 +73,7 @@ class CartTotalDetails extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  customLabel(labelText: 'TOTAL:'),
+                  customLabel(labelText: 'SUBTOTAL:'),
                   SizedBox(width: 10.w),
                   dataContainerHolder(
                     textData: _cartRepo.totalCart.toString(),
@@ -106,7 +106,7 @@ class CartTotalDetails extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  customLabel(labelText: 'GRAND TOTAL:'),
+                  customLabel(labelText: 'ORDER TOTAL:'),
                   SizedBox(width: 10.w),
                   dataContainerHolder(
                     textData: _cartRepo.grantTotal.toString(),

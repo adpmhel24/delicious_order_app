@@ -85,16 +85,31 @@ class AppRouter extends _i13.RootStackRouter {
           routeData: routeData, child: const _i9.ProductSelectionScreen());
     },
     PendingOrdersScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<PendingOrdersScreenRouteArgs>();
       return _i13.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i10.PendingOrdersScreen());
+          routeData: routeData,
+          child: _i10.PendingOrdersScreen(
+              key: args.key,
+              startdateController: args.startdateController,
+              enddateController: args.enddateController));
     },
     ForPickupDeliverScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ForPickupDeliverScreenRouteArgs>();
       return _i13.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i11.ForPickupDeliverScreen());
+          routeData: routeData,
+          child: _i11.ForPickupDeliverScreen(
+              key: args.key,
+              startdateController: args.startdateController,
+              enddateController: args.enddateController));
     },
     CompletedOrderScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<CompletedOrderScreenRouteArgs>();
       return _i13.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i12.CompletedOrderScreen());
+          routeData: routeData,
+          child: _i12.CompletedOrderScreen(
+              key: args.key,
+              startdateController: args.startdateController,
+              enddateController: args.enddateController));
     }
   };
 
@@ -115,7 +130,7 @@ class AppRouter extends _i13.RootStackRouter {
           routeGuard
         ], children: [
           _i13.RouteConfig(PendingOrdersScreenRoute.name,
-              path: '', parent: OrderScreenRoute.name),
+              path: 'pending_orders', parent: OrderScreenRoute.name),
           _i13.RouteConfig(ForPickupDeliverScreenRoute.name,
               path: 'for_pickup_deliver', parent: OrderScreenRoute.name),
           _i13.RouteConfig(CompletedOrderScreenRoute.name,
@@ -245,27 +260,108 @@ class ProductSelectionScreenRoute extends _i13.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i10.PendingOrdersScreen]
-class PendingOrdersScreenRoute extends _i13.PageRouteInfo<void> {
-  const PendingOrdersScreenRoute()
-      : super(PendingOrdersScreenRoute.name, path: '');
+class PendingOrdersScreenRoute
+    extends _i13.PageRouteInfo<PendingOrdersScreenRouteArgs> {
+  PendingOrdersScreenRoute(
+      {_i14.Key? key,
+      required _i14.TextEditingController startdateController,
+      required _i14.TextEditingController enddateController})
+      : super(PendingOrdersScreenRoute.name,
+            path: 'pending_orders',
+            args: PendingOrdersScreenRouteArgs(
+                key: key,
+                startdateController: startdateController,
+                enddateController: enddateController));
 
   static const String name = 'PendingOrdersScreenRoute';
 }
 
+class PendingOrdersScreenRouteArgs {
+  const PendingOrdersScreenRouteArgs(
+      {this.key,
+      required this.startdateController,
+      required this.enddateController});
+
+  final _i14.Key? key;
+
+  final _i14.TextEditingController startdateController;
+
+  final _i14.TextEditingController enddateController;
+
+  @override
+  String toString() {
+    return 'PendingOrdersScreenRouteArgs{key: $key, startdateController: $startdateController, enddateController: $enddateController}';
+  }
+}
+
 /// generated route for
 /// [_i11.ForPickupDeliverScreen]
-class ForPickupDeliverScreenRoute extends _i13.PageRouteInfo<void> {
-  const ForPickupDeliverScreenRoute()
-      : super(ForPickupDeliverScreenRoute.name, path: 'for_pickup_deliver');
+class ForPickupDeliverScreenRoute
+    extends _i13.PageRouteInfo<ForPickupDeliverScreenRouteArgs> {
+  ForPickupDeliverScreenRoute(
+      {_i14.Key? key,
+      required _i14.TextEditingController startdateController,
+      required _i14.TextEditingController enddateController})
+      : super(ForPickupDeliverScreenRoute.name,
+            path: 'for_pickup_deliver',
+            args: ForPickupDeliverScreenRouteArgs(
+                key: key,
+                startdateController: startdateController,
+                enddateController: enddateController));
 
   static const String name = 'ForPickupDeliverScreenRoute';
 }
 
+class ForPickupDeliverScreenRouteArgs {
+  const ForPickupDeliverScreenRouteArgs(
+      {this.key,
+      required this.startdateController,
+      required this.enddateController});
+
+  final _i14.Key? key;
+
+  final _i14.TextEditingController startdateController;
+
+  final _i14.TextEditingController enddateController;
+
+  @override
+  String toString() {
+    return 'ForPickupDeliverScreenRouteArgs{key: $key, startdateController: $startdateController, enddateController: $enddateController}';
+  }
+}
+
 /// generated route for
 /// [_i12.CompletedOrderScreen]
-class CompletedOrderScreenRoute extends _i13.PageRouteInfo<void> {
-  const CompletedOrderScreenRoute()
-      : super(CompletedOrderScreenRoute.name, path: 'completed_order');
+class CompletedOrderScreenRoute
+    extends _i13.PageRouteInfo<CompletedOrderScreenRouteArgs> {
+  CompletedOrderScreenRoute(
+      {_i14.Key? key,
+      required _i14.TextEditingController startdateController,
+      required _i14.TextEditingController enddateController})
+      : super(CompletedOrderScreenRoute.name,
+            path: 'completed_order',
+            args: CompletedOrderScreenRouteArgs(
+                key: key,
+                startdateController: startdateController,
+                enddateController: enddateController));
 
   static const String name = 'CompletedOrderScreenRoute';
+}
+
+class CompletedOrderScreenRouteArgs {
+  const CompletedOrderScreenRouteArgs(
+      {this.key,
+      required this.startdateController,
+      required this.enddateController});
+
+  final _i14.Key? key;
+
+  final _i14.TextEditingController startdateController;
+
+  final _i14.TextEditingController enddateController;
+
+  @override
+  String toString() {
+    return 'CompletedOrderScreenRouteArgs{key: $key, startdateController: $startdateController, enddateController: $enddateController}';
+  }
 }

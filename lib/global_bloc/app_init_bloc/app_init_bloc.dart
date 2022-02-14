@@ -1,3 +1,4 @@
+import '../../data/repositories/repositories.dart';
 import './bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,8 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
     on<AddingNewURL>(onAddingURL);
   }
 
+  final VersionRepo _versionRepo = VersionRepo();
+
   void onOpeningApp(OpeningApp event, Emitter<AppInitState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -15,6 +18,11 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
       emit(NoURLState());
     } else {
       emit(AddedNewURlState(prefs.getString("url")!));
+    }
+    if (await _versionRepo.isUpdatedAvailable()) {
+      emit(NewUpdateAvailable(_versionRepo.currentVersion));
+    } else {
+      emit(NoUpdateAvailable());
     }
   }
 

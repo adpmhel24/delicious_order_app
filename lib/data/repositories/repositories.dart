@@ -9,3 +9,4 @@ export 'order_repo.dart';
 export 'customer_type_repo.dart';
 export 'checkout_repo.dart';
 export 'ph_location_repo.dart';
+export 'version_repo.dart';

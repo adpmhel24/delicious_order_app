@@ -21,15 +21,17 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   void onFetchingForConfirmOrders(
       FetchForConfirmOrders event, Emitter<OrdersState> emit) async {
     emit(LoadingOrdersForConfirm());
-    final String fromDate =
-        event.fromDate ?? DateFormat('MM/dd/yyyy').format(DateTime.now());
-    final String toDate =
-        event.fromDate ?? DateFormat('MM/dd/yyyy').format(DateTime.now());
+    var fromDate = event.fromDate;
+    var toDate = event.toDate;
+    fromDate!.text = event.fromDate!.text.isEmpty ? "" : event.fromDate!.text;
+    toDate!.text = event.toDate!.text.isEmpty
+        ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+        : event.toDate!.text;
     try {
       await _orderRepo.fetchAllOrdersByUser(params: {
         "order_status": 0,
-        "from_date": fromDate,
-        "to_date": toDate
+        "from_date": fromDate.text,
+        "to_date": toDate.text
       });
       emit(LoadedOrdersForConfirm(_orderRepo.orders));
     } on HttpException catch (e) {
@@ -40,8 +42,18 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   void onFetchingForDelivery(
       FetchForDeliveryOrders event, Emitter<OrdersState> emit) async {
     emit(LoadingOrdersForDelivery());
+    var fromDate = event.fromDate;
+    var toDate = event.toDate;
+    fromDate!.text = event.fromDate!.text.isEmpty ? "" : event.fromDate!.text;
+    toDate!.text = event.toDate!.text.isEmpty
+        ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+        : event.toDate!.text;
     try {
-      await _orderRepo.fetchAllOrdersByUser(params: {"order_status": 1});
+      await _orderRepo.fetchAllOrdersByUser(params: {
+        "order_status": 1,
+        "from_date": fromDate.text,
+        "to_date": toDate.text
+      });
       emit(LoadedOrdersForDelivery(_orderRepo.orders));
     } on HttpException catch (e) {
       emit(OrdersErrorState(e.message));
@@ -51,9 +63,21 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   void onFetchingCompleted(
       FetchCompletedOrders event, Emitter<OrdersState> emit) async {
     emit(LoadingOrdersCompeted());
+    var fromDate = event.fromDate;
+    var toDate = event.toDate;
+    fromDate!.text = event.fromDate!.text.isEmpty
+        ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+        : event.fromDate!.text;
+    toDate!.text = event.toDate!.text.isEmpty
+        ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+        : event.toDate!.text;
     try {
-      await _orderRepo
-          .fetchAllOrdersByUser(params: {"order_status": 3, "docstatus": 'C'});
+      await _orderRepo.fetchAllOrdersByUser(params: {
+        "order_status": 3,
+        "from_date": fromDate.text,
+        "to_date": toDate.text,
+        "docstatus": 'C'
+      });
       emit(LoadedOrdersCompleted(_orderRepo.orders));
     } on HttpException catch (e) {
       emit(OrdersErrorState(e.message));

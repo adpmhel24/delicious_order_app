@@ -34,7 +34,7 @@ import './router_guard.dart';
       path: '/orders',
       guards: [RouteGuard],
       children: <AutoRoute>[
-        AutoRoute(page: PendingOrdersScreen, path: '', initial: true),
+        AutoRoute(page: PendingOrdersScreen, path: 'pending_orders'),
         AutoRoute(page: ForPickupDeliverScreen, path: 'for_pickup_deliver'),
         AutoRoute(page: CompletedOrderScreen, path: 'completed_order'),
       ],

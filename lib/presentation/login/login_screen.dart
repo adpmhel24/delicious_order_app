@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:native_updater/native_updater.dart';
 
 import '/global_bloc/app_init_bloc/bloc.dart';
 import 'bloc/bloc.dart';
@@ -30,17 +31,33 @@ class LoginScreen extends StatelessWidget {
         builder: (BuildContext builderContext) {
           return BlocConsumer<AppInitBloc, AppInitState>(
             listener: (_, state) {
+              print(state);
+
               if (state is NoURLState) {
                 showAnimatedDialog(
                   context: context,
                   builder: (_) {
-                    return AddUrlDialog(
-                      loginContext: builderContext,
+                    return WillPopScope(
+                      onWillPop: () async => false,
+                      child: AddUrlDialog(
+                        loginContext: builderContext,
+                      ),
                     );
                   },
                   animationType: DialogTransitionType.size,
                   curve: Curves.fastOutSlowIn,
                 );
+              } else if (state is NewUpdateAvailable) {
+                NativeUpdater.displayUpdateAlert(context,
+                    forceUpdate: true,
+                    appStoreUrl:
+                        'https://github.com/laikamanor/mobile-pos-v2/releases/download/v1.17/DPA.Setup.exe',
+                    iOSDescription: '<Your iOS description>',
+                    iOSUpdateButtonLabel: 'Upgrade',
+                    iOSCloseButtonLabel: 'Exit',
+                    errorText: "Error",
+                    errorCloseButtonLabel: "Close",
+                    errorSubtitle: "This version of the app isn't legit");
               }
             },
             builder: (_, state) => BlocListener<LoginBloc, LoginState>(

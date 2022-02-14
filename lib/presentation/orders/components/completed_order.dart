@@ -1,46 +1,36 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../widget/custom_text_field.dart';
 import '../../../widget/custom_date_range_picker.dart';
 import '/presentation/orders/bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'order_item.dart';
 
-// class CompletedOrderScreen extends StatefulWidget {
-//   const CompletedOrderScreen({Key? key}) : super(key: key);
-
-//   @override
-//   State<CompletedOrderScreen> createState() => _CompletedOrderScreenState();
-// }
-
-// class _CompletedOrderScreenState extends State<CompletedOrderScreen> {
-
-// }
-
 class CompletedOrderScreen extends StatefulWidget {
-  const CompletedOrderScreen({Key? key}) : super(key: key);
+  final TextEditingController startdateController;
+  final TextEditingController enddateController;
+  const CompletedOrderScreen(
+      {Key? key,
+      required this.startdateController,
+      required this.enddateController})
+      : super(key: key);
 
   @override
   State<CompletedOrderScreen> createState() => _CompletedOrderScreenState();
 }
 
 class _CompletedOrderScreenState extends State<CompletedOrderScreen> {
-  final TextEditingController _startdateController = TextEditingController();
-  final TextEditingController _enddateController = TextEditingController();
-
-  @override
-  void dispose() {
-    _startdateController.dispose();
-    _enddateController.dispose();
-    super.dispose();
-  }
-
   Future<void> _refresh(BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 200));
-    BlocProvider.of<OrdersBloc>(context).add(FetchCompletedOrders());
+    BlocProvider.of<OrdersBloc>(context).add(FetchCompletedOrders(
+      fromDate: widget.startdateController,
+      toDate: widget.enddateController,
+    ));
   }
 
   @override
@@ -53,7 +43,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen> {
             children: [
               Flexible(
                 child: CustomTextField(
-                  controller: _startdateController,
+                  controller: widget.startdateController,
                   labelText: 'Start Delivery Date',
                   readOnly: true,
                 ),
@@ -63,7 +53,7 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen> {
               ),
               Flexible(
                 child: CustomTextField(
-                  controller: _enddateController,
+                  controller: widget.enddateController,
                   labelText: 'End Delivery Date',
                   readOnly: true,
                 ),
@@ -72,10 +62,29 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen> {
                 onPressed: () {
                   customDateRangePicker(
                       context: context,
-                      startDateController: _startdateController,
-                      endDateController: _enddateController,
+                      startDateController: widget.startdateController,
+                      endDateController: widget.enddateController,
+                      initialDateRange: PickerDateRange(
+                        DateTime.parse(
+                          widget.startdateController.text.isEmpty
+                              ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+                              : DateFormat("MM/dd/yyyy")
+                                  .parse(widget.startdateController.text)
+                                  .toString(),
+                        ),
+                        DateTime.parse(
+                          widget.enddateController.text.isEmpty
+                              ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+                              : DateFormat("MM/dd/yyyy")
+                                  .parse(widget.enddateController.text)
+                                  .toString(),
+                        ),
+                      ),
                       onSubmit: () {
-                        // context.read<OrdersBloc>().add(FetchForConfirmOrders());
+                        context.read<OrdersBloc>().add(FetchCompletedOrders(
+                              fromDate: widget.startdateController,
+                              toDate: widget.enddateController,
+                            ));
                         Navigator.of(context).pop();
                       });
                 },

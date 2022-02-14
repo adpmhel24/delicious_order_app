@@ -16,6 +16,16 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  final TextEditingController _startdateController = TextEditingController();
+  final TextEditingController _enddateController = TextEditingController();
+
+  @override
+  void dispose() {
+    _startdateController.dispose();
+    _enddateController.dispose();
+    super.dispose();
+  }
+
   int currentpage = 0;
 
   List<String> appBarTitles = [
@@ -29,10 +39,19 @@ class _OrderScreenState extends State<OrderScreen> {
     return BlocProvider<OrdersBloc>(
       create: (context) => OrdersBloc(),
       child: AutoTabsRouter(
-        routes: const [
-          PendingOrdersScreenRoute(),
-          ForPickupDeliverScreenRoute(),
-          CompletedOrderScreenRoute(),
+        routes: [
+          PendingOrdersScreenRoute(
+            startdateController: _startdateController,
+            enddateController: _enddateController,
+          ),
+          ForPickupDeliverScreenRoute(
+            startdateController: _startdateController,
+            enddateController: _enddateController,
+          ),
+          CompletedOrderScreenRoute(
+            startdateController: _startdateController,
+            enddateController: _enddateController,
+          ),
         ],
         builder: (context, child, animation) {
           final tabsRouter = AutoTabsRouter.of(context);
@@ -61,13 +80,18 @@ class _OrderScreenState extends State<OrderScreen> {
                   currentpage = index;
                 });
                 if (index == 0) {
-                  context.read<OrdersBloc>().add(const FetchForConfirmOrders());
+                  context.read<OrdersBloc>().add(FetchForConfirmOrders(
+                      fromDate: _startdateController,
+                      toDate: _enddateController));
                 } else if (index == 1) {
-                  BlocProvider.of<OrdersBloc>(context)
-                      .add(FetchForDeliveryOrders());
+                  BlocProvider.of<OrdersBloc>(context).add(
+                      FetchForDeliveryOrders(
+                          fromDate: _startdateController,
+                          toDate: _enddateController));
                 } else if (index == 2) {
-                  BlocProvider.of<OrdersBloc>(context)
-                      .add(FetchCompletedOrders());
+                  BlocProvider.of<OrdersBloc>(context).add(FetchCompletedOrders(
+                      fromDate: _startdateController,
+                      toDate: _enddateController));
                 }
               },
               items: const [
@@ -78,6 +102,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 BottomNavigationBarItem(
                   label: 'Confirmed Orders',
                   icon: Icon(LineIcons.truckMoving),
+                  tooltip: 'Confirmed Orders',
                 ),
                 BottomNavigationBarItem(
                   label: 'Delivered Orders',
