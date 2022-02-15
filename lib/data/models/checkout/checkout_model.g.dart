@@ -29,7 +29,8 @@ CheckOutModel _$CheckOutModelFromJson(Map<String, dynamic> json) =>
       salestype: json['salestype'] as String?,
     )
       ..custName = json['cust_name'] as String?
-      ..custType = json['cust_type'] as String?;
+      ..custType = json['cust_type'] as String?
+      ..disctype = json['disctype'] as String?;
 
 Map<String, dynamic> _$CheckOutModelToJson(CheckOutModel instance) {
   final val = <String, dynamic>{
@@ -55,6 +56,7 @@ Map<String, dynamic> _$CheckOutModelToJson(CheckOutModel instance) {
   val['payment_method'] = instance.paymentMethod;
   val['delivery_method'] = instance.deliveryMethod;
   val['salestype'] = instance.salestype;
+  val['disctype'] = instance.disctype;
   val['rows'] = instance.rows;
   return val;
 }

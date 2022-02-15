@@ -85,18 +85,19 @@ class _MyAppState extends State<MyApp> {
 
 elevatedButtonTheme() {
   return ElevatedButtonThemeData(
-      // style: ButtonStyle(
-      //   backgroundColor: MaterialStateProperty.all(const Color(0xFFb1c795)),
-      //   foregroundColor: MaterialStateProperty.all(Colors.white),
-      //   padding: MaterialStateProperty.all(
-      //     EdgeInsets.symmetric(vertical: 14.h),
-      //   ),
-      // ),
-      style: ElevatedButton.styleFrom(
-    primary: const Color(0xFFb1c795),
-    onPrimary: Colors.white,
-    padding: EdgeInsets.symmetric(vertical: 14.h),
-  ));
+    // style: ButtonStyle(
+    //   backgroundColor: MaterialStateProperty.all(const Color(0xFFb1c795)),
+    //   foregroundColor: MaterialStateProperty.all(Colors.white),
+    //   padding: MaterialStateProperty.all(
+    //     EdgeInsets.symmetric(vertical: 14.h),
+    //   ),
+    // ),
+    style: ElevatedButton.styleFrom(
+      primary: const Color(0xFFb1c795),
+      onPrimary: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: 14.h),
+    ),
+  );
 }
 
 textTheme() {

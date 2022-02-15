@@ -64,22 +64,22 @@ class _CompletedOrderScreenState extends State<CompletedOrderScreen> {
                       context: context,
                       startDateController: widget.startdateController,
                       endDateController: widget.enddateController,
-                      initialDateRange: PickerDateRange(
-                        DateTime.parse(
-                          widget.startdateController.text.isEmpty
-                              ? DateFormat('MM/dd/yyyy').format(DateTime.now())
-                              : DateFormat("MM/dd/yyyy")
-                                  .parse(widget.startdateController.text)
-                                  .toString(),
-                        ),
-                        DateTime.parse(
-                          widget.enddateController.text.isEmpty
-                              ? DateFormat('MM/dd/yyyy').format(DateTime.now())
-                              : DateFormat("MM/dd/yyyy")
-                                  .parse(widget.enddateController.text)
-                                  .toString(),
-                        ),
-                      ),
+                      // initialDateRange: PickerDateRange(
+                      //   DateTime.parse(
+                      //     widget.startdateController.text.isEmpty
+                      //         ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+                      //         : DateFormat("MM/dd/yyyy")
+                      //             .parse(widget.startdateController.text)
+                      //             .toString(),
+                      //   ),
+                      //   DateTime.parse(
+                      //     widget.enddateController.text.isEmpty
+                      //         ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+                      //         : DateFormat("MM/dd/yyyy")
+                      //             .parse(widget.enddateController.text)
+                      //             .toString(),
+                      //   ),
+                      // ),
                       onSubmit: () {
                         context.read<OrdersBloc>().add(FetchCompletedOrders(
                               fromDate: widget.startdateController,

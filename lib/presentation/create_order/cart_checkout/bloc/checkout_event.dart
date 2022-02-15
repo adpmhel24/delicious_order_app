@@ -36,6 +36,13 @@ class SalesTypeCodeChange extends CheckOutEvent {
   List<Object?> get props => [salesTypeCode];
 }
 
+class DiscTypeCodeChange extends CheckOutEvent {
+  final String discType;
+  const DiscTypeCodeChange(this.discType);
+  @override
+  List<Object?> get props => [discType];
+}
+
 class PaymentMethodChange extends CheckOutEvent {
   final String paymentMethod;
   const PaymentMethodChange(this.paymentMethod);

@@ -10,6 +10,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../../../utils/constant.dart';
 import '../bloc/bloc.dart';
 import '/global_bloc/sales_type_bloc/bloc.dart';
+import '/global_bloc/disc_type_bloc/bloc.dart';
 import '/utils/size_config.dart';
 import '/widget/custom_text_field.dart';
 
@@ -23,6 +24,7 @@ class CheckOutForm extends StatefulWidget {
 class _CheckOutFormState extends State<CheckOutForm> {
   final TextEditingController _dateTimeController = TextEditingController();
   final TextEditingController _deliveryMethod = TextEditingController();
+  final TextEditingController _discountTypeController = TextEditingController();
   final TextEditingController _paymentMethod = TextEditingController();
   final TextEditingController _orderNotes = TextEditingController();
   final TextEditingController _salesTypeController = TextEditingController();
@@ -34,6 +36,7 @@ class _CheckOutFormState extends State<CheckOutForm> {
     _deliveryMethod.dispose();
     _paymentMethod.dispose();
     _orderNotes.dispose();
+    _discountTypeController.dispose();
     _dateTimeController.dispose();
     _salesTypeController.dispose();
     super.dispose();
@@ -163,7 +166,81 @@ class _CheckOutFormState extends State<CheckOutForm> {
                                         state.salesTypes[index].description;
                                     context.read<CheckOutBloc>().add(
                                           SalesTypeCodeChange(
-                                              _salesTypeController.text),
+                                              state.salesTypes[index].code),
+                                        );
+                                    AutoRouter.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return SizedBox(
+                        height: (SizeConfig.screenHeight * .5).h,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          ),
+          SizedBox(
+            height: 15.h,
+          ),
+          CustomTextField(
+            labelText: 'Discount Type',
+            controller: _discountTypeController,
+            readOnly: true,
+            onTap: () {
+              context.read<DiscTypeBloc>().add(FetchDiscTypeFromLocal());
+              showMaterialModalBottomSheet(
+                context: context,
+                enableDrag: false,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.r),
+                    topRight: Radius.circular(10.r),
+                  ),
+                ),
+                builder: (_) {
+                  return BlocBuilder<DiscTypeBloc, DiscTypeState>(
+                    builder: (_, state) {
+                      if (state is DiscTypeLoadedState) {
+                        return SafeArea(
+                          child: SizedBox(
+                            height: (SizeConfig.screenHeight * .75).h,
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                context
+                                    .read<DiscTypeBloc>()
+                                    .add(FetchDiscTypeFromAPI());
+                              },
+                              child: ListView.separated(
+                                itemCount: state.discTypes.length,
+                                separatorBuilder: (_, index) {
+                                  return const Divider(
+                                    thickness: 1,
+                                    color: Color(0xFFBDBDBD),
+                                  );
+                                },
+                                itemBuilder: (_, index) => ListTile(
+                                  title:
+                                      Text(state.discTypes[index].description),
+                                  selected:
+                                      state.discTypes[index].description ==
+                                          _discountTypeController.text,
+                                  selectedColor: Constant.onSelectedColor,
+                                  onTap: () {
+                                    _discountTypeController.text =
+                                        state.discTypes[index].description;
+                                    context.read<CheckOutBloc>().add(
+                                          DiscTypeCodeChange(
+                                            state.discTypes[index].code,
+                                          ),
                                         );
                                     AutoRouter.of(context).pop();
                                   },

@@ -39,6 +39,7 @@ class CheckOutModel {
   String? deliveryMethod;
 
   String? salestype;
+  String? disctype;
 
   List<Map<String, dynamic>>? rows;
 

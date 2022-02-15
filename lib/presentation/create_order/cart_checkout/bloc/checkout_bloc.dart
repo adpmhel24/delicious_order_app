@@ -17,6 +17,7 @@ class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
     on<DeliveryMethodChange>(onDeliveryMethodChange);
     on<PaymentMethodChange>(onPaymentMethodChange);
     on<SalesTypeCodeChange>(onSalesTypeCodeChange);
+    on<DiscTypeCodeChange>(onDiscTypeCodeChange);
   }
 
   void onDeliveryDateChange(
@@ -47,6 +48,12 @@ class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
       SalesTypeCodeChange event, Emitter<CheckOutState> emit) {
     emit(state.update(isSalesTypeCodeValid: event.salesTypeCode.isNotEmpty));
     _checkOutRepo.checkoutData.salestype = event.salesTypeCode;
+  }
+
+  void onDiscTypeCodeChange(
+      DiscTypeCodeChange event, Emitter<CheckOutState> emit) {
+    // emit(state.update(isSalesTypeCodeValid: event.discType.isNotEmpty));
+    _checkOutRepo.checkoutData.disctype = event.discType;
   }
 
   void onCheckOut(ProceedCheckOut event, Emitter<CheckOutState> emit) async {
