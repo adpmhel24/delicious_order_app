@@ -73,7 +73,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         : event.toDate!.text;
     try {
       await _orderRepo.fetchAllOrdersByUser(params: {
-        "order_status": 3,
+        "order_status": 2,
         "from_date": fromDate.text,
         "to_date": toDate.text,
         "docstatus": 'C'
