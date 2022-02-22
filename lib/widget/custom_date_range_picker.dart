@@ -44,7 +44,9 @@ customDateRangePicker({
             initialSelectedRange: initialDateRange ??
                 PickerDateRange(
                   DateTime.now(),
-                  DateTime.now().add(const Duration(days: 4)),
+                  DateTime.now().add(
+                    const Duration(days: 4),
+                  ),
                 ),
           ),
         ),

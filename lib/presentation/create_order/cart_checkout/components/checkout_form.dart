@@ -122,6 +122,12 @@ class _CheckOutFormState extends State<CheckOutForm> {
             labelText: 'SalesType*',
             controller: _salesTypeController,
             readOnly: true,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                _salesTypeController.clear();
+              },
+            ),
             onTap: () {
               context.read<SalesTypeBloc>().add(FetchSalesTypeFromLocal());
               showMaterialModalBottomSheet(
@@ -195,6 +201,12 @@ class _CheckOutFormState extends State<CheckOutForm> {
             labelText: 'Discount Type',
             controller: _discountTypeController,
             readOnly: true,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                _discountTypeController.clear();
+              },
+            ),
             onTap: () {
               context.read<DiscTypeBloc>().add(FetchDiscTypeFromLocal());
               showMaterialModalBottomSheet(
@@ -268,6 +280,12 @@ class _CheckOutFormState extends State<CheckOutForm> {
           DeliveryDateField(
             controller: _dateTimeController,
             dateFormat: dateFormat,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                _dateTimeController.clear();
+              },
+            ),
           ),
           SizedBox(
             height: 15.h,
@@ -316,13 +334,16 @@ class RemarksField extends StatelessWidget {
 class DeliveryDateField extends StatelessWidget {
   final TextEditingController _controller;
   final DateFormat _dateFormat;
+  final Widget? _suffixIcon;
 
   const DeliveryDateField({
     Key? key,
     required TextEditingController controller,
     required DateFormat dateFormat,
+    Widget? suffixIcon,
   })  : _controller = controller,
         _dateFormat = dateFormat,
+        _suffixIcon = suffixIcon,
         super(key: key);
 
   @override
@@ -350,6 +371,7 @@ class DeliveryDateField extends StatelessWidget {
         );
       },
       prefixIcon: const Icon(Icons.calendar_today),
+      suffixIcon: _suffixIcon,
     );
   }
 }

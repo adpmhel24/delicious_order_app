@@ -23,9 +23,12 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(LoadingOrdersForConfirm());
     var fromDate = event.fromDate;
     var toDate = event.toDate;
-    fromDate!.text = event.fromDate!.text.isEmpty ? "" : event.fromDate!.text;
-    toDate!.text = event.toDate!.text.isEmpty
+    fromDate!.text = event.fromDate!.text.isEmpty
         ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+        : event.fromDate!.text;
+    toDate!.text = event.toDate!.text.isEmpty
+        ? DateFormat('MM/dd/yyyy')
+            .format(DateTime.now().add(const Duration(days: 7)))
         : event.toDate!.text;
     try {
       await _orderRepo.fetchAllOrdersByUser(params: {
@@ -44,9 +47,12 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(LoadingOrdersForDelivery());
     var fromDate = event.fromDate;
     var toDate = event.toDate;
-    fromDate!.text = event.fromDate!.text.isEmpty ? "" : event.fromDate!.text;
-    toDate!.text = event.toDate!.text.isEmpty
+    fromDate!.text = event.fromDate!.text.isEmpty
         ? DateFormat('MM/dd/yyyy').format(DateTime.now())
+        : event.fromDate!.text;
+    toDate!.text = event.toDate!.text.isEmpty
+        ? DateFormat('MM/dd/yyyy')
+            .format(DateTime.now().add(const Duration(days: 7)))
         : event.toDate!.text;
     try {
       await _orderRepo.fetchAllOrdersByUser(params: {
