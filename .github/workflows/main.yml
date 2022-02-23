@@ -31,24 +31,24 @@ jobs:
 #     runs-on: ubuntu-latest
     
       # Setup Java environment in order to build the Android app.
-        uses: actions/checkout@v2
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
         with:
           distribution: 'zulu'
           java-version: '11'
       
       # Setup the flutter environment.
-        uses: actions/checkout@v2
-        uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.10.0'
           channel: 'stable'
       
       # Get flutter dependencies.
-        run: flutter pub get
+      - run: flutter pub get
       
       # Statically analyze the Dart code for any errors.
-        run: flutter analyze .
+      - run: flutter analyze .
       
       # Run widget tests for our flutter project.
       # - run: flutter test
@@ -57,9 +57,9 @@ jobs:
       # - run: flutter build appbundle
 
       # Build apk.
-        run: flutter build apk
+      - run: flutter build apk
 
-        uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@v1
         with:
           artifacts: build/app/outputs/flutter-apk/app-release.apk
           tag: v1.0.1
