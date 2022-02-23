@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch API Data 📦
-        uses: JamesIves/fetch-api-data-action@v2.1.0
+      - uses: JamesIves/fetch-api-data-action@v2.1.0
         with:
         token-endpoint: http://122.54.198.84:82/api/auth/get_token
         token-configuration: '{ "method": "POST", "body": {"username": "${{ secrets.USERNAME }}", "password": "${{ secrets.PASSWORD }}" } }'
