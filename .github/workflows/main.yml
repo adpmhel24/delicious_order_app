@@ -59,5 +59,10 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         artifacts: build/app/outputs/flutter-apk/app-release.apk
+<<<<<<< HEAD
         tag: v1.0.2
         token: ${{ secrets.TOKEN }}
+=======
+        tag: v1.0.1
+        token: ${{ secrets.TOKEN }}
+>>>>>>> 3027f96c7864fea680435035bf9464bd81e61a0b
