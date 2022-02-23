@@ -14,8 +14,6 @@ on:
 jobs:
   build:
     name: Build & Release
-
-  refresh-feed:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch API Data 📦
