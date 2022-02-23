@@ -10,54 +10,57 @@ on:
     - develop
     
 # on: push    # Default will running for every branch.
-    
 jobs:
-  build:
-    name: Build & Release
-    # This job will run on ubuntu virtual machine
+  refresh-feed:
     runs-on: ubuntu-latest
     steps:
-    # Login to API
-    - uses: JamesIves/fetch-api-data-action@v2.1.0
-      with:
-        token-endpoint: http://122.54.198.84:82/api/auth/get_token
-        token-configuration: '{ "method": "POST", "body": {"username": "${{ secrets.USERNAME }}", "password": "${{ secrets.PASSWORD }}" } }'
-        # Once the token endpoint has fetched then this endpoint is requested.
-        endpoint: http://122.54.198.84:82/api/f_e/version/add_update
-        # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
-        configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer {{{ data.token }}}"}, "body": {"platform": "android", "version": "1.0.0", "buildNumber": 2, "packageName": "com.delicious_ordering.android.app", "releaseNotes": "Minor updates and improvements."} }'
-  
-    # # Setup Java environment in order to build the Android app.
-    # - uses: actions/checkout@v2
-    # - uses: actions/setup-java@v1
-    #   with:
-    #     distribution: 'zulu'
-    #     java-version: '11'
+      - name: Fetch API Data 📦
+        uses: JamesIves/fetch-api-data-action@v2.1.0
+        with:
+          token-endpoint: http://122.54.198.84:82/api/auth/get_token
+          token-configuration: '{ "method": "POST", "body": {"username": "${{ secrets.USERNAME }}", "password": "${{ secrets.PASSWORD }}" } }'
+          # Once the token endpoint has fetched then this endpoint is requested.
+          endpoint: http://122.54.198.84:82/api/f_e/version/add_update
+          # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
+          configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer {{{ data.token }}}"}, "body": {"platform": "android", "version": "1.0.0", "buildNumber": 2, "packageName": "com.delicious_ordering.android.app", "releaseNotes": "Minor updates and improvements."} }'
     
-    # # Setup the flutter environment.
-    # - uses: actions/checkout@v2
-    # - uses: subosito/flutter-action@v2
-    #   with:
-    #     flutter-version: '2.10.0'
-    #     channel: 'stable'
+# jobs:
+#   build:
+#     name: Build & Release
+#     # This job will run on ubuntu virtual machine
+#     runs-on: ubuntu-latest
     
-    # # Get flutter dependencies.
-    # - run: flutter pub get
-    
-    # # Statically analyze the Dart code for any errors.
-    # - run: flutter analyze .
-    
-    # # Run widget tests for our flutter project.
-    # # - run: flutter test
-    
-    # # # Build appBundle.
-    # # - run: flutter build appbundle
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      
+      # Setup the flutter environment.
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.0'
+          channel: 'stable'
+      
+      # Get flutter dependencies.
+      - run: flutter pub get
+      
+      # Statically analyze the Dart code for any errors.
+      - run: flutter analyze .
+      
+      # Run widget tests for our flutter project.
+      # - run: flutter test
+      
+      # # Build appBundle.
+      # - run: flutter build appbundle
 
-    # # Build apk.
-    # - run: flutter build apk
+      # Build apk.
+      - run: flutter build apk
 
-    # - uses: ncipollo/release-action@v1
-    #   with:
-    #     artifacts: build/app/outputs/flutter-apk/app-release.apk
-    #     tag: v1.0.2
-    #     token: ${{ secrets.TOKEN }}
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/flutter-apk/app-release.apk
+          tag: v1.0.1
+          token: ${{ secrets.TOKEN }}
