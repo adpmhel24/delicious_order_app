@@ -24,9 +24,7 @@ class NewCustDetailsBloc
       state.copyWith(
         cityMunicipality: cityMunicipality,
         status: Formz.validate([
-          cityMunicipality,
-          state.cityMunicipality,
-          state.brgy,
+          state.streetAddress,
         ]),
       ),
     );
@@ -38,7 +36,7 @@ class NewCustDetailsBloc
     emit(
       state.copyWith(
         brgy: brgy,
-        status: Formz.validate([brgy, state.cityMunicipality, state.brgy]),
+        status: Formz.validate([state.streetAddress]),
       ),
     );
   }
@@ -51,8 +49,6 @@ class NewCustDetailsBloc
         streetAddress: streetAddress,
         status: Formz.validate([
           streetAddress,
-          state.cityMunicipality,
-          state.brgy,
         ]),
       ),
     );
@@ -64,7 +60,7 @@ class NewCustDetailsBloc
     emit(
       state.copyWith(
         otherDetails: otherDetails,
-        status: Formz.validate([otherDetails]),
+        status: Formz.validate([state.streetAddress]),
       ),
     );
   }

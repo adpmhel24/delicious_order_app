@@ -90,6 +90,9 @@ brgyModalSelection({
                                     state.brgys[index].name,
                                 onTap: () {
                                   brgyController.text = state.brgys[index].name;
+                                  if (onChanged != null) {
+                                    onChanged(brgyController.text);
+                                  }
                                   Navigator.of(context).pop();
                                 },
                               );

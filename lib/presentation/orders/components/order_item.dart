@@ -221,7 +221,7 @@ class _OrderItemState extends State<OrderItem> {
                                             ),
                                             Text(
                                               "Subtotal: ${formatStringToDecimal(
-                                                prod['linetotal'].toString(),
+                                                prod['subtotal'].toString(),
                                                 hasCurrency: true,
                                               )}",
                                             )

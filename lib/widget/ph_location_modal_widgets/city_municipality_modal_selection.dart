@@ -99,6 +99,10 @@ cityMunicipalityModalSelection({
                                   phLocationRepo.selectedCityMunicipalityCode =
                                       state.citiesMunicipalities[index].code;
 
+                                  if (onChanged != null) {
+                                    onChanged(cityMunicipalityController.text);
+                                  }
+
                                   Navigator.of(context).pop();
                                 },
                               );

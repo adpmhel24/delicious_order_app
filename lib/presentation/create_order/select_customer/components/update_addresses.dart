@@ -63,9 +63,8 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                   cityMunicipalityModalSelection(
                     context: context,
                     phLocationRepo: _phLocationRepo,
-                    labelText: 'City / Municipality*',
+                    labelText: 'City / Municipality',
                     cityMunicipalityController: _cityMunicipalityController,
-                    autovalidateMode: AutovalidateMode.always,
                     onChanged: (_) {
                       context.read<NewCustDetailsBloc>().add(
                             ChangeCityMunicipalityEvent(
@@ -84,26 +83,16 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                       },
                       icon: const Icon(Icons.close),
                     ),
-                    validator: (_) {
-                      return (context
-                              .read<NewCustDetailsBloc>()
-                              .state
-                              .cityMunicipality
-                              .invalid)
-                          ? "Required field!"
-                          : null;
-                    },
                   ),
                   SizedBox(
                     height: 15.w,
                   ),
                   brgyModalSelection(
                     context: context,
-                    labelText: 'Barangay*',
+                    labelText: 'Barangay',
                     brgyController: _brgyController,
                     phLocationRepo: _phLocationRepo,
-                    autovalidateMode: AutovalidateMode.always,
-                    onChanged: (_) {
+                    onChanged: (value) {
                       context.read<NewCustDetailsBloc>().add(
                             ChangeBrgyEvent(
                               _brgyController.text,
@@ -121,15 +110,6 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                       },
                       icon: const Icon(Icons.close),
                     ),
-                    validator: (_) {
-                      return (context
-                              .read<NewCustDetailsBloc>()
-                              .state
-                              .brgy
-                              .invalid)
-                          ? "Required field!"
-                          : null;
-                    },
                   ),
                   SizedBox(
                     height: 15.w,
