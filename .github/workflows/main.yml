@@ -17,16 +17,15 @@ jobs:
     # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
     steps:
-    steps:
-      - name: Fetch API Data 📦
-        uses: JamesIves/fetch-api-data-action@v2.1.0
-        with:
-          token-endpoint: http://122.54.198.84:84/api/auth/get_token
-          token-configuration: '{ "method": "POST", "body": {"username": "${{ secrets.USERNAME }}", "password": "${{ secrets.PASSWORD }}" } }'
-          # Once the token endpoint has fetched then this endpoint is requested.
-          endpoint: http://122.54.198.84:84/api/f_e/version/add_update
-          # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
-          configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer {{{ data.token }}}"}, "body": {"platform": "android", "version": "1.0.0", "buildNumber": 2, "packageName": "com.delicious_ordering.android.app", "releaseNotes": "Minor updates and improvements."} }'
+    - name: Fetch API Data 📦
+      uses: JamesIves/fetch-api-data-action@v2.1.0
+      with:
+        token-endpoint: http://122.54.198.84:84/api/auth/get_token
+        token-configuration: '{ "method": "POST", "body": {"username": "${{ secrets.USERNAME }}", "password": "${{ secrets.PASSWORD }}" } }'
+        # Once the token endpoint has fetched then this endpoint is requested.
+        endpoint: http://122.54.198.84:84/api/f_e/version/add_update
+        # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
+        configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer {{{ data.token }}}"}, "body": {"platform": "android", "version": "1.0.0", "buildNumber": 2, "packageName": "com.delicious_ordering.android.app", "releaseNotes": "Minor updates and improvements."} }'
   
     # Setup Java environment in order to build the Android app.
     - uses: actions/checkout@v2
