@@ -17,8 +17,9 @@ jobs:
     # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
     steps:
-     # Login to API
-      - uses: JamesIves/fetch-api-data-action@v2.1.0
+    steps:
+      - name: Fetch API Data 📦
+        uses: JamesIves/fetch-api-data-action@v2.1.0
         with:
           token-endpoint: http://122.54.198.84:84/api/auth/get_token
           token-configuration: '{ "method": "POST", "body": {"username": "${{ secrets.USERNAME }}", "password": "${{ secrets.PASSWORD }}" } }'
