@@ -183,7 +183,6 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
       "first_name": state.firstName.value,
       "last_name": state.lastName.value,
       "cust_type": int.parse(state.custType.value),
-      "address": state.address.value,
       "contact_number": state.contactNumber.value,
     };
 
