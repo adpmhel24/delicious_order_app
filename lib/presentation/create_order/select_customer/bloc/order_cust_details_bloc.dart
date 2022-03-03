@@ -23,7 +23,6 @@ class OrderCustDetailsBloc
       status: Formz.validate([
         state.custCode,
         state.contactNumber,
-        state.address,
       ]),
     ));
     _checkOutRepo.checkoutData.custType = event.custType.text;
@@ -40,7 +39,6 @@ class OrderCustDetailsBloc
       status: Formz.validate([
         custCode,
         state.contactNumber,
-        state.address,
       ]),
     ));
     _checkOutRepo.checkoutData.custCode = event.custCode.text;
@@ -55,7 +53,6 @@ class OrderCustDetailsBloc
       status: Formz.validate([
         state.custCode,
         contactNumber,
-        state.address,
       ]),
     ));
     _checkOutRepo.checkoutData.contactNumber = event.contactNum.text;
@@ -69,7 +66,6 @@ class OrderCustDetailsBloc
       status: Formz.validate([
         state.custCode,
         state.contactNumber,
-        address,
       ]),
     ));
     _checkOutRepo.checkoutData.address = event.address.text;

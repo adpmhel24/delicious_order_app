@@ -22,7 +22,7 @@ jobs:
           # Once the token endpoint has fetched then this endpoint is requested.
           endpoint: http://122.54.198.84:84/api/f_e/version/add_update
           # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
-          configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer {{{ data.token }}}"}, "body": {"platform": "android", "version": "1.0.0", "buildNumber": 1, "packageName": "com.delicious_ordering.android.app", "releaseNotes": "Minor updates and improvements."} }'
+          configuration: '{ "method": "POST", "headers": {"Authorization": "Bearer {{{ data.token }}}"}, "body": {"platform": "android", "version": "1.0.0", "buildNumber": 2, "packageName": "com.delicious_ordering.android.app", "releaseNotes": "Minor updates and improvements."} }'
     
 # jobs:
 #   build:
@@ -62,5 +62,5 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: build/app/outputs/flutter-apk/app-release.apk
-          tag: v1.0.1
+          tag: v1.0.2
           token: ${{ secrets.TOKEN }}
