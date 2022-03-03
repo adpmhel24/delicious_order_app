@@ -11,7 +11,7 @@ on:
     
 # on: push    # Default will running for every branch.
 jobs:
-  refresh-feed:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch API Data 📦
