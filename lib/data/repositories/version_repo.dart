@@ -66,4 +66,13 @@ class VersionRepo {
     }
     return false;
   }
+
+  ///Singleton factory
+  static final VersionRepo _instance = VersionRepo._internal();
+
+  factory VersionRepo() {
+    return _instance;
+  }
+
+  VersionRepo._internal();
 }

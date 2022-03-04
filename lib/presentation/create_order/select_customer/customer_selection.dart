@@ -606,7 +606,6 @@ customerAddressField({
     buildWhen: (prevState, currState) => prevState.address != currState.address,
     builder: (_, state) {
       return TextFormField(
-        autovalidateMode: AutovalidateMode.always,
         keyboardType: TextInputType.multiline,
         controller: addressController,
         readOnly: true,
@@ -636,9 +635,6 @@ customerAddressField({
           context
               .read<OrderCustDetailsBloc>()
               .add(ChangeAddress(addressController));
-        },
-        validator: (_) {
-          return (state.address.invalid) ? "Required field!" : null;
         },
       );
     },

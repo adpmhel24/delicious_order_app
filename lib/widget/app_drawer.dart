@@ -78,7 +78,7 @@ class _AppDrawerState extends State<AppDrawer> {
 }
 
 Widget _createHeader(AuthRepository _authRepo) {
-  // VersionRepo versionRepo = VersionRepo();
+  VersionRepo versionRepo = VersionRepo();
   return DrawerHeader(
     margin: EdgeInsets.zero,
     padding: EdgeInsets.zero,
@@ -117,7 +117,7 @@ Widget _createHeader(AuthRepository _authRepo) {
               fontSize: 15.sp,
             ),
           ),
-          Text("v1"),
+          Text("V.${versionRepo.packageInfo.version}"),
         ],
       ),
     ),
