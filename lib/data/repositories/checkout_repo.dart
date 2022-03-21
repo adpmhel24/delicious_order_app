@@ -1,7 +1,7 @@
 import '../models/models.dart';
 
 class CheckOutRepo {
-  late CheckOutModel checkoutData = CheckOutModel();
+  late CheckOutModel checkoutData;
 
   ///Singleton factory
   static final CheckOutRepo _instance = CheckOutRepo._internal();

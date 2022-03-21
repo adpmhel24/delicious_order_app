@@ -43,6 +43,9 @@ class LoginBody extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 18.h),
+                    Text("Delicious Inventory System",
+                        style: Theme.of(context).textTheme.titleMedium),
+                    SizedBox(height: 18.h),
                     const LoginForm(),
                     SizedBox(height: 18.h),
                     SizedBox(

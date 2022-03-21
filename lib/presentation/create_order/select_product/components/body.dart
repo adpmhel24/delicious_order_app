@@ -1,10 +1,10 @@
 import 'package:delicious_ordering_app/widget/custom_error_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '/widget/custom_text_field.dart';
 
 import '/global_bloc/products_bloc/bloc.dart';
-import '/widget/custom_loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -74,9 +74,9 @@ class _BodyState extends State<Body> {
           child: BlocConsumer<ProductsBloc, ProductsState>(
             listener: (context, state) {
               if (state is LoadingProductsState) {
-                customLoadingDialog(context);
+                context.loaderOverlay.show();
               } else if (state is LoadedProductsState) {
-                Navigator.of(context).pop();
+                context.loaderOverlay.hide();
               } else if (state is ErrorState) {
                 customErrorDialog(context, message: state.message);
               }

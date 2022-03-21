@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:delicious_ordering_app/presentation/master_data/customer_type/create_screen/create_screen.dart';
 
+import '../presentation/master_data/create_customer/new_customer.dart';
 import '../presentation/master_data/customer_type/customer_type_screen.dart';
-import '/presentation/create_customer/new_customer.dart';
 import '/presentation/orders/components/completed_order.dart';
 import '/presentation/orders/components/for_pickup_deliver.dart';
 import '/presentation/orders/components/pending_order.dart';

@@ -6,57 +6,51 @@ part 'checkout_model.g.dart';
 class CheckOutModel {
   static toNull(_) => null;
 
-  DateTime? transdate;
+  DateTime transdate;
 
   @JsonKey(name: "delivery_date")
-  DateTime? deliveryDate;
+  DateTime deliveryDate;
 
   @JsonKey(name: "cust_code")
-  String? custCode;
+  String custCode;
 
   @JsonKey(name: 'cust_name', toJson: toNull, includeIfNull: false)
   String? custName;
 
-  String? address;
-  String? remarks;
+  String address;
+  String remarks;
 
-  double? delfee;
-  double? otherfee;
+  double delfee;
+  double otherfee;
 
   @JsonKey(name: 'contact_number')
-  String? contactNumber;
-
-  @JsonKey(name: 'cust_type', toJson: toNull, includeIfNull: false)
-  String? custType;
-
-  @JsonKey(name: 'customer_id', toJson: toNull, includeIfNull: false)
-  int? customerId;
+  String contactNumber;
 
   @JsonKey(name: 'payment_method')
-  String? paymentMethod;
+  String paymentMethod;
 
   @JsonKey(name: 'delivery_method')
-  String? deliveryMethod;
+  String deliveryMethod;
 
-  String? salestype;
   String? disctype;
+  String salestype;
 
-  List<Map<String, dynamic>>? rows;
+  List<Map<String, dynamic>> rows;
 
   CheckOutModel({
-    this.transdate,
-    this.deliveryDate,
-    this.custCode,
+    required this.transdate,
+    required this.deliveryDate,
+    required this.custCode,
     this.delfee = 0.00,
     this.otherfee = 0.00,
-    this.address,
-    this.remarks,
-    this.rows,
-    this.contactNumber,
-    this.customerId = -1,
-    this.paymentMethod,
-    this.deliveryMethod,
-    this.salestype,
+    required this.address,
+    this.remarks = '',
+    this.contactNumber = '',
+    required this.paymentMethod,
+    required this.deliveryMethod,
+    required this.salestype,
+    required this.rows,
+    this.disctype,
   });
 
   factory CheckOutModel.fromJson(Map<String, dynamic> json) =>

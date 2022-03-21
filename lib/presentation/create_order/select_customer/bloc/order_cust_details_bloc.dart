@@ -1,73 +1,98 @@
+import 'dart:async';
+
+import 'package:delicious_ordering_app/data/models/customer/customer_model.dart';
+import 'package:delicious_ordering_app/data/models/customer_address/customer_address_model.dart';
 import 'package:formz/formz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '/data/repositories/repositories.dart';
+import '../../../../global_bloc/customer_bloc/bloc.dart';
 import './bloc.dart';
 import '/widget/text_field_validator.dart';
 
 class OrderCustDetailsBloc
     extends Bloc<OrderCustDetailsEvent, OrderCustDetailsState> {
-  final CheckOutRepo _checkOutRepo = AppRepo.checkOutRepository;
-  OrderCustDetailsBloc() : super(const OrderCustDetailsState()) {
-    on<ChangeCustType>(onCustTypeChange);
-    on<ChangeCustCode>(onCustCodeChange);
-    on<ChangeContactNumber>(onContactNumChange);
-    on<ChangeAddress>(onAddressChange);
+  final CustomerBloc _customerBloc;
+  late final StreamSubscription _customerBlocSubscription;
+  OrderCustDetailsBloc(this._customerBloc)
+      : super(const OrderCustDetailsState()) {
+    on<ChangedCustomerSelected>(_onChangedCustomerSelected);
+    on<ChangedAddressSelected>(onAddressChange);
+    _customerBlocSubscription = _customerBloc.stream.listen((state) {
+      if (state.status == CustomerBlocStatus.success &&
+          state.lastUpdateCustomer != null) {
+        add(ChangedCustomerSelected(
+            selectedCustomer: state.lastUpdateCustomer));
+      }
+    });
   }
 
-  void onCustTypeChange(
-      ChangeCustType event, Emitter<OrderCustDetailsState> emit) {
-    final custType = TextFieldModel.dirty(event.custType.text);
-    emit(state.copyWith(
-      custType: custType,
-      status: Formz.validate([
-        state.custCode,
-        state.contactNumber,
-      ]),
-    ));
-    _checkOutRepo.checkoutData.custType = event.custType.text;
-  }
+  void _onChangedCustomerSelected(
+      ChangedCustomerSelected event, Emitter<OrderCustDetailsState> emit) {
+    CustomerModel? selectedCustomer = event.selectedCustomer;
+    CustomerAddressModel? selectedAddress;
+    String custId = selectedCustomer?.id.toString() ?? '';
+    String defaultAddress;
+    if (selectedCustomer?.details != null &&
+        selectedCustomer!.details.isNotEmpty) {
+      final int defaultAddressIndx = selectedCustomer.details.indexWhere(
+          (element) => element?.isDefault != null && element!.isDefault!);
+      if (defaultAddressIndx >= 0) {
+        selectedAddress = selectedCustomer.details[defaultAddressIndx];
+        defaultAddress =
+            """${selectedCustomer.details[defaultAddressIndx]?.streetAddress ?? ''}
+${selectedCustomer.details[defaultAddressIndx]?.brgy == null ? '' : 'Brgy. ${selectedCustomer.details[defaultAddressIndx]!.brgy}'}
+${selectedCustomer.details[defaultAddressIndx]?.cityMunicipality ?? ''}
+""";
+      } else {
+        selectedAddress = selectedCustomer.details[0];
+        defaultAddress = """${selectedCustomer.details[0]?.streetAddress ?? ''}
+${selectedCustomer.details[0]?.brgy == null ? '' : 'Brgy. ${selectedCustomer.details[0]!.brgy}'}
+${selectedCustomer.details[0]?.cityMunicipality ?? ''}
+""";
+      }
+    } else {
+      defaultAddress = '';
+    }
 
-  void onCustCodeChange(
-      ChangeCustCode event, Emitter<OrderCustDetailsState> emit) {
-    final custCode = TextFieldModel.dirty(event.custCode.text);
-    final custId = TextFieldModel.dirty(event.customerId.toString());
-    emit(state.copyWith(
-      custCode: custCode,
-      customerId: custId,
-      details: event.details,
-      status: Formz.validate([
-        custCode,
-        state.contactNumber,
-      ]),
-    ));
-    _checkOutRepo.checkoutData.custCode = event.custCode.text;
-    _checkOutRepo.checkoutData.customerId = event.customerId;
-  }
+    final customerId = TextFieldModel.dirty(custId);
+    final custCode = TextFieldModel.dirty(selectedCustomer?.code ?? '');
+    final contactNumber =
+        TextFieldModel.dirty(selectedCustomer?.contactNumber ?? '');
 
-  void onContactNumChange(
-      ChangeContactNumber event, Emitter<OrderCustDetailsState> emit) {
-    final contactNumber = TextFieldModel.dirty(event.contactNum.text);
-    emit(state.copyWith(
-      contactNumber: contactNumber,
-      status: Formz.validate([
-        state.custCode,
-        contactNumber,
-      ]),
-    ));
-    _checkOutRepo.checkoutData.contactNumber = event.contactNum.text;
+    final address = TextFieldModel.dirty(defaultAddress);
+    emit(
+      state.copyWith(
+        selectedCustomer: selectedCustomer,
+        customerId: customerId,
+        custCode: custCode,
+        contactNumber: contactNumber,
+        address: address,
+        selectedAddress: selectedAddress,
+        status: Formz.validate([custCode]),
+      ),
+    );
   }
 
   void onAddressChange(
-      ChangeAddress event, Emitter<OrderCustDetailsState> emit) {
-    final address = TextFieldModel.dirty(event.address.text);
+      ChangedAddressSelected event, Emitter<OrderCustDetailsState> emit) {
+    String completeAddress = """${event.selectedAddress?.streetAddress ?? ''}
+${event.selectedAddress?.brgy == null ? '' : 'Brgy. ${event.selectedAddress?.brgy}'}
+${event.selectedAddress?.cityMunicipality ?? ''}
+""";
+    final address = TextFieldModel.dirty(completeAddress);
+
     emit(state.copyWith(
       address: address,
+      selectedAddress: event.selectedAddress,
       status: Formz.validate([
         state.custCode,
-        state.contactNumber,
       ]),
     ));
-    _checkOutRepo.checkoutData.address = event.address.text;
+  }
+
+  @override
+  Future<void> close() {
+    _customerBlocSubscription.cancel();
+    return super.close();
   }
 }

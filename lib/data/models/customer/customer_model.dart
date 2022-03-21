@@ -49,6 +49,14 @@ class CustomerModel {
   @JsonKey(name: "contact_number")
   String? contactNumber;
 
+  @JsonKey(name: "allowed_disc")
+  double? allowedDiscount;
+
+  @JsonKey(name: "pickup_disc")
+  double? pickupDiscount;
+
+  Map<String, dynamic>? user;
+
   @JsonKey(fromJson: customerAddressFromJson)
   List<CustomerAddressModel?> details;
 
@@ -68,6 +76,9 @@ class CustomerModel {
     this.isConfidential,
     this.isActive,
     this.contactNumber,
+    this.user,
+    this.allowedDiscount,
+    this.pickupDiscount,
     required this.details,
   });
 

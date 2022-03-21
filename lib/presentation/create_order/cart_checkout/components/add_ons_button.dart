@@ -1,7 +1,8 @@
+import 'package:delicious_ordering_app/presentation/create_order/cart_checkout/bloc/checkout_bloc.dart';
+import 'package:delicious_ordering_app/presentation/create_order/cart_checkout/bloc/checkout_event.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
 
-import '/global_bloc/cart_bloc/bloc.dart';
 import '/global_bloc/disc_type_bloc/bloc.dart';
 import '/data/repositories/repositories.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class AddOnButtons extends StatefulWidget {
-  final CartRepo _cartRepo;
   const AddOnButtons({
     Key? key,
-    required CartRepo cartRepo,
-  })  : _cartRepo = cartRepo,
-        super(key: key);
+    required this.bloc,
+  }) : super(key: key);
+
+  final CheckOutBloc bloc;
 
   @override
   _AddOnButtonsState createState() => _AddOnButtonsState();
@@ -32,15 +33,9 @@ class _AddOnButtonsState extends State<AddOnButtons> {
   }
 
   @override
-  void initState() {
-    _delFeeController.text = widget._cartRepo.delfee.toString();
-    _otherFeeController.text = widget._cartRepo.otherfee.toString();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // DiscountTypeRepo _discountTypeRepo = AppRepo.discTypeRepository;
+    _delFeeController.text = widget.bloc.state.deliveryFee.value;
+    _otherFeeController.text = widget.bloc.state.otherFee.value;
     return Scrollbar(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -61,13 +56,13 @@ class _AddOnButtonsState extends State<AddOnButtons> {
                           title: 'Add Delivery Fee',
                           controller: _delFeeController,
                           onPressed: () {
-                            context.read<CartBloc>().add(
-                                  UpdateDeliveryFee(
-                                    double.parse(_delFeeController.text.isEmpty
-                                        ? '0'
-                                        : _delFeeController.text),
-                                  ),
-                                );
+                            widget.bloc.add(
+                              DeliveryFeeAdded(
+                                double.parse(_delFeeController.text.isEmpty
+                                    ? '0'
+                                    : _delFeeController.text),
+                              ),
+                            );
                             Navigator.of(context).pop();
                           },
                         );
@@ -89,14 +84,16 @@ class _AddOnButtonsState extends State<AddOnButtons> {
                           title: 'Add Other Fee',
                           controller: _otherFeeController,
                           onPressed: () {
-                            context.read<CartBloc>().add(
-                                  UpdateOtherFee(
-                                    double.parse(
-                                        _otherFeeController.text.isEmpty
-                                            ? '0'
-                                            : _otherFeeController.text),
-                                  ),
-                                );
+                            widget.bloc.add(
+                              OtherFeeAdded(
+                                double.parse(
+                                  _otherFeeController.text.isEmpty
+                                      ? '0'
+                                      : _otherFeeController.text,
+                                ),
+                              ),
+                            );
+
                             Navigator.of(context).pop();
                           },
                         );

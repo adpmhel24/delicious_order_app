@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 Future<Object?> customSuccessDialog({
   required BuildContext context,
   required String message,
   void Function()? onPositiveClick,
 }) {
-  Navigator.of(context).pop();
+  context.loaderOverlay.hide();
   return showAnimatedDialog(
     context: context,
     builder: (BuildContext context) {

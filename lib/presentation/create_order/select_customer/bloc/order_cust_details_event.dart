@@ -9,37 +9,24 @@ abstract class OrderCustDetailsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ChangeCustType extends OrderCustDetailsEvent {
-  final TextEditingController custType;
+class ChangedCustomerSelected extends OrderCustDetailsEvent {
+  final CustomerModel? selectedCustomer;
 
-  const ChangeCustType(this.custType);
-
+  const ChangedCustomerSelected({
+    required this.selectedCustomer,
+  });
   @override
-  List<Object> get props => [custType];
+  List<Object> get props => [];
 }
 
-class ChangeCustCode extends OrderCustDetailsEvent {
-  final int? customerId;
-  final TextEditingController custCode;
-  final List<CustomerAddressModel?>? details;
+class ChangedAddressSelected extends OrderCustDetailsEvent {
+  final CustomerAddressModel? selectedAddress;
+  final TextEditingController addressController;
 
-  const ChangeCustCode({this.customerId, this.details, required this.custCode});
+  const ChangedAddressSelected({
+    this.selectedAddress,
+    required this.addressController,
+  });
   @override
-  List<Object> get props => [custCode];
-}
-
-class ChangeContactNumber extends OrderCustDetailsEvent {
-  final TextEditingController contactNum;
-
-  const ChangeContactNumber(this.contactNum);
-  @override
-  List<Object> get props => [contactNum];
-}
-
-class ChangeAddress extends OrderCustDetailsEvent {
-  final TextEditingController address;
-
-  const ChangeAddress(this.address);
-  @override
-  List<Object> get props => [address];
+  List<Object> get props => [addressController];
 }

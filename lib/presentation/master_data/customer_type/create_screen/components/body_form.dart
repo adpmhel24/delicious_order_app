@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:delicious_ordering_app/widget/custom_error_dialog.dart';
-import 'package:delicious_ordering_app/widget/custom_loading_dialog.dart';
 import 'package:delicious_ordering_app/widget/custom_success_dialog.dart';
 import 'package:delicious_ordering_app/widget/custom_text_field.dart';
 import 'package:delicious_ordering_app/widget/custom_warning_dialog.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../bloc/bloc.dart';
 
@@ -37,7 +37,7 @@ class _BodyFormState extends State<BodyForm> {
         child: BlocConsumer<CreateCustTypeBloc, CreateCustTypeState>(
             listener: (_, state) {
           if (state.status.isSubmissionInProgress) {
-            customLoadingDialog(context);
+            context.loaderOverlay.show();
           } else if (state.status.isSubmissionSuccess) {
             customSuccessDialog(
               context: context,

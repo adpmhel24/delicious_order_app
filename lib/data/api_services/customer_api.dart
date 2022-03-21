@@ -70,7 +70,7 @@ class CustomerAPI {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Dio dio = DioSettings(prefs.getString("url")!).dio();
     try {
-      response = await dio.post('/api/customer/new',
+      response = await dio.post('/api/customer_with_user/new',
           data: data,
           options: Options(headers: {
             "Authorization": "Bearer " + token,

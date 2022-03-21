@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+import '../../../../utils/currency_formater.dart';
+import '../../select_customer/bloc/bloc.dart';
 import '/data/models/models.dart';
 import '/presentation/create_order/select_product/bloc/bloc.dart';
 import '/presentation/create_order/select_product/components/select_item_form.dart';
@@ -35,7 +37,7 @@ class ProductCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Price : ${product.price}',
+                'Price : ${formatStringToDecimal(product.price!.toStringAsFixed(2))}',
               ),
             ],
           ),
@@ -58,7 +60,10 @@ class ProductCard extends StatelessWidget {
         child: BlocProvider.value(
           value: BlocProvider.of<ProductSelectionBloc>(context),
           child: SelectItemForm(
-              product: product, selectionProductionContext: context),
+            product: product,
+            selectionProductionContext: context,
+            custDetailsBloc: context.read<OrderCustDetailsBloc>(),
+          ),
         ),
       ),
     );

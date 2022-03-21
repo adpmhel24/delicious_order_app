@@ -44,26 +44,25 @@ class CustomerRepo {
     return message;
   }
 
-  Future<String> updateCustomer({
+  Future<CustomerModel> updateCustomer({
     required int customerId,
     required Map<String, dynamic> data,
   }) async {
     Response response;
-    String message = 'Updating Customer: Unknown Error!';
 
     try {
       response = await _customerAPI.updateCustomer(
           token: _token, customerId: customerId.toString(), data: data);
       if (response.statusCode == 201 || response.statusCode == 200) {
         //  Update Customer in local
-        _customers[customers.indexWhere((cust) => cust.id == customerId)] =
+
+        _customers[_customers.indexWhere((cust) => cust.id == customerId)] =
             CustomerModel.fromJson(response.data['data']);
-        message = response.data['message'];
       }
     } on HttpException catch (e) {
       throw HttpException(e.message);
     }
-    return message;
+    return CustomerModel.fromJson(response.data['data']);
   }
 
   Future<String> updateCustomerDetails({

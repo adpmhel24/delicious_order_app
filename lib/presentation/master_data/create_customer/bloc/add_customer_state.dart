@@ -1,4 +1,5 @@
 import 'package:delicious_ordering_app/data/models/models.dart';
+import 'package:delicious_ordering_app/utils/email_validator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
@@ -12,6 +13,11 @@ class AddCustomerState extends Equatable {
   final TextField custType;
   final TextField address;
   final TextField contactNumber;
+  final TextField customerDiscount;
+  final TextField pickupDiscount;
+  final TextField username;
+  final TextField password;
+  final EmailField emailAddress;
   final List<CustomerAddressModel> details;
   final String? message;
   final int detailsCount;
@@ -24,6 +30,11 @@ class AddCustomerState extends Equatable {
     this.custType = const TextField.pure(),
     this.address = const TextField.pure(),
     this.contactNumber = const TextField.pure(),
+    this.customerDiscount = const TextField.pure(),
+    this.pickupDiscount = const TextField.pure(),
+    this.username = const TextField.pure(),
+    this.password = const TextField.pure(),
+    this.emailAddress = const EmailField.pure(),
     this.message,
     this.details = const [],
     this.detailsCount = 0,
@@ -37,6 +48,11 @@ class AddCustomerState extends Equatable {
     TextField? custType,
     TextField? address,
     TextField? contactNumber,
+    TextField? customerDiscount,
+    TextField? pickupDiscount,
+    TextField? username,
+    TextField? password,
+    EmailField? emailAddress,
     String? message,
     List<CustomerAddressModel>? details,
   }) {
@@ -47,6 +63,11 @@ class AddCustomerState extends Equatable {
       lastName: lastName ?? this.lastName,
       address: address ?? this.address,
       contactNumber: contactNumber ?? this.contactNumber,
+      customerDiscount: customerDiscount ?? this.customerDiscount,
+      pickupDiscount: pickupDiscount ?? this.pickupDiscount,
+      username: username ?? this.username,
+      password: password ?? this.password,
+      emailAddress: emailAddress ?? this.emailAddress,
       custType: custType ?? this.custType,
       message: message ?? this.message,
       details: details ?? this.details,
@@ -62,6 +83,11 @@ class AddCustomerState extends Equatable {
         custType,
         address,
         contactNumber,
+        customerDiscount,
+        pickupDiscount,
+        username,
+        password,
+        emailAddress,
         details,
       ];
 }

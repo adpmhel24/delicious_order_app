@@ -2,7 +2,6 @@ import 'package:delicious_ordering_app/global_bloc/ph_location_bloc/brgy_bloc/br
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './auth_bloc/bloc.dart';
-import './cart_bloc/cart_bloc.dart';
 import './customer_bloc/bloc.dart';
 import './disc_type_bloc/bloc.dart';
 import './products_bloc/bloc.dart';
@@ -14,7 +13,7 @@ import 'ph_location_bloc/city_municipality_bloc/bloc.dart';
 class GlobalBloc {
   static final authBloc = AuthBloc();
   static final productsBloc = ProductsBloc();
-  static final cartBloc = CartBloc();
+  // static final cartBloc = CartBloc();
   static final customerBloc = CustomerBloc();
   static final salesTypeBloc = SalesTypeBloc();
   static final discTypeBloc = DiscTypeBloc();
@@ -26,7 +25,7 @@ class GlobalBloc {
   static final List<BlocProvider> blocProviders = [
     BlocProvider<AuthBloc>(create: (context) => authBloc),
     BlocProvider<ProductsBloc>(create: (context) => productsBloc),
-    BlocProvider<CartBloc>(create: (context) => cartBloc),
+    // BlocProvider<CartBloc>(create: (context) => cartBloc),
     BlocProvider<CustomerBloc>(create: (context) => customerBloc),
     BlocProvider<SalesTypeBloc>(create: (context) => salesTypeBloc),
     BlocProvider<DiscTypeBloc>(create: (context) => discTypeBloc),
@@ -40,7 +39,7 @@ class GlobalBloc {
   static void dispose() {
     authBloc.close();
     productsBloc.close();
-    cartBloc.close();
+    // cartBloc.close();
     customerBloc.close();
     salesTypeBloc.close();
     discTypeBloc.close();

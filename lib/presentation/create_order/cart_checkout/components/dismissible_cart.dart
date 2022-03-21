@@ -1,5 +1,5 @@
 import 'package:delicious_ordering_app/data/models/models.dart';
-import 'package:delicious_ordering_app/global_bloc/cart_bloc/bloc.dart';
+import 'package:delicious_ordering_app/presentation/create_order/cart_checkout/bloc/bloc.dart';
 import 'package:delicious_ordering_app/utils/currency_formater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,7 +90,7 @@ class DismissibleCart extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        context.read<CartBloc>().add(RemoveItemFromCart(cartItem));
+        context.read<CheckOutBloc>().add(DeleteItemInCart(cartItem));
       },
     );
   }

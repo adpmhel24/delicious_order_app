@@ -13,6 +13,7 @@ import '/global_bloc/sales_type_bloc/bloc.dart';
 import '/global_bloc/disc_type_bloc/bloc.dart';
 import '/utils/size_config.dart';
 import '/widget/custom_text_field.dart';
+import 'add_ons_button.dart';
 
 class CheckOutForm extends StatefulWidget {
   const CheckOutForm({Key? key}) : super(key: key);
@@ -30,6 +31,17 @@ class _CheckOutFormState extends State<CheckOutForm> {
   final TextEditingController _salesTypeController = TextEditingController();
 
   DateFormat dateFormat = DateFormat("MM/dd/yyyy");
+
+  late String deliveryMethodInit;
+  late String paymentMethodInit;
+
+  @override
+  void initState() {
+    deliveryMethodInit =
+        context.read<CheckOutBloc>().state.deliveryMethod.value;
+    paymentMethodInit = context.read<CheckOutBloc>().state.paymentMethod.value;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -56,6 +68,7 @@ class _CheckOutFormState extends State<CheckOutForm> {
             decoration: const InputDecoration(
               labelText: 'Delivery Method*',
             ),
+            initialValue: deliveryMethodInit,
             onChanged: (value) {
               context
                   .read<CheckOutBloc>()
@@ -76,11 +89,15 @@ class _CheckOutFormState extends State<CheckOutForm> {
               ),
             ],
           ),
+          AddOnButtons(
+            bloc: context.watch<CheckOutBloc>(),
+          ),
           FormBuilderChoiceChip(
             alignment: WrapAlignment.spaceEvenly,
             name: 'payment_method_chips',
             backgroundColor: const Color(0xFFFFF1BD),
             selectedColor: const Color(0xFFA3DA8D),
+            initialValue: paymentMethodInit,
             decoration: const InputDecoration(
               labelText: 'Payment Method*',
             ),

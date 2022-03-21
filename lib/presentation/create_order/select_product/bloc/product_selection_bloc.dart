@@ -32,17 +32,27 @@ class ProductSelectionBloc
     TextEditingController discPrcntController = event.discPercentageController;
 
     double netAmountTotal = 0;
-    double discountPercnt = 0;
+
     double grossAmnt = 0;
 
     grossAmnt = (double.tryParse(quantityController.text) ?? 0) *
         double.parse(priceController.text);
 
-    discAmntController.text = 0.toStringAsFixed(2);
-    netAmountTotal = grossAmnt - double.parse(discAmntController.text);
-    discountPercnt = (double.parse(discAmntController.text) / grossAmnt) * 100;
+    if (discPrcntController.text.isNotEmpty) {
+      discAmntController.text =
+          (grossAmnt * (double.parse(discPrcntController.text) / 100))
+              .toStringAsFixed(2);
+      netAmountTotal = grossAmnt - double.parse(discAmntController.text);
+    } else {
+      double discountPercnt = 0;
+      discAmntController.text = 0.toStringAsFixed(2);
+      netAmountTotal = grossAmnt - double.parse(discAmntController.text);
+      discountPercnt =
+          (double.parse(discAmntController.text) / grossAmnt) * 100;
 
-    discPrcntController.text = discountPercnt.toStringAsFixed(2);
+      discPrcntController.text = discountPercnt.toStringAsFixed(2);
+    }
+
     if (netAmountTotal <= 0) {
       totalNetAmntController.text = '';
     } else {
@@ -202,10 +212,13 @@ class ProductSelectionBloc
         "discprcnt": double.tryParse(state.discPercentage.value),
         "total": double.tryParse(state.total.value),
       };
-      await _cartRepo.addToCart(CartItem.fromJson(data));
-      emit(state.copyWith(
-          status: FormzStatus.submissionSuccess,
-          message: "Successfully added!"));
+      _cartRepo.addToCart(CartItem.fromJson(data));
+      emit(
+        state.copyWith(
+            cartItem: CartItem.fromJson(data),
+            status: FormzStatus.submissionSuccess,
+            message: "Successfully added!"),
+      );
     } on Exception catch (e) {
       emit(state.copyWith(
           status: FormzStatus.submissionFailure, message: e.toString()));

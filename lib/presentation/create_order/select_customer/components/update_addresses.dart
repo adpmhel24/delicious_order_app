@@ -1,7 +1,9 @@
+import 'package:delicious_ordering_app/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../../../../data/repositories/repositories.dart';
 import '../../../../widget/custom_text_field.dart';
@@ -10,7 +12,6 @@ import '../../../../widget/ph_location_modal_widgets/brgy_modal_selection.dart';
 import '../../../../widget/ph_location_modal_widgets/city_municipality_modal_selection.dart';
 import '../new_cust_details_bloc/bloc.dart';
 import '/widget/custom_error_dialog.dart';
-import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_success_dialog.dart';
 
 class UpdateCustomerAddress extends StatefulWidget {
@@ -31,6 +32,7 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
   final TextEditingController _cityMunicipalityController =
       TextEditingController();
   final TextEditingController _otherDetailsController = TextEditingController();
+  final TextEditingController _deliveryFeeController = TextEditingController();
 
   @override
   void dispose() {
@@ -38,6 +40,7 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
     _brgyController.dispose();
     _cityMunicipalityController.dispose();
     _otherDetailsController.dispose();
+    _deliveryFeeController.dispose();
     super.dispose();
   }
 
@@ -57,9 +60,7 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    height: 15.w,
-                  ),
+                  Constant.columnSpacer,
                   cityMunicipalityModalSelection(
                     context: context,
                     phLocationRepo: _phLocationRepo,
@@ -84,9 +85,7 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                       icon: const Icon(Icons.close),
                     ),
                   ),
-                  SizedBox(
-                    height: 15.w,
-                  ),
+                  Constant.columnSpacer,
                   brgyModalSelection(
                     context: context,
                     labelText: 'Barangay',
@@ -111,9 +110,7 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                       icon: const Icon(Icons.close),
                     ),
                   ),
-                  SizedBox(
-                    height: 15.w,
-                  ),
+                  Constant.columnSpacer,
                   CustomTextField(
                     autovalidateMode: AutovalidateMode.always,
                     textInputAction: TextInputAction.newline,
@@ -150,9 +147,41 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                           : null;
                     },
                   ),
-                  SizedBox(
-                    height: 15.w,
+                  Constant.columnSpacer,
+                  CustomTextField(
+                    textInputAction: TextInputAction.next,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    maxLines: 1,
+                    controller: _deliveryFeeController,
+                    labelText: 'Delivery Fee',
+                    prefixIcon: const Icon(Icons.delivery_dining_outlined),
+                    onChanged: (value) {
+                      if (value.isNotEmpty) {
+                        context.read<NewCustDetailsBloc>().add(
+                              ChangedDeliveryFee(
+                                double.parse(value),
+                              ),
+                            );
+                      } else {
+                        context.read<NewCustDetailsBloc>().add(
+                              const ChangedDeliveryFee(0.00),
+                            );
+                      }
+                    },
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _deliveryFeeController.clear();
+                        context.read<NewCustDetailsBloc>().add(
+                              const ChangedDeliveryFee(
+                                0.00,
+                              ),
+                            );
+                      },
+                      icon: const Icon(Icons.close),
+                    ),
                   ),
+                  Constant.columnSpacer,
                   CustomTextField(
                     textInputAction: TextInputAction.newline,
                     minLines: 3,
@@ -179,26 +208,23 @@ class _UpdateCustomerAddressState extends State<UpdateCustomerAddress> {
                       icon: const Icon(Icons.close),
                     ),
                   ),
-                  SizedBox(
-                    height: 15.w,
-                  ),
+                  Constant.columnSpacer,
                   BlocListener<NewCustDetailsBloc, NewCustDetailsState>(
-                    listener: (_, state) => {
-                      if (state.status.isSubmissionInProgress)
-                        {customLoadingDialog(context)}
-                      else if (state.status.isSubmissionFailure)
-                        {customErrorDialog(context, message: state.message)}
-                      else if (state.status.isSubmissionSuccess)
-                        {
-                          customSuccessDialog(
-                              context: context,
-                              message: state.message,
-                              onPositiveClick: () {
-                                Navigator.of(context)
-                                  ..pop()
-                                  ..pop();
-                              })
-                        }
+                    listener: (_, state) {
+                      if (state.status.isSubmissionInProgress) {
+                        context.loaderOverlay.show();
+                      } else if (state.status.isSubmissionFailure) {
+                        customErrorDialog(context, message: state.message);
+                      } else if (state.status.isSubmissionSuccess) {
+                        customSuccessDialog(
+                            context: context,
+                            message: state.message,
+                            onPositiveClick: () {
+                              Navigator.of(context)
+                                ..pop()
+                                ..pop();
+                            });
+                      }
                     },
                     child: ElevatedButton(
                       onPressed: (context

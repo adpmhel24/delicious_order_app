@@ -18,6 +18,14 @@ class SearchCustomerByKeyword extends CustomerEvent {
   List<Object?> get props => [keyword];
 }
 
+class UpdateCustomer extends CustomerEvent {
+  final int customerId;
+  final Map<String, dynamic> data;
+  const UpdateCustomer(this.customerId, this.data);
+  @override
+  List<Object?> get props => [customerId, data];
+}
+
 class FilterCustomerByCustType extends CustomerEvent {
   final int custType;
   const FilterCustomerByCustType(this.custType);

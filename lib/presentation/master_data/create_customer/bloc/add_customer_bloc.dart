@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:delicious_ordering_app/data/models/models.dart';
+import 'package:delicious_ordering_app/utils/email_validator.dart';
 
 import '/data/repositories/repositories.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,11 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
     on<ChangeCustContactNumber>(onChangeContactNumber);
     on<AddCustomerAddressEvent>(onChangeProvinceCityMunicipalityBrgy);
     on<PostNewCustomer>(onSubmit);
+    on<ChangedEmailAddress>(onChangedEmailAddress);
+    on<ChangedCustomerDiscount>(onChangedCustomerDiscount);
+    on<ChangedPickupDiscount>(onChangedPickupDiscount);
+    on<ChangedUsername>(onChangedUsername);
+    on<ChangedPassword>(onChangedPassword);
     on<DeleteAddressEvent>(onDeleteAddressEvent);
   }
 
@@ -120,14 +126,16 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
         "uid": uuid.v1(),
         "street_address": event.address,
         "brgy": event.brgy,
-        "city_municipality": event.cityMunicipality
+        "city_municipality": event.cityMunicipality,
+        "delivery_fee": event.deliveryFee,
       }));
     } else {
       _details.add(CustomerAddressModel.fromJson({
         "uid": uuid.v1(),
         "street_address": event.address,
         "brgy": event.brgy,
-        "city_municipality": event.cityMunicipality
+        "city_municipality": event.cityMunicipality,
+        "delivery_fee": event.deliveryFee,
       }));
       _details.addAll(state.details);
     }
@@ -174,23 +182,127 @@ class AddCustomerBloc extends Bloc<AddCustomerEvent, AddCustomerState> {
         ])));
   }
 
+  void onChangedEmailAddress(
+      ChangedEmailAddress event, Emitter<AddCustomerState> emit) {
+    EmailField email;
+    if (event.email.isNotEmpty) {
+      email = EmailField.dirty(event.email.toString());
+    } else {
+      email = const EmailField.pure();
+    }
+    emit(
+      state.copyWith(
+        emailAddress: email,
+        status: Formz.validate([
+          state.contactNumber,
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
+        ]),
+      ),
+    );
+  }
+
+  void onChangedCustomerDiscount(
+      ChangedCustomerDiscount event, Emitter<AddCustomerState> emit) {
+    final customerDiscount = TextField.dirty(event.discount);
+
+    emit(
+      state.copyWith(
+        customerDiscount: customerDiscount,
+        status: Formz.validate([
+          state.contactNumber,
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
+        ]),
+      ),
+    );
+  }
+
+  void onChangedPickupDiscount(
+      ChangedPickupDiscount event, Emitter<AddCustomerState> emit) {
+    final pickupDiscount = TextField.dirty(event.discount);
+    emit(
+      state.copyWith(
+        pickupDiscount: pickupDiscount,
+        status: Formz.validate([
+          state.contactNumber,
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
+        ]),
+      ),
+    );
+  }
+
+  void onChangedUsername(
+      ChangedUsername event, Emitter<AddCustomerState> emit) {
+    final username = TextField.dirty(event.username);
+    emit(
+      state.copyWith(
+        username: username,
+        status: Formz.validate([
+          state.contactNumber,
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
+        ]),
+      ),
+    );
+  }
+
+  void onChangedPassword(
+      ChangedPassword event, Emitter<AddCustomerState> emit) {
+    final password = TextField.dirty(event.password);
+    emit(
+      state.copyWith(
+        password: password,
+        status: Formz.validate([
+          state.contactNumber,
+          state.custType,
+          state.firstName,
+          state.lastName,
+          state.code,
+        ]),
+      ),
+    );
+  }
+
   Future<void> onSubmit(
       PostNewCustomer event, Emitter<AddCustomerState> emit) async {
-    emit(state.copyWith(status: FormzStatus.submissionInProgress));
+    // emit(state.copyWith(status: FormzStatus.submissionInProgress));
+
     Map<String, dynamic> data = {
-      "code": state.code.value,
-      "name": "${state.firstName.value} ${state.lastName.value}",
-      "first_name": state.firstName.value,
-      "last_name": state.lastName.value,
-      "cust_type": int.parse(state.custType.value),
-      "contact_number": state.contactNumber.value,
+      "header": {
+        "first_name": state.firstName.value,
+        "last_name": state.lastName.value,
+        "cust_type": state.custType.value,
+        "code": state.code.value,
+        "email": state.emailAddress.value,
+        "contact_number": state.contactNumber.value,
+        "allowed_disc": double.parse(state.customerDiscount.valid
+                ? state.customerDiscount.value
+                : '0.00')
+            .toStringAsFixed(2),
+        "pickup_disc": double.parse(state.pickupDiscount.valid
+                ? state.pickupDiscount.value
+                : '0.00')
+            .toStringAsFixed(2)
+      },
+      "user": {
+        "username": state.username.value,
+        "password": state.password.value,
+      },
+      "addresses": state.details.map((e) => e.toJson()).toList(),
     };
 
     try {
-      var message = await _customerRepo.addNewCustomer({
-        "header": data,
-        "details": state.details.map((e) => e.toJson()).toList(),
-      });
+      var message = await _customerRepo.addNewCustomer(data);
       emit(state.copyWith(
           status: FormzStatus.submissionSuccess, message: message));
     } on HttpException catch (e) {

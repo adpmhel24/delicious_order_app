@@ -27,6 +27,13 @@ class ChangeStreetAddressEvent extends NewCustDetailsEvent {
   List<Object> get props => [streetAddress];
 }
 
+class ChangedDeliveryFee extends NewCustDetailsEvent {
+  final double deliveryFee;
+  const ChangedDeliveryFee(this.deliveryFee);
+  @override
+  List<Object> get props => [deliveryFee];
+}
+
 class ChangeOtherDetailsEvent extends NewCustDetailsEvent {
   final String otherDetails;
   const ChangeOtherDetailsEvent(this.otherDetails);

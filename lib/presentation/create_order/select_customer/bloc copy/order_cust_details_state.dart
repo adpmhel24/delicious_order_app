@@ -5,51 +5,51 @@ import '/widget/text_field_validator.dart';
 
 class OrderCustDetailsState extends Equatable {
   final FormzStatus status;
-  final CustomerModel? selectedCustomer;
-  final CustomerAddressModel? selectedAddress;
   final TextFieldModel customerId;
+  final TextFieldModel custType;
   final TextFieldModel custCode;
   final TextFieldModel contactNumber;
   final TextFieldModel address;
+  final List<CustomerAddressModel?> details;
 
   const OrderCustDetailsState({
     this.status = FormzStatus.pure,
-    this.selectedCustomer,
-    this.selectedAddress,
-    this.address = const TextFieldModel.pure(),
+    this.custType = const TextFieldModel.pure(),
     this.custCode = const TextFieldModel.pure(),
     this.contactNumber = const TextFieldModel.pure(),
+    this.address = const TextFieldModel.pure(),
     this.customerId = const TextFieldModel.pure(),
+    this.details = const [],
   });
 
   OrderCustDetailsState copyWith({
     FormzStatus? status,
-    CustomerModel? selectedCustomer,
-    CustomerAddressModel? selectedAddress,
     TextFieldModel? customerId,
+    TextFieldModel? custType,
     TextFieldModel? custCode,
     TextFieldModel? contactNumber,
     TextFieldModel? address,
+    final List<CustomerAddressModel?>? details,
   }) {
     return OrderCustDetailsState(
       status: status ?? this.status,
-      selectedCustomer: selectedCustomer ?? this.selectedCustomer,
-      selectedAddress: selectedAddress ?? this.selectedAddress,
       customerId: customerId ?? this.customerId,
-      address: address ?? this.address,
+      custType: custType ?? this.custType,
       custCode: custCode ?? this.custCode,
       contactNumber: contactNumber ?? this.contactNumber,
+      address: address ?? this.address,
+      details: details ?? this.details,
     );
   }
 
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         status,
-        selectedCustomer,
-        selectedAddress,
-        address,
+        custType,
         custCode,
         contactNumber,
+        address,
         customerId,
+        details,
       ];
 }

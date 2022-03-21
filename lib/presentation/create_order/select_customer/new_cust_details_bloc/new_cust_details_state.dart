@@ -9,6 +9,7 @@ class NewCustDetailsState extends Equatable {
   final TextFieldModel brgy;
   final TextFieldModel streetAddress;
   final TextFieldModel otherDetails;
+  final TextFieldModel deliveryFee;
   final String message;
 
   const NewCustDetailsState({
@@ -17,6 +18,7 @@ class NewCustDetailsState extends Equatable {
     this.brgy = const TextFieldModel.pure(),
     this.streetAddress = const TextFieldModel.pure(),
     this.otherDetails = const TextFieldModel.pure(),
+    this.deliveryFee = const TextFieldModel.pure(),
     this.message = '',
   });
 
@@ -26,6 +28,7 @@ class NewCustDetailsState extends Equatable {
     TextFieldModel? brgy,
     TextFieldModel? streetAddress,
     TextFieldModel? otherDetails,
+    TextFieldModel? deliveryFee,
     String? message,
   }) {
     return NewCustDetailsState(
@@ -34,6 +37,7 @@ class NewCustDetailsState extends Equatable {
       brgy: brgy ?? this.brgy,
       streetAddress: streetAddress ?? this.streetAddress,
       otherDetails: otherDetails ?? this.otherDetails,
+      deliveryFee: deliveryFee ?? this.deliveryFee,
       message: message ?? this.message,
     );
   }
@@ -45,5 +49,6 @@ class NewCustDetailsState extends Equatable {
         brgy,
         streetAddress,
         otherDetails,
+        deliveryFee,
       ];
 }

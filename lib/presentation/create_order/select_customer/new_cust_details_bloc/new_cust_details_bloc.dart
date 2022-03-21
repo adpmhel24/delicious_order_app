@@ -10,14 +10,15 @@ import 'bloc.dart';
 class NewCustDetailsBloc
     extends Bloc<NewCustDetailsEvent, NewCustDetailsState> {
   NewCustDetailsBloc() : super(const NewCustDetailsState()) {
-    on<ChangeCityMunicipalityEvent>(onChangeCityMunicipalityEvent);
-    on<ChangeBrgyEvent>(onChangeBrgyEvent);
-    on<ChangeStreetAddressEvent>(onChangeStreetAddressEvent);
-    on<ChangeOtherDetailsEvent>(onChangeOtherDetailsEvent);
-    on<SubmitNewCustDetails>(onSubmitNewCustDetails);
+    on<ChangeCityMunicipalityEvent>(_onChangeCityMunicipalityEvent);
+    on<ChangeBrgyEvent>(_onChangeBrgyEvent);
+    on<ChangeStreetAddressEvent>(_onChangeStreetAddressEvent);
+    on<ChangeOtherDetailsEvent>(_onChangeOtherDetailsEvent);
+    on<SubmitNewCustDetails>(_onSubmitNewCustDetails);
+    on<ChangedDeliveryFee>(_onChangedDeliveryFee);
   }
 
-  void onChangeCityMunicipalityEvent(
+  void _onChangeCityMunicipalityEvent(
       ChangeCityMunicipalityEvent event, Emitter<NewCustDetailsState> emit) {
     final cityMunicipality = TextFieldModel.dirty(event.cityMunicipality);
     emit(
@@ -30,7 +31,7 @@ class NewCustDetailsBloc
     );
   }
 
-  void onChangeBrgyEvent(
+  void _onChangeBrgyEvent(
       ChangeBrgyEvent event, Emitter<NewCustDetailsState> emit) {
     final brgy = TextFieldModel.dirty(event.brgy);
     emit(
@@ -41,7 +42,19 @@ class NewCustDetailsBloc
     );
   }
 
-  void onChangeStreetAddressEvent(
+  void _onChangedDeliveryFee(
+      ChangedDeliveryFee event, Emitter<NewCustDetailsState> emit) {
+    final deliveryFee =
+        TextFieldModel.dirty(event.deliveryFee.toStringAsFixed(2));
+    emit(
+      state.copyWith(
+        deliveryFee: deliveryFee,
+        status: Formz.validate([state.streetAddress]),
+      ),
+    );
+  }
+
+  void _onChangeStreetAddressEvent(
       ChangeStreetAddressEvent event, Emitter<NewCustDetailsState> emit) {
     final streetAddress = TextFieldModel.dirty(event.streetAddress);
     emit(
@@ -54,7 +67,7 @@ class NewCustDetailsBloc
     );
   }
 
-  void onChangeOtherDetailsEvent(
+  void _onChangeOtherDetailsEvent(
       ChangeOtherDetailsEvent event, Emitter<NewCustDetailsState> emit) {
     final otherDetails = TextFieldModel.dirty(event.otherDetails);
     emit(
@@ -65,13 +78,14 @@ class NewCustDetailsBloc
     );
   }
 
-  void onSubmitNewCustDetails(
+  void _onSubmitNewCustDetails(
       SubmitNewCustDetails event, Emitter<NewCustDetailsState> emit) async {
     Map<String, dynamic> data = {
       "city_municipality": state.cityMunicipality.value,
       "brgy": state.brgy.value,
       "street_address": state.streetAddress.value,
       "other_details": state.otherDetails.value,
+      "delivery_fee": double.parse(state.deliveryFee.value),
     };
     String message;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));

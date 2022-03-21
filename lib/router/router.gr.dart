@@ -13,14 +13,16 @@
 import 'package:auto_route/auto_route.dart' as _i13;
 import 'package:flutter/material.dart' as _i14;
 
-import '../presentation/create_customer/new_customer.dart' as _i3;
+import '../presentation/create_order/cart_checkout/bloc/bloc.dart' as _i17;
 import '../presentation/create_order/cart_checkout/cart.dart' as _i4;
 import '../presentation/create_order/create_order_screen.dart' as _i2;
+import '../presentation/create_order/select_customer/bloc/bloc.dart' as _i16;
 import '../presentation/create_order/select_customer/customer_selection.dart'
     as _i8;
 import '../presentation/create_order/select_product/product_selection.dart'
     as _i9;
 import '../presentation/login/login_screen.dart' as _i1;
+import '../presentation/master_data/create_customer/new_customer.dart' as _i3;
 import '../presentation/master_data/customer_type/create_screen/create_screen.dart'
     as _i7;
 import '../presentation/master_data/customer_type/customer_type_screen.dart'
@@ -62,7 +64,9 @@ class AppRouter extends _i13.RootStackRouter {
       return _i13.MaterialPageX<dynamic>(
           routeData: routeData,
           child: _i4.CartScreen(
-              key: args.key, orderingHomeContext: args.orderingHomeContext));
+              key: args.key,
+              orderCustDetailsBloc: args.orderCustDetailsBloc,
+              checkOutBloc: args.checkOutBloc));
     },
     OrderScreenRoute.name: (routeData) {
       return _i13.MaterialPageX<dynamic>(
@@ -190,25 +194,34 @@ class AddNewCustomerScreenRoute extends _i13.PageRouteInfo<void> {
 /// [_i4.CartScreen]
 class CartScreenRoute extends _i13.PageRouteInfo<CartScreenRouteArgs> {
   CartScreenRoute(
-      {_i14.Key? key, required _i14.BuildContext orderingHomeContext})
+      {_i14.Key? key,
+      required _i16.OrderCustDetailsBloc orderCustDetailsBloc,
+      required _i17.CheckOutBloc checkOutBloc})
       : super(CartScreenRoute.name,
             path: '/cart',
             args: CartScreenRouteArgs(
-                key: key, orderingHomeContext: orderingHomeContext));
+                key: key,
+                orderCustDetailsBloc: orderCustDetailsBloc,
+                checkOutBloc: checkOutBloc));
 
   static const String name = 'CartScreenRoute';
 }
 
 class CartScreenRouteArgs {
-  const CartScreenRouteArgs({this.key, required this.orderingHomeContext});
+  const CartScreenRouteArgs(
+      {this.key,
+      required this.orderCustDetailsBloc,
+      required this.checkOutBloc});
 
   final _i14.Key? key;
 
-  final _i14.BuildContext orderingHomeContext;
+  final _i16.OrderCustDetailsBloc orderCustDetailsBloc;
+
+  final _i17.CheckOutBloc checkOutBloc;
 
   @override
   String toString() {
-    return 'CartScreenRouteArgs{key: $key, orderingHomeContext: $orderingHomeContext}';
+    return 'CartScreenRouteArgs{key: $key, orderCustDetailsBloc: $orderCustDetailsBloc, checkOutBloc: $checkOutBloc}';
   }
 }
 

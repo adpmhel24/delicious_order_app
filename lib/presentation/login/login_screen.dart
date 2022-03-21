@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../../widget/custom_updater_dialog.dart';
 import '/global_bloc/app_init_bloc/bloc.dart';
 import 'bloc/bloc.dart';
 import 'components/add_url_dialog.dart';
 import 'components/login_body.dart';
-import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_error_dialog.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -32,6 +32,7 @@ class LoginScreen extends StatelessWidget {
         builder: (BuildContext builderContext) {
           return BlocConsumer<AppInitBloc, AppInitState>(
             listener: (_, state) {
+              context.loaderOverlay.hide();
               if (state is NoURLState) {
                 showAnimatedDialog(
                   context: context,
@@ -47,9 +48,9 @@ class LoginScreen extends StatelessWidget {
                   curve: Curves.fastOutSlowIn,
                 );
               } else if (state is CheckingUpdate) {
-                customLoadingDialog(context);
+                context.loaderOverlay.show();
               } else if (state is NewUpdateAvailable) {
-                Navigator.of(context).pop();
+                context.loaderOverlay.hide();
                 NewUpdate.displayAlert(
                   context,
                   appName: state.devicePackageInfo.appName,
@@ -66,17 +67,18 @@ class LoginScreen extends StatelessWidget {
                   SystemNavigator.pop();
                 });
               } else if (state is NoUpdateAvailable) {
-                Navigator.of(context).pop();
+                context.loaderOverlay.hide();
               }
             },
             builder: (_, state) => BlocListener<LoginBloc, LoginState>(
               listener: (context, state) {
                 if (state.status.isSubmissionSuccess) {
+                  context.loaderOverlay.hide();
                   onLoginCallback?.call(true);
                 } else if (state.status.isSubmissionFailure) {
                   customErrorDialog(context, message: state.message);
                 } else if (state.status.isSubmissionInProgress) {
-                  customLoadingDialog(context);
+                  context.loaderOverlay.show();
                 }
               },
               child: const LoginBody(),

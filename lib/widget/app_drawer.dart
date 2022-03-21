@@ -28,14 +28,14 @@ class _AppDrawerState extends State<AppDrawer> {
             icon: Icons.list_alt,
             text: 'Ordering',
             onTap: () {
-              AutoRouter.of(context).popAndPush(const CreateOrderScreenRoute());
+              AutoRouter.of(context).replace(const CreateOrderScreenRoute());
             },
           ),
           _createDrawerItem(
             icon: LineIcons.listUl,
             text: 'My Orders',
             onTap: () {
-              AutoRouter.of(context).popAndPush(const OrderScreenRoute());
+              AutoRouter.of(context).replace(const OrderScreenRoute());
             },
           ),
           // _createDrawerItem(

@@ -1,7 +1,9 @@
+import 'package:delicious_ordering_app/utils/constant.dart';
 import 'package:delicious_ordering_app/widget/custom_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
 
+import '../../select_customer/bloc/bloc.dart';
 import '/data/models/models.dart';
 import '/presentation/create_order/select_product/bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +13,13 @@ import 'package:formz/formz.dart';
 class SelectItemForm extends StatefulWidget {
   final ProductModel product;
   final BuildContext selectionProductionContext;
-  const SelectItemForm(
-      {Key? key,
-      required this.product,
-      required this.selectionProductionContext})
-      : super(key: key);
+  final OrderCustDetailsBloc custDetailsBloc;
+  const SelectItemForm({
+    Key? key,
+    required this.product,
+    required this.selectionProductionContext,
+    required this.custDetailsBloc,
+  }) : super(key: key);
 
   @override
   _SelectItemFormState createState() => _SelectItemFormState();
@@ -32,8 +36,11 @@ class _SelectItemFormState extends State<SelectItemForm> {
   @override
   void initState() {
     _quantityController.text = '1.00';
-    _discPrcntController.text = '0.00';
-    _discAmntController.text = '0.00';
+
+    _discPrcntController.text = widget
+            .custDetailsBloc.state.selectedCustomer?.allowedDiscount
+            ?.toStringAsFixed(2) ??
+        '0.00';
     _itemNameController.text = widget.product.itemName;
     _unitPriceController.text = widget.product.price!.toStringAsFixed(2);
     context.read<ProductSelectionBloc>().add(QuantityChanged(
@@ -57,43 +64,6 @@ class _SelectItemFormState extends State<SelectItemForm> {
     super.dispose();
   }
 
-  // void _priceChanged(String price) {
-  //   double newTotal;
-  //   String quantity = _quantityController.text;
-  //   if (price.isNotEmpty && UtilValidators.isValidNumeric(price)) {
-  //     newTotal = double.parse(price) *
-  //         ((quantity.isNotEmpty) ? double.parse(quantity) : 0);
-  //     _totalController.value = TextEditingValue(
-  //       text: newTotal.toStringAsFixed(2).toString(),
-  //       selection: TextSelection.fromPosition(
-  //         TextPosition(offset: newTotal.toString().length),
-  //       ),
-  //     );
-
-  //     context
-  //         .read<ProductSelectionBloc>()
-  //         .add(TotalChanged(newTotal.toString()));
-  //   }
-  // }
-
-  // void _totalChanged(String total) {
-  //   double newPrice;
-  //   String quantity = _quantityController.text;
-  //   if (total.isNotEmpty && UtilValidators.isValidNumeric(total)) {
-  //     newPrice = double.parse(total) /
-  //         ((quantity.isNotEmpty) ? double.parse(quantity) : 1);
-  //     _unitPriceController.value = TextEditingValue(
-  //       text: newPrice.toStringAsFixed(2).toString(),
-  //       selection: TextSelection.fromPosition(
-  //         TextPosition(offset: newPrice.toString().length),
-  //       ),
-  //     );
-  //     context
-  //         .read<ProductSelectionBloc>()
-  //         .add(PriceChanged(newPrice.toString()));
-  //   }
-  // }
-
   Map<String, dynamic> data = {};
 
   @override
@@ -111,14 +81,6 @@ class _SelectItemFormState extends State<SelectItemForm> {
                 ..showSnackBar(
                   SnackBar(
                     content: Text(state.message),
-                    action: SnackBarAction(
-                      label: 'Undo',
-                      onPressed: () {
-                        BlocProvider.of<ProductSelectionBloc>(
-                                widget.selectionProductionContext)
-                            .add(UndoCart(widget.product.id));
-                      },
-                    ),
                   ),
                 );
             } else if (state.status == FormzStatus.submissionFailure) {
@@ -149,11 +111,11 @@ class _SelectItemFormState extends State<SelectItemForm> {
                     enabled: false,
                     prefixIcon: const Icon(LineIcons.breadSlice),
                   ),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _quantityField(),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _unitPriceField(),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   Row(
                     children: [
                       Flexible(
@@ -165,9 +127,9 @@ class _SelectItemFormState extends State<SelectItemForm> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _totalAmountField(),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   ElevatedButton(
                     onPressed: (state.status == FormzStatus.valid)
                         ? () {

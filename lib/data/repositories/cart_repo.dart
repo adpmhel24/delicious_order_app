@@ -1,16 +1,10 @@
-import '../repositories/repositories.dart';
 import '../models/models.dart';
 
 class CartRepo {
-  List<CartItem> _cartItems = [];
-  double _delfee = 0;
-  double _otherfee = 0;
-
-  final CheckOutRepo _checkOutRepo = AppRepo.checkOutRepository;
+  final List<CartItem> _cartItems = [];
 
   // Add To Cart
-  Future<void> addToCart(CartItem cartItem) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+  void addToCart(CartItem cartItem) {
     var index = _cartItems.indexWhere((element) =>
         element.id == cartItem.id && element.unitPrice == cartItem.unitPrice);
 
@@ -23,9 +17,6 @@ class CartRepo {
   }
 
   List<CartItem> get cartItems => [..._cartItems];
-
-  double get delfee => _delfee;
-  double get otherfee => _otherfee;
 
   double get totalCart {
     double totalAmount = 0;
@@ -43,32 +34,6 @@ class CartRepo {
     return totalDisc;
   }
 
-  void changeOtherFee(double otherFee) {
-    _otherfee = otherFee;
-    _checkOutRepo.checkoutData.otherfee = _otherfee;
-  }
-
-  void changeDelfee(double delfee) {
-    _delfee = delfee;
-    _checkOutRepo.checkoutData.delfee = delfee;
-  }
-
-  void toggleIsSelected(int index) {
-    _cartItems[index].isSelected = !_cartItems[index].isSelected;
-  }
-
-  void toggleSelectAllItems() {
-    _cartItems = _cartItems.map((cartItem) {
-      var item = cartItem;
-      item.isSelected = !item.isSelected;
-      return item;
-    }).toList();
-  }
-
-  double get grantTotal {
-    return totalCart + _delfee + otherfee;
-  }
-
   int get cartItemsCount => _cartItems.length;
 
   // Delete Item From The Cart
@@ -82,23 +47,9 @@ class CartRepo {
     _cartItems.removeAt(index);
   }
 
-  void removeItemIfSelected() {
-    _cartItems.removeWhere((cartItem) => cartItem.isSelected);
-    if (_cartItems.isEmpty) {
-      _cartItems.clear();
-      _delfee = 0;
-      _otherfee = 0;
-      _checkOutRepo.checkoutData = CheckOutModel();
-    }
-  }
-
   // Clear Cart
-  Future<void> clearCart() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+  void clearCart() {
     _cartItems.clear();
-    _delfee = 0;
-    _otherfee = 0;
-    _checkOutRepo.checkoutData = CheckOutModel();
   }
 
   ///Singleton factory

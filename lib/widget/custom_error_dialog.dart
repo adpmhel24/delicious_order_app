@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 Future<Object?> customErrorDialog(BuildContext context,
     {required String message,
     void Function()? onPositiveClick,
     bool? barrierDismissible}) {
-  Navigator.of(context).pop();
+  context.loaderOverlay.hide();
   return showAnimatedDialog(
     barrierDismissible: barrierDismissible ?? true,
     context: context,

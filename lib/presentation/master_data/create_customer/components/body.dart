@@ -6,15 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '/data/repositories/repositories.dart';
 import '/utils/constant.dart';
 import '/router/router.gr.dart';
-import '/presentation/create_customer/bloc/bloc.dart';
+import '../bloc/bloc.dart';
 import '/widget/custom_choices_modal.dart';
 import '/widget/custom_error_dialog.dart';
-import '/widget/custom_loading_dialog.dart';
 import '/widget/custom_success_dialog.dart';
 import '/widget/custom_text_field.dart';
 import 'add_address.dart';
@@ -38,7 +39,17 @@ class _BodyState extends State<Body> {
   final TextEditingController _custAddressController = TextEditingController();
   final TextEditingController _custContactNumberController =
       TextEditingController();
+  final TextEditingController _emailAddressController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _customerDiscountController =
+      TextEditingController();
+  final TextEditingController _pickupDiscountController =
+      TextEditingController();
+
   final PhLocationRepo _phLocationRepo = AppRepo.phLocationRepository;
+
+  bool isPasswordHidden = true;
 
   @override
   void dispose() {
@@ -51,6 +62,11 @@ class _BodyState extends State<Body> {
     _cityMunicipalityController.dispose();
     _brgyController.dispose();
     _custContactNumberController.dispose();
+    _emailAddressController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _customerDiscountController.dispose();
+    _pickupDiscountController.dispose();
     _phLocationRepo.clear();
     super.dispose();
   }
@@ -75,7 +91,7 @@ class _BodyState extends State<Body> {
           child: BlocConsumer<AddCustomerBloc, AddCustomerState>(
             listener: (context, state) {
               if (state.status.isSubmissionInProgress) {
-                customLoadingDialog(context);
+                context.loaderOverlay.show();
               } else if (state.status.isSubmissionFailure) {
                 customErrorDialog(context, message: state.message!);
               } else if (state.status.isSubmissionSuccess) {
@@ -84,7 +100,7 @@ class _BodyState extends State<Body> {
                     message: state.message!,
                     onPositiveClick: () {
                       AutoRouter.of(context)
-                          .popAndPush(const CreateOrderScreenRoute());
+                          .replaceAll([const CreateOrderScreenRoute()]);
                     });
               }
             },
@@ -100,7 +116,7 @@ class _BodyState extends State<Body> {
                         .headline6!
                         .copyWith(fontStyle: FontStyle.italic),
                   ),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,15 +140,19 @@ class _BodyState extends State<Body> {
                           icon: const Icon(Icons.add)),
                     ],
                   ),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _customerFirstNameField(context: context, state: state),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _customerLastNameField(context, state),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _customerCodeField(context, state),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
                   _customerContactNumber(context, state),
-                  SizedBox(height: 15.h),
+                  Constant.columnSpacer,
+                  _emailAddressField(context, state),
+                  Constant.columnSpacer,
+                  if (_custTypeController.text == 'Partner')
+                    ..._partnerWidget(state),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: ElevatedButton(
@@ -238,6 +258,22 @@ class _BodyState extends State<Body> {
                                             ''),
                                       ],
                                     ),
+                                    Wrap(
+                                      children: [
+                                        Text(
+                                          'Delivery Fee: ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1!
+                                              .copyWith(
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(state.details[index].deliveryFee
+                                            .toString()),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -262,6 +298,19 @@ class _BodyState extends State<Body> {
     );
   }
 
+  List<Widget> _partnerWidget(AddCustomerState state) {
+    return [
+      _customerDiscountField(context, state),
+      Constant.columnSpacer,
+      _pickupDiscountField(context, state),
+      Constant.columnSpacer,
+      _usernameField(context, state),
+      Constant.columnSpacer,
+      _passwordField(context, state),
+      Constant.columnSpacer,
+    ];
+  }
+
   CustomTextField _customerContactNumber(
       BuildContext context, AddCustomerState state) {
     return CustomTextField(
@@ -273,17 +322,6 @@ class _BodyState extends State<Body> {
       prefixIcon: const Icon(
         Icons.phone,
       ),
-      suffixIcon: IconButton(
-        onPressed: () {
-          _custContactNumberController.clear();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeCustContactNumber(_custContactNumberController.text));
-        },
-        icon: const Icon(
-          Icons.close,
-        ),
-      ),
       validator: (_) {
         return (state.contactNumber.invalid) ? "Required field!" : null;
       },
@@ -291,6 +329,122 @@ class _BodyState extends State<Body> {
         context
             .read<AddCustomerBloc>()
             .add(ChangeCustContactNumber(_custContactNumberController.text));
+      },
+    );
+  }
+
+  CustomTextField _emailAddressField(
+      BuildContext context, AddCustomerState state) {
+    return CustomTextField(
+      autovalidateMode: AutovalidateMode.always,
+      textInputAction: TextInputAction.done,
+      keyboardType: TextInputType.emailAddress,
+      controller: _emailAddressController,
+      labelText: 'Email Address',
+      prefixIcon: const Icon(
+        Icons.email,
+      ),
+      validator: (value) {
+        return (state.emailAddress.invalid) ? "Invalid Email" : null;
+      },
+      onChanged: (value) {
+        context
+            .read<AddCustomerBloc>()
+            .add(ChangedEmailAddress(_emailAddressController.text));
+        if (_custTypeController.text == 'Partner') {
+          _usernameController.text = _emailAddressController.text;
+          context
+              .read<AddCustomerBloc>()
+              .add(ChangedUsername(_emailAddressController.text));
+        }
+      },
+    );
+  }
+
+  CustomTextField _customerDiscountField(
+      BuildContext context, AddCustomerState state) {
+    return CustomTextField(
+      textInputAction: TextInputAction.next,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      controller: _customerDiscountController,
+      labelText: 'Sales Discount',
+      prefixIcon: const Icon(
+        LineIcons.percent,
+      ),
+      onChanged: (value) {
+        context
+            .read<AddCustomerBloc>()
+            .add(ChangedCustomerDiscount(_customerDiscountController.text));
+      },
+    );
+  }
+
+  CustomTextField _pickupDiscountField(
+      BuildContext context, AddCustomerState state) {
+    return CustomTextField(
+      textInputAction: TextInputAction.next,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      controller: _pickupDiscountController,
+      labelText: 'Pickup Discount',
+      prefixIcon: const Icon(
+        LineIcons.percent,
+      ),
+      onChanged: (value) {
+        context
+            .read<AddCustomerBloc>()
+            .add(ChangedPickupDiscount(_pickupDiscountController.text));
+      },
+    );
+  }
+
+  CustomTextField _usernameField(BuildContext context, AddCustomerState state) {
+    return CustomTextField(
+      autovalidateMode: AutovalidateMode.always,
+      textInputAction: TextInputAction.done,
+      controller: _usernameController,
+      labelText: 'Username',
+      prefixIcon: const Icon(Icons.account_box),
+      validator: (value) {
+        if (state.username.invalid && state.password.valid) {
+          return "Username is required!";
+        }
+        return null;
+      },
+      onChanged: (value) {
+        context
+            .read<AddCustomerBloc>()
+            .add(ChangedUsername(_usernameController.text));
+      },
+    );
+  }
+
+  CustomTextField _passwordField(BuildContext context, AddCustomerState state) {
+    return CustomTextField(
+      autovalidateMode: AutovalidateMode.always,
+      textInputAction: TextInputAction.done,
+      controller: _passwordController,
+      labelText: 'Password',
+      obscureText: isPasswordHidden,
+      prefixIcon: const Icon(Icons.security),
+      suffixIcon: IconButton(
+        icon: Icon(isPasswordHidden ? Icons.visibility_off : Icons.visibility),
+        onPressed: () {
+          setState(() {
+            isPasswordHidden = !isPasswordHidden;
+          });
+        },
+      ),
+      validator: (value) {
+        if (state.username.valid && state.password.invalid) {
+          return "Password is required!";
+        }
+
+        return null;
+      },
+      onChanged: (value) {
+        context
+            .read<AddCustomerBloc>()
+            .add(ChangedPassword(_passwordController.text));
       },
     );
   }
@@ -305,20 +459,6 @@ class _BodyState extends State<Body> {
       controller: _firstNameController,
       labelText: 'First Name*',
       prefixIcon: const Icon(Icons.person),
-      suffixIcon: IconButton(
-        onPressed: () {
-          _firstNameController.clear();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeFirstName(_firstNameController.text));
-
-          updateCustomerCode();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeCustomerCode(_codeController.text));
-        },
-        icon: const Icon(Icons.close),
-      ),
       validator: (_) {
         return (state.firstName.invalid) ? "Required field!" : null;
       },
@@ -351,20 +491,6 @@ class _BodyState extends State<Body> {
       controller: _lastNameController,
       labelText: 'Last Name*',
       prefixIcon: const Icon(Icons.person),
-      suffixIcon: IconButton(
-        onPressed: () {
-          _lastNameController.clear();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeLastName(_lastNameController.text));
-
-          updateCustomerCode();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeCustomerCode(_codeController.text));
-        },
-        icon: const Icon(Icons.close),
-      ),
       validator: (_) {
         return (state.lastName.invalid) ? "Required field!" : null;
       },
@@ -395,15 +521,6 @@ class _BodyState extends State<Body> {
       controller: _codeController,
       labelText: 'Customer Code*',
       prefixIcon: const Icon(Icons.person),
-      suffixIcon: IconButton(
-        onPressed: () {
-          _codeController.clear();
-          context
-              .read<AddCustomerBloc>()
-              .add(ChangeCustomerCode(_codeController.text));
-        },
-        icon: const Icon(Icons.close),
-      ),
       validator: (_) {
         return (state.code.invalid) ? "Required field!" : null;
       },

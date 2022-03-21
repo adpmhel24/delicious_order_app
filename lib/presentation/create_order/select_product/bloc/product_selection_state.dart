@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
+import '../../../../data/models/models.dart';
 import 'field_validator.dart';
 
 class ProductSelectionState extends Equatable {
@@ -11,6 +12,7 @@ class ProductSelectionState extends Equatable {
       this.discPercentage = const InputField.pure(),
       this.discAmount = const InputField.pure(),
       this.total = const InputField.pure(),
+      this.cartItem,
       this.isUndo = false,
       this.message = 'Ordering failed!'});
 
@@ -21,6 +23,7 @@ class ProductSelectionState extends Equatable {
   final InputField discPercentage;
   final InputField discAmount;
   final String message;
+  final CartItem? cartItem;
   final bool isUndo;
 
   ProductSelectionState copyWith({
@@ -31,6 +34,7 @@ class ProductSelectionState extends Equatable {
     InputField? discAmount,
     InputField? total,
     String? message,
+    CartItem? cartItem,
     bool? isUndo,
   }) {
     return ProductSelectionState(
@@ -39,6 +43,7 @@ class ProductSelectionState extends Equatable {
       price: price ?? this.price,
       discPercentage: discPercentage ?? this.discPercentage,
       discAmount: discAmount ?? this.discAmount,
+      cartItem: cartItem ?? this.cartItem,
       total: total ?? this.total,
       message: message ?? this.message,
       isUndo: isUndo ?? this.isUndo,
@@ -46,7 +51,7 @@ class ProductSelectionState extends Equatable {
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         status,
         quantity,
         discPercentage,
@@ -54,6 +59,7 @@ class ProductSelectionState extends Equatable {
         price,
         message,
         total,
+        cartItem,
         isUndo
       ];
 }

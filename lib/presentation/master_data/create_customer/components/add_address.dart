@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:delicious_ordering_app/utils/constant.dart';
 import 'package:delicious_ordering_app/widget/ph_location_modal_widgets/city_municipality_modal_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../data/repositories/repositories.dart';
-import '../../../widget/custom_text_field.dart';
-import '../../../widget/ph_location_modal_widgets/brgy_modal_selection.dart';
+import '../../../../data/repositories/repositories.dart';
+import '../../../../widget/custom_text_field.dart';
+import '../../../../widget/ph_location_modal_widgets/brgy_modal_selection.dart';
 import '../bloc/bloc.dart';
 
 class AddCustomerAddress extends StatefulWidget {
@@ -25,6 +26,7 @@ class _AddCustomerAddressState extends State<AddCustomerAddress> {
   final TextEditingController _cityMunicipalityController =
       TextEditingController();
   final TextEditingController _otherDetailsController = TextEditingController();
+  final TextEditingController _deliveryFeeController = TextEditingController();
 
   @override
   void dispose() {
@@ -32,6 +34,7 @@ class _AddCustomerAddressState extends State<AddCustomerAddress> {
     _brgyController.clear();
     _cityMunicipalityController.clear();
     _otherDetailsController.clear();
+    _deliveryFeeController.clear();
     super.dispose();
   }
 
@@ -50,42 +53,27 @@ class _AddCustomerAddressState extends State<AddCustomerAddress> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
-                  height: 15.w,
-                ),
+                Constant.columnSpacer,
                 cityMunicipalityModalSelection(
                   context: context,
                   phLocationRepo: _phLocationRepo,
                   cityMunicipalityController: _cityMunicipalityController,
                 ),
-                SizedBox(
-                  height: 15.w,
-                ),
+                Constant.columnSpacer,
                 brgyModalSelection(
                   context: context,
                   brgyController: _brgyController,
                   phLocationRepo: _phLocationRepo,
                 ),
-                SizedBox(
-                  height: 15.w,
-                ),
+                Constant.columnSpacer,
                 CustomTextField(
                   autovalidateMode: AutovalidateMode.always,
                   textInputAction: TextInputAction.newline,
-                  minLines: 3,
+                  minLines: 2,
                   maxLines: 6,
                   controller: _custAddressController,
                   labelText: 'Street Address',
                   prefixIcon: const Icon(Icons.home),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      _custAddressController.clear();
-                      context
-                          .read<AddCustomerBloc>()
-                          .add(ChangeCustAddress(_custAddressController.text));
-                    },
-                    icon: const Icon(Icons.close),
-                  ),
                   validator: (_) {
                     return (widget.addCustomerContext
                             .watch<AddCustomerBloc>()
@@ -96,38 +84,37 @@ class _AddCustomerAddressState extends State<AddCustomerAddress> {
                         : null;
                   },
                 ),
-                SizedBox(
-                  height: 15.w,
-                ),
+                Constant.columnSpacer,
                 CustomTextField(
                   textInputAction: TextInputAction.newline,
-                  minLines: 3,
+                  minLines: 2,
                   maxLines: 6,
                   controller: _otherDetailsController,
                   labelText: 'Other Details',
                   prefixIcon: const Icon(Icons.details),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      _otherDetailsController.clear();
-                    },
-                    icon: const Icon(Icons.close),
-                  ),
                 ),
-                SizedBox(
-                  height: 15.w,
+                Constant.columnSpacer,
+                CustomTextField(
+                  textInputAction: TextInputAction.done,
+                  controller: _deliveryFeeController,
+                  labelText: 'Delivery Fee',
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  prefixIcon: const Icon(Icons.delivery_dining_sharp),
                 ),
+                Constant.columnSpacer,
                 ElevatedButton(
                   onPressed: () {
-                    // widget.addCustomerContext
-                    //     .read<AddCustomerBloc>()
-                    //     .add(ChangeCustAddress(_custAddressController.text));
-
                     widget.addCustomerContext.read<AddCustomerBloc>().add(
                           AddCustomerAddressEvent(
                             address: _custAddressController.text,
                             cityMunicipality: _cityMunicipalityController.text,
                             brgy: _brgyController.text,
                             otherDetails: _otherDetailsController.text,
+                            deliveryFee: double.parse(
+                                _deliveryFeeController.text.isEmpty
+                                    ? '0.00'
+                                    : _deliveryFeeController.text),
                           ),
                         );
                     AutoRouter.of(context).pop();

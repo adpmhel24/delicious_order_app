@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String formatStringToDecimal(var amount, {bool hasCurrency = false}) {
-  String currency = '₱';
+  String currency = 'Php ';
   var newValue = '';
   final f =
       NumberFormat.currency(locale: 'en_US', decimalDigits: 2, symbol: '');

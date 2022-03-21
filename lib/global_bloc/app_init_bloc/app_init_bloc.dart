@@ -15,6 +15,7 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
 
   void onOpeningApp(OpeningApp event, Emitter<AppInitState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    emit(CheckingUpdate());
 
     if (prefs.getString("url") == null) {
       emit(NoURLState());
@@ -22,8 +23,6 @@ class AppInitBloc extends Bloc<AppInitEvent, AppInitState> {
       emit(AddedNewURlState(prefs.getString("url")!));
     }
     if (prefs.getString("url") != null) {
-      emit(CheckingUpdate());
-
       // Check if there's update available after adding url.
       try {
         if (await _versionRepo.isUpdatedAvailable()) {

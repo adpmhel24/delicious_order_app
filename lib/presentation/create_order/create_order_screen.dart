@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
+import '../../global_bloc/customer_bloc/bloc.dart';
 import '/data/repositories/app_repo.dart';
 import '/data/repositories/cart_repo.dart';
-import '/global_bloc/cart_bloc/bloc.dart';
 import '/presentation/create_order/select_product/bloc/bloc.dart';
 import '/presentation/create_order/select_customer/bloc/bloc.dart';
 import '/router/router.gr.dart';
 import '/widget/app_drawer.dart';
+import 'cart_checkout/bloc/bloc.dart';
 
 class CreateOrderScreen extends StatefulWidget {
   const CreateOrderScreen({Key? key}) : super(key: key);
@@ -28,10 +29,16 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<OrderCustDetailsBloc>(
-          create: (_) => OrderCustDetailsBloc(),
+          create: (_) => OrderCustDetailsBloc(context.read<CustomerBloc>()),
         ),
         BlocProvider<ProductSelectionBloc>(
           create: (_) => ProductSelectionBloc(),
+        ),
+        BlocProvider<CheckOutBloc>(
+          create: (context) => CheckOutBloc(
+            AppRepo.cartRepository,
+            BlocProvider.of<ProductSelectionBloc>(context),
+          ),
         ),
       ],
       child: AutoTabsRouter(
@@ -49,31 +56,28 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 Builder(builder: (context) {
                   return Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: BlocBuilder<ProductSelectionBloc,
-                        ProductSelectionState>(
+                    child: BlocBuilder<CheckOutBloc, CheckOutState>(
+                      buildWhen: (prev, curr) =>
+                          prev.cartItems != curr.cartItems,
                       builder: (_, state) {
-                        return BlocBuilder<CartBloc, CartState>(
-                          builder: (context, state) {
-                            return Badge(
-                              badgeContent:
-                                  Text(_cartRepo.cartItemsCount.toString()),
-                              child: IconButton(
-                                color: Theme.of(context).iconTheme.color,
-                                onPressed: (_cartRepo.cartItems.isNotEmpty)
-                                    ? () {
-                                        context
-                                            .read<CartBloc>()
-                                            .add(LoadCart());
-
-                                        AutoRouter.of(context).push(
-                                            CartScreenRoute(
-                                                orderingHomeContext: context));
-                                      }
-                                    : null,
-                                icon: const Icon(Icons.shopping_cart_sharp),
-                              ),
-                            );
-                          },
+                        return Badge(
+                          badgeContent: Text(state.cartItems.length.toString()),
+                          child: IconButton(
+                            color: Theme.of(context).iconTheme.color,
+                            onPressed: (_cartRepo.cartItems.isNotEmpty)
+                                ? () {
+                                    AutoRouter.of(context).push(
+                                      CartScreenRoute(
+                                        orderCustDetailsBloc: context
+                                            .read<OrderCustDetailsBloc>(),
+                                        checkOutBloc:
+                                            context.read<CheckOutBloc>(),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            icon: const Icon(Icons.shopping_cart_sharp),
+                          ),
                         );
                       },
                     ),

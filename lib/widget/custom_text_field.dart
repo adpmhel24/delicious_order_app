@@ -21,6 +21,7 @@ class CustomTextField extends StatelessWidget {
     AutovalidateMode? autovalidateMode,
     TextStyle? labelStyle,
     bool? enabled,
+    bool? obscureText,
   })  : _controller = controller,
         _labelText = labelText,
         _prefixIcon = prefixIcon,
@@ -38,6 +39,7 @@ class CustomTextField extends StatelessWidget {
         _autovalidateMode = autovalidateMode,
         _labelStyle = labelStyle,
         _enabled = enabled,
+        _obscureText = obscureText,
         super(key: key);
 
   final TextEditingController? _controller;
@@ -57,6 +59,7 @@ class CustomTextField extends StatelessWidget {
   final AutovalidateMode? _autovalidateMode;
   final TextStyle? _labelStyle;
   final bool? _enabled;
+  final bool? _obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +69,13 @@ class CustomTextField extends StatelessWidget {
       keyboardType: _keyboardType,
       enabled: _enabled,
       controller: _controller,
-      minLines: _minLines,
-      maxLines: _maxLines,
+      minLines: _minLines ?? 1,
+      maxLines: _maxLines ?? 1,
       showCursor: _showCursor,
       readOnly: _readOnly ?? false,
       onTap: _onTap,
       textAlign: _textAlign ?? TextAlign.start,
+      obscureText: _obscureText ?? false,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
