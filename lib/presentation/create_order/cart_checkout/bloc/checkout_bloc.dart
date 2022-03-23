@@ -387,7 +387,8 @@ ${selectedAddress?.cityMunicipality ?? ''} """;
           : '0.00'),
       otherfee: double.parse(
           state.otherFee.value.isNotEmpty ? state.otherFee.value : '0.00'),
-      disctype: state.discTypeCode.value,
+      disctype:
+          state.discTypeCode.value.isEmpty ? null : state.discTypeCode.value,
       remarks: state.remarks.value,
       contactNumber: state.selectedCustomer?.contactNumber ?? '',
       rows: state.cartItems.map((e) => e.toJson()).toList(),

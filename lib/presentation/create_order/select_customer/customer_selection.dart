@@ -180,7 +180,7 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
                         customWarningDialog(
                           context: context,
                           message:
-                              "Are you sure you want to update customer's Contact Number?",
+                              "Are you sure you want to update customer's Sales Discount?",
                           onPositiveClick: () {
                             context.read<CustomerBloc>().add(
                                   UpdateCustomer(
@@ -194,45 +194,6 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
                                             _customerDiscountController.text
                                       }),
                                 );
-                            // try {
-                            //   var customer = await _custRepo.updateCustomer(
-                            //     customerId: int.parse(context
-                            //         .read<OrderCustDetailsBloc>()
-                            //         .state
-                            //         .customerId
-                            //         .value),
-                            //     data: {
-                            //       "allowed_disc": _customerDiscountController.text
-                            //     },
-                            //   );
-
-                            //   context.read<OrderCustDetailsBloc>().add(
-                            //         ChangedCustomerSelected(
-                            //           selectedCustomer: customer,
-                            //           addressController: _addressController,
-                            //           custCodeController: _custCodeController,
-                            //           custNameController: _custNameController,
-                            //           contactNumberController:
-                            //               _contactNumberController,
-                            //         ),
-                            //       );
-
-                            //   ScaffoldMessenger.of(context)
-                            //     ..hideCurrentSnackBar()
-                            //     ..showSnackBar(
-                            //       const SnackBar(
-                            //         content: Text("Successfully added!"),
-                            //       ),
-                            //     );
-                            // } on HttpException catch (e) {
-                            //   ScaffoldMessenger.of(context)
-                            //     ..hideCurrentSnackBar()
-                            //     ..showSnackBar(
-                            //       SnackBar(
-                            //         content: Text(e.message),
-                            //       ),
-                            //     );
-                            // }
                             AutoRouter.of(context).pop();
                           },
                         );
@@ -261,7 +222,7 @@ class _CustomerSelectionScreenState extends State<CustomerSelectionScreen> {
                         customWarningDialog(
                           context: context,
                           message:
-                              "Are you sure you want to update customer's Contact Number?",
+                              "Are you sure you want to update customer's Pickup Discount?",
                           onPositiveClick: () async {
                             try {
                               var customer = await _custRepo.updateCustomer(
