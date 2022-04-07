@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:delicious_ordering_app/data/models/customer/customer_model.dart';
 import 'package:delicious_ordering_app/data/models/customer_address/customer_address_model.dart';
+import 'package:delicious_ordering_app/presentation/create_order/cart_checkout/bloc/bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,16 +13,26 @@ import '/widget/text_field_validator.dart';
 class OrderCustDetailsBloc
     extends Bloc<OrderCustDetailsEvent, OrderCustDetailsState> {
   final CustomerBloc _customerBloc;
+  final CheckOutBloc _checkOutBloc;
   late final StreamSubscription _customerBlocSubscription;
-  OrderCustDetailsBloc(this._customerBloc)
+  late final StreamSubscription _checkOutBlocSubscription;
+  OrderCustDetailsBloc(this._customerBloc, this._checkOutBloc)
       : super(const OrderCustDetailsState()) {
     on<ChangedCustomerSelected>(_onChangedCustomerSelected);
     on<ChangedAddressSelected>(onAddressChange);
+    on<ClearData>(_onClearData);
     _customerBlocSubscription = _customerBloc.stream.listen((state) {
       if (state.status == CustomerBlocStatus.success &&
           state.lastUpdateCustomer != null) {
         add(ChangedCustomerSelected(
             selectedCustomer: state.lastUpdateCustomer));
+      }
+    });
+
+    _checkOutBlocSubscription =
+        _checkOutBloc.stream.listen((checkOutBlocState) {
+      if (checkOutBlocState.status.isSubmissionSuccess) {
+        add(ClearData());
       }
     });
   }
@@ -90,9 +101,14 @@ ${event.selectedAddress?.cityMunicipality ?? ''}
     ));
   }
 
+  void _onClearData(ClearData event, Emitter<OrderCustDetailsState> emit) {
+    emit(state.clearData());
+  }
+
   @override
   Future<void> close() {
     _customerBlocSubscription.cancel();
+    _checkOutBlocSubscription.cancel();
     return super.close();
   }
 }

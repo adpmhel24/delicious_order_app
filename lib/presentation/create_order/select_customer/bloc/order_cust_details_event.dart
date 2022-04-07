@@ -30,3 +30,5 @@ class ChangedAddressSelected extends OrderCustDetailsEvent {
   @override
   List<Object> get props => [addressController];
 }
+
+class ClearData extends OrderCustDetailsEvent {}

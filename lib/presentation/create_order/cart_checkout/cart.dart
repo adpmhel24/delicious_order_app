@@ -8,7 +8,6 @@ import 'package:loader_overlay/loader_overlay.dart';
 import '/presentation/create_order/cart_checkout/bloc/bloc.dart';
 import '/presentation/create_order/select_customer/bloc/bloc.dart';
 import '/widget/custom_warning_dialog.dart';
-import '/router/router.gr.dart';
 import '/widget/custom_error_dialog.dart';
 import '/widget/custom_success_dialog.dart';
 import '/presentation/create_order/cart_checkout/components/cart_body.dart';
@@ -80,9 +79,7 @@ bottomButton() {
                 context: context,
                 message: state.message.value,
                 onPositiveClick: () {
-                  AutoRouter.of(context).replaceAll(
-                    [const CreateOrderScreenRoute()],
-                  );
+                  context.router.popUntilRoot();
                 },
               );
             } else if (state.status.isSubmissionFailure) {
@@ -107,6 +104,7 @@ bottomButton() {
                           Navigator.of(context).pop();
                         },
                         onPositiveClick: () {
+                          Navigator.of(context).pop();
                           context.read<CheckOutBloc>().add(ProceedCheckOut());
                         },
                       );

@@ -28,9 +28,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     CartRepo _cartRepo = AppRepo.cartRepository;
     return MultiBlocProvider(
       providers: [
-        BlocProvider<OrderCustDetailsBloc>(
-          create: (_) => OrderCustDetailsBloc(context.read<CustomerBloc>()),
-        ),
         BlocProvider<ProductSelectionBloc>(
           create: (_) => ProductSelectionBloc(),
         ),
@@ -39,6 +36,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             AppRepo.cartRepository,
             BlocProvider.of<ProductSelectionBloc>(context),
           ),
+        ),
+        BlocProvider<OrderCustDetailsBloc>(
+          create: (context) => OrderCustDetailsBloc(
+              context.read<CustomerBloc>(), context.read<CheckOutBloc>()),
         ),
       ],
       child: AutoTabsRouter(

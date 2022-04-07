@@ -42,6 +42,18 @@ class OrderCustDetailsState extends Equatable {
     );
   }
 
+  OrderCustDetailsState clearData() {
+    return const OrderCustDetailsState(
+      status: FormzStatus.pure,
+      selectedCustomer: null,
+      selectedAddress: null,
+      address: TextFieldModel.pure(),
+      custCode: TextFieldModel.pure(),
+      contactNumber: TextFieldModel.pure(),
+      customerId: TextFieldModel.pure(),
+    );
+  }
+
   @override
   List<Object?> get props => [
         status,
